@@ -3,3 +3,4 @@
 * Initial creation of `ff_drop_down_list` library, forked from `drop_down_list` library [(Mindinventory/drop_down_list)](https://github.com/Mindinventory/drop_down_list).
 * Added `searchOnEmpty` option to allow the `searchDelegate` to search on an empty query.
 * Added `listSortDelegate` option that will be called in the widget `initState()` as well as after every search.
+* Added `onMultipleSelection` and `onSingleSelection` callbacks. When `enableMultipleSelection` is `true`, `onMultipleSelection` is called alongside `onSelection`. Otherwise, `onSelection` is called normally with the `onSingleSelection` being called with a single `SelectedListItem` (not a list).

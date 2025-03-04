@@ -8,6 +8,16 @@ typedef ItemSelectionCallBack<T> = void Function(
   List<SelectedListItem<T>> selectedItems,
 );
 
+/// A callback function that is invoked when multiple items are selected
+typedef MultipleItemSelectionCallBack<T> = void Function(
+  List<SelectedListItem<T>> selectedItems,
+);
+
+/// A callback function that is invoked when a single item is selected
+typedef SingleItemSelectionCallBack<T> = void Function(
+  SelectedListItem<T> selectedItem,
+);
+
 /// A function type definition for building a widget for a specific list item
 typedef ListItemBuilder<T> = Widget Function(
   int index,
@@ -43,6 +53,12 @@ class DropDown<T> {
 
   /// A callback function triggered when items are selected from the list
   final ItemSelectionCallBack<T>? onSelected;
+
+  /// A callback function triggered when items are selected from the list
+  final MultipleItemSelectionCallBack<T>? onMultipleSelected;
+
+  /// A callback function triggered when a single item is selected from the list
+  final SingleItemSelectionCallBack<T>? onSingleSelected;
 
   /// A function that takes an [index] and [dataItem] as a parameter and returns a custom widget
   /// to display for the list item at that index
@@ -283,6 +299,8 @@ class DropDown<T> {
     Key? key,
     required this.data,
     this.onSelected,
+    this.onMultipleSelected,
+    this.onSingleSelected,
     this.listItemBuilder,
     this.enableMultipleSelection = false,
     this.maxSelectedItems,
@@ -544,6 +562,10 @@ class _MainBodyState<T> extends State<MainBody<T>> {
                             } else {
                               widget.dropDown.onSelected
                                   ?.call([mainList[index]]);
+
+                              widget.dropDown.onSingleSelected
+                                  ?.call(mainList[index]);
+
                               _onUnFocusKeyboardAndPop();
                             }
                           },
@@ -592,6 +614,8 @@ class _MainBodyState<T> extends State<MainBody<T>> {
         widget.dropDown.data.where((element) => element.isSelected).toList();
 
     widget.dropDown.onSelected?.call(selectedList);
+
+    widget.dropDown.onMultipleSelected?.call(selectedList);
 
     _onUnFocusKeyboardAndPop();
   }
