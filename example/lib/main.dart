@@ -1,5 +1,5 @@
-import 'package:drop_down_list/drop_down_list.dart';
-import 'package:drop_down_list/model/selected_list_item.dart';
+import 'package:ff_drop_down_list/ff_drop_down_list.dart';
+import 'package:ff_drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
@@ -206,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
         submitButtonText: 'Save',
         clearButtonText: 'Clear',
         data: _listOfLanguages,
-        listItemBuilder: (index, dataItem) {
+        listItemBuilder: (int index, SelectedListItem<LanguageModel> dataItem) {
           return Text(
             '${dataItem.data.name} : ${dataItem.data.code}',
           );
@@ -218,7 +218,7 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           showSnackBar(list.toString());
         },
-        searchDelegate: (query, dataItems) {
+        searchDelegate: (String query, List<SelectedListItem<LanguageModel>> dataItems) {
           return dataItems
               .where((item) =>
                   item.data.name.toLowerCase().contains(query.toLowerCase()) ||
