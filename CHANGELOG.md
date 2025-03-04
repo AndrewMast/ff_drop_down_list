@@ -4,3 +4,4 @@
 * Added `searchOnEmpty` option to allow the `searchDelegate` to search on an empty query.
 * Added `listSortDelegate` option that will be called in the widget `initState()` as well as after every search.
 * Added `onMultipleSelection` and `onSingleSelection` callbacks. When `enableMultipleSelection` is `true`, `onMultipleSelection` is called alongside `onSelection`. Otherwise, `onSelection` is called normally with the `onSingleSelection` being called with a single `SelectedListItem` (not a list).
+* Added `listSelectedTileColor` to change the background color of selected items.

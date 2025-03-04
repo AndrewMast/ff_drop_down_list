@@ -99,8 +99,10 @@ class DropDown<T> {
   final EdgeInsets? listTileContentPadding;
 
   /// Defines the background color of each `ListTile` in the dropdown list
-  /// Default Value: [Colors.transparent]
-  final Color listTileColor;
+  final Color? listTileColor;
+
+  /// Defines the background color of each selected `ListTile` in the dropdown list
+  final Color? listSelectedTileColor;
 
   /// The widget displayed as a trailing icon when a list item is selected
   ///
@@ -308,7 +310,8 @@ class DropDown<T> {
     this.listViewPadding,
     this.listViewSeparatorWidget,
     this.listTileContentPadding,
-    this.listTileColor = Colors.transparent,
+    this.listTileColor,
+    this.listSelectedTileColor,
     this.selectedListTileTrailingWidget = const Icon(
       Icons.check_box,
     ),
@@ -586,7 +589,11 @@ class _MainBodyState<T> extends State<MainBody<T>> {
                                   const EdgeInsets.symmetric(
                                     horizontal: 20,
                                   ),
-                          tileColor: widget.dropDown.listTileColor,
+                          tileColor: (isSelected
+                                  ? widget.dropDown.listSelectedTileColor
+                                  : null) ??
+                              widget.dropDown.listTileColor ??
+                              Colors.transparent,
                         ),
                       );
                     },
