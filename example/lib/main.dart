@@ -218,7 +218,8 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           showSnackBar(list.toString());
         },
-        searchDelegate: (String query, List<SelectedListItem<LanguageModel>> dataItems) {
+        searchDelegate:
+            (String query, List<SelectedListItem<LanguageModel>> dataItems) {
           return dataItems
               .where((item) =>
                   item.data.name.toLowerCase().contains(query.toLowerCase()) ||
