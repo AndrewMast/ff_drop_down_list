@@ -178,6 +178,8 @@ class _MyHomePageState extends State<MyHomePage> {
         submitButtonText: 'Save',
         clearButtonText: 'Clear',
         data: _listOfCities,
+        listTileColor: Colors.cyan[50],
+        listSelectedTileColor: Colors.cyan[100],
         onSelected: (selectedItems) {
           List<String> list = [];
           for (var item in selectedItems) {
