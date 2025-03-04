@@ -1,4 +1,4 @@
-import 'package:drop_down_list/model/selected_list_item.dart';
+import 'package:ff_drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 
 import 'search_text_field.dart';
@@ -490,7 +490,7 @@ class _MainBodyState<T> extends State<MainBody<T>> {
                     ),
                   ),
 
-                /// Listview (list of data with check box for multiple selection & on tile tap single selection)
+                /// ListView (list of data with check box for multiple selection & on tile tap single selection)
                 Flexible(
                   child: ListView.separated(
                     controller: scrollController,

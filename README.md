@@ -1,50 +1,31 @@
-# drop_down_list
+# ff_drop_down_list
 
 <a href="https://flutter.dev/"><img src="https://img.shields.io/badge/flutter-website-deepskyblue.svg" alt="Flutter Website"></a>
 <a href="https://dart.dev"><img src="https://img.shields.io/badge/dart-website-deepskyblue.svg" alt="Dart Website"></a>
-<a href="https://developer.android.com" style="pointer-events: stroke;" target="_blank">
-<img src="https://img.shields.io/badge/platform-Android-deepskyblue">
-</a>
-<a href="https://developer.apple.com/ios/" style="pointer-events: stroke;" target="_blank">
-<img src="https://img.shields.io/badge/platform-iOS-deepskyblue">
-</a>
-<a href="" style="pointer-events: stroke;" target="_blank">
-<img src="https://img.shields.io/badge/platform-Web-deepskyblue">
-</a>
-<a href="" style="pointer-events: stroke;" target="_blank">
-<img src="https://img.shields.io/badge/platform-Mac-deepskyblue">
-</a>
-<a href="" style="pointer-events: stroke;" target="_blank">
-<img src="https://img.shields.io/badge/platform-Linux-deepskyblue">
-</a>
-<a href="" style="pointer-events: stroke;" target="_blank">
-<img src="https://img.shields.io/badge/platform-Windows-deepskyblue">
-</a>
-<a href=""><img src="https://app.codacy.com/project/badge/Grade/dc683c9cc61b499fa7cdbf54e4d9ff35"/></a>
-<a href="https://github.com/Mindinventory/drop_down_list/blob/main/LICENSE" style="pointer-events: stroke;" target="_blank">
-<img src="https://img.shields.io/github/license/Mindinventory/drop_down_list"></a>
-<a href="https://pub.dev/packages/drop_down_list"><img src="https://img.shields.io/pub/v/drop_down_list?color=as&label=drop_down_list&logo=as1&logoColor=blue&style=social"></a>
-<a href="https://github.com/Mindinventory/drop_down_list"><img src="https://img.shields.io/github/stars/Mindinventory/drop_down_list?style=social" alt="MIT License"></a>
+<a href="https://github.com/AndrewMast/ff_drop_down_list/blob/main/LICENSE" style="pointer-events: stroke;" target="_blank"><img src="https://img.shields.io/github/license/AndrewMast/ff_drop_down_list"></a>
+<a href="https://pub.dev/packages/ff_drop_down_list"><img src="https://img.shields.io/pub/v/ff_drop_down_list?color=as&label=ff_drop_down_list&logo=as1&logoColor=blue&style=social"></a>
 
 A customizable dropdown widget supporting single/multiple selection, integrated search in a bottom
 sheet, generic support for flexible, type-safe handling of custom data.
+
+Forked from [Mindinventory/drop_down_list](https://github.com/Mindinventory/drop_down_list) to optimize for FlutterFlow usage.
 
 # Preview
 
 ### Dropdown with a Multiple Selection
 
-![drop_down_with_multiple_selection](https://github.com/Mindinventory/drop_down_list/raw/main/screenshots/drop_down_with_multiple_selection.gif)
+![drop_down_with_multiple_selection](https://github.com/AndrewMast/ff_drop_down_list/raw/main/screenshots/drop_down_with_multiple_selection.gif)
 
 ### Dropdown with a Single Selection
 
-![drop_down_with_single_selection](https://github.com/Mindinventory/drop_down_list/raw/main/screenshots/drop_down_with_single_selection.gif)
+![drop_down_with_single_selection](https://github.com/AndrewMast/ff_drop_down_list/raw/main/screenshots/drop_down_with_single_selection.gif)
 
 ## Basic Usage
 
 Import it to your project file
 
 ```dart
-import 'package:drop_down_list/drop_down_list.dart';
+import 'package:ff_drop_down_list/ff_drop_down_list.dart';
 ```
 
 And add it in its most basic form like it:
@@ -147,37 +128,11 @@ DropDownState<String>(
 |----------------------------------------|----------------------------------------------------|
 | `void showModal(BuildContext context)` | Displays the dropdown menu as a modal bottom sheet |
 
-## Guideline for contributors
+## Contribution
 
-* Contributions to our repository are always welcome! We encourage contributors to submit pull
-  requests for development and improvements.
+Contributions to our repository are always welcome! We encourage contributors to submit pull requests for development and improvements.
 
-## Guideline for Reporting an Issue or Feature Request
+## License
 
-To help us better understand and resolve the issue, please include the following details when
-reporting:
-
-* Library version
-* Code snippet
-* Logs (if applicable)
-* Device specifications (e.g., manufacturer, OS version)
-* Screenshot or video with steps to reproduce the issue
-* Any other relevant libraries used
-
-## LICENSE!
-
-**drop_down_list**
-is [MIT-licensed.](https://github.com/Mindinventory/drop_down_list/blob/main/LICENSE)
-
-## Let us know!
-
-We’d be really happy if you send us links to your projects where you use our open-source libraries.
-Just send an email to [sales@mindinventory.com](mailto:sales@mindinventory.com) And do let us know
-if you have any questions or suggestion regarding our work.
-
-Visit our website [mindinventory.com](https://www.mindinventory.com)
-
-Let us know if you are interested to building Apps or Designing Products.
-<p><a href="https://www.mindinventory.com/contact-us.php?utm_source=gthb&utm_medium=repo&utm_campaign=drop_down_list" target="__blank">
-<img src="https://github.com/Mindinventory/drop_down_list/raw/main/assets/have_a_project_button.png" width="203" height="43"  alt="flutter app development">
-</a></p>
+**ff_drop_down_list**
+is [MIT-licensed.](https://github.com/AndrewMast/ff_drop_down_list/blob/main/LICENSE)
