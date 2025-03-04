@@ -20,6 +20,12 @@ typedef SearchDelegate<T> = List<SelectedListItem<T>> Function(
   List<SelectedListItem<T>> dataItems,
 );
 
+/// A function type definition for searching through a list of items based on the user's query
+typedef ListSortDelegate<T> = int Function(
+  SelectedListItem<T> a,
+  SelectedListItem<T> b,
+);
+
 /// A function type definition for handling notifications from a draggable bottom sheet
 typedef BottomSheetListener = bool Function(
   DraggableScrollableNotification draggableScrollableNotification,
@@ -270,6 +276,9 @@ class DropDown<T> {
   /// Set to [true] to search when the string is empty.
   final bool searchOnEmpty;
 
+  /// A delegate used to sort the list of items after every search
+  final ListSortDelegate<T>? listSortDelegate;
+
   DropDown({
     Key? key,
     required this.data,
@@ -317,6 +326,7 @@ class DropDown<T> {
     this.deSelectAllButtonText = 'Deselect All',
     this.searchDelegate,
     this.searchOnEmpty = false,
+    this.listSortDelegate,
   });
 }
 
@@ -390,7 +400,11 @@ class _MainBodyState<T> extends State<MainBody<T>> {
   @override
   void initState() {
     super.initState();
+
     mainList = widget.dropDown.data;
+
+    _sortSearchList();
+
     _setSearchWidgetListener();
   }
 
@@ -576,7 +590,9 @@ class _MainBodyState<T> extends State<MainBody<T>> {
   void onSubmitButtonPressed() {
     List<SelectedListItem<T>> selectedList =
         widget.dropDown.data.where((element) => element.isSelected).toList();
+
     widget.dropDown.onSelected?.call(selectedList);
+
     _onUnFocusKeyboardAndPop();
   }
 
@@ -585,6 +601,7 @@ class _MainBodyState<T> extends State<MainBody<T>> {
     for (final element in mainList) {
       element.isSelected = false;
     }
+
     setState(() {});
   }
 
@@ -603,7 +620,15 @@ class _MainBodyState<T> extends State<MainBody<T>> {
       mainList = widget.dropDown.data;
     }
 
+    _sortSearchList();
+
     setState(() {});
+  }
+
+  void _sortSearchList() {
+    if (widget.dropDown.listSortDelegate != null) {
+      mainList.sort(widget.dropDown.listSortDelegate);
+    }
   }
 
   /// This helps to UnFocus the keyboard & pop from the bottom sheet.
@@ -615,6 +640,7 @@ class _MainBodyState<T> extends State<MainBody<T>> {
   /// This helps to add listener on search field controller
   void _setSearchWidgetListener() {
     TextFormField? searchField = widget.dropDown.searchWidget;
+
     searchField?.controller?.addListener(() {
       _buildSearchList(searchField.controller?.text ?? '');
     });
