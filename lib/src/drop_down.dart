@@ -262,6 +262,14 @@ class DropDown<T> {
   /// A delegate used to configure the custom search functionality in the dropdown
   final SearchDelegate<T>? searchDelegate;
 
+  /// Controls whether the search list will be queried when the query string is empty.
+  ///
+  /// Particularly helpful when [searchDelegate] is set.
+  ///
+  /// Default Value: [false], The widget will not search when the query string is empty
+  /// Set to [true] to search when the string is empty.
+  final bool searchOnEmpty;
+
   DropDown({
     Key? key,
     required this.data,
@@ -308,6 +316,7 @@ class DropDown<T> {
     this.deSelectAllTextButtonChild,
     this.deSelectAllButtonText = 'Deselect All',
     this.searchDelegate,
+    this.searchOnEmpty = false,
   });
 }
 
@@ -580,21 +589,20 @@ class _MainBodyState<T> extends State<MainBody<T>> {
   }
 
   /// This helps when search enabled & show the filtered data in list.
-  void _buildSearchList(String userSearchTerm) {
-    final results = widget.dropDown.searchDelegate
-            ?.call(userSearchTerm, widget.dropDown.data) ??
-        widget.dropDown.data
-            .where((element) => element.data
-                .toString()
-                .toLowerCase()
-                .contains(userSearchTerm.toLowerCase()))
-            .toList();
-
-    if (userSearchTerm.isEmpty) {
-      mainList = widget.dropDown.data;
+  void _buildSearchList(String query) {
+    if (query.isNotEmpty || widget.dropDown.searchOnEmpty) {
+      mainList =
+          widget.dropDown.searchDelegate?.call(query, widget.dropDown.data) ??
+              widget.dropDown.data
+                  .where((element) => element.data
+                      .toString()
+                      .toLowerCase()
+                      .contains(query.toLowerCase()))
+                  .toList();
     } else {
-      mainList = results;
+      mainList = widget.dropDown.data;
     }
+
     setState(() {});
   }
 
