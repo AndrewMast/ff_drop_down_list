@@ -1,7 +1,21 @@
-import 'package:ff_drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 
 import 'search_text_field.dart';
+
+/// This is a model class used to represent an item in a selectable list
+class SelectedListItem<T> {
+  /// Indicates whether the item is selected
+  /// Default Value: [false]
+  bool isSelected;
+
+  /// Tha data of the item
+  final T data;
+
+  SelectedListItem({
+    required this.data,
+    this.isSelected = false,
+  });
+}
 
 /// A callback function that is invoked when items are selected
 typedef ItemSelectionCallBack<T> = void Function(

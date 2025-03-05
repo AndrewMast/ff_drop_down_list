@@ -6,3 +6,4 @@
 * Added `onMultipleSelection` and `onSingleSelection` callbacks. When `enableMultipleSelection` is `true`, `onMultipleSelection` is called alongside `onSelection`. Otherwise, `onSelection` is called normally with the `onSingleSelection` being called with a single `SelectedListItem` (not a list).
 * Added `listSelectedTileColor` to change the background color of selected items.
 * Restructured the drop down classes to allow for context-aware styling. `DropDownStyle` and `DropDownOptions` instead of `DropDown` for options. `DropDown` is now used to launch the modal instead of `DropDownState`.
+* Moved `SelectedListItem` to the main library file to make usage easier.
