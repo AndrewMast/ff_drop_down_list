@@ -41,29 +41,11 @@ typedef BottomSheetListener = bool Function(
   DraggableScrollableNotification draggableScrollableNotification,
 );
 
-/// A generic and customizable dropdown widget with support for single and multiple selections,
-/// a searchable list, and advanced configuration options
-///
-/// The `DropDown` widget provides a flexible way to display a list of items
-/// in a bottom sheet with optional features such as search, select all, and
-/// multiple selection
-class DropDown<T> {
-  /// The list of generic data items to be displayed in the dropdown
-  final List<SelectedListItem<T>> data;
+/// A function type definition for building a [DropDownStyle]
+typedef DropDownStyleBuilder = DropDownStyle Function(BuildContext context);
 
-  /// A callback function triggered when items are selected from the list
-  final ItemSelectionCallBack<T>? onSelected;
-
-  /// A callback function triggered when items are selected from the list
-  final MultipleItemSelectionCallBack<T>? onMultipleSelected;
-
-  /// A callback function triggered when a single item is selected from the list
-  final SingleItemSelectionCallBack<T>? onSingleSelected;
-
-  /// A function that takes an [index] and [dataItem] as a parameter and returns a custom widget
-  /// to display for the list item at that index
-  final ListItemBuilder<T>? listItemBuilder;
-
+/// Manages the options and behavior of a dropdown
+class DropDownOptions<T> {
   /// Enables single or multiple selection for the drop down list items
   /// Set to `true` to allow multiple items to be selected at once
   ///
@@ -79,44 +61,32 @@ class DropDown<T> {
   /// the value specified by [maxSelectedItems]
   final VoidCallback? onMaxSelectionReached;
 
-  /// The padding applied to the `ListView` that contains the dropdown items
-  ///
-  /// If not provided (i.e., null), [EdgeInsets.zero] will be applied
-  final EdgeInsets? listViewPadding;
+  /// A callback function triggered when items are selected from the list
+  final ItemSelectionCallBack<T>? onSelected;
 
-  /// The widget used as a separator between items in the dropdown list
-  ///
-  /// This can be any widget, such as a `Divider` or `SizedBox`
-  ///
-  /// If not provided (i.e., null), a default `Divider` with a color of
-  /// [Colors.black12] and a height of 0 will be applied
-  final Widget? listViewSeparatorWidget;
+  /// A callback function triggered when items are selected from the list
+  final MultipleItemSelectionCallBack<T>? onMultipleSelected;
 
-  /// The padding applied to the content of each `ListTile` in the dropdown list
-  ///
-  /// If not provided (i.e., null), the default padding of
-  /// [EdgeInsets.symmetric(horizontal: 20)] will be applied
-  final EdgeInsets? listTileContentPadding;
+  /// A callback function triggered when a single item is selected from the list
+  final SingleItemSelectionCallBack<T>? onSingleSelected;
 
-  /// Defines the background color of each `ListTile` in the dropdown list
-  final Color? listTileColor;
+  /// A function that takes an [index] and [dataItem] as a parameter and returns a custom widget
+  /// to display for the list item at that index
+  final ListItemBuilder<T>? listItemBuilder;
 
-  /// Defines the background color of each selected `ListTile` in the dropdown list
-  final Color? listSelectedTileColor;
+  /// A delegate used to configure the custom search functionality in the dropdown
+  final SearchDelegate<T>? searchDelegate;
 
-  /// The widget displayed as a trailing icon when a list item is selected
+  /// Controls whether the search list will be queried when the query string is empty.
   ///
-  /// This is used only when [enableMultipleSelection] is true
+  /// Particularly helpful when [searchDelegate] is set.
   ///
-  /// Default Value: [Icon(Icons.check_box)]
-  final Widget selectedListTileTrailingWidget;
+  /// Default Value: [false], The widget will not search when the query string is empty
+  /// Set to [true] to search when the string is empty.
+  final bool searchOnEmpty;
 
-  /// The widget displayed as a trailing icon when a list item is not selected
-  ///
-  /// This is used only when [enableMultipleSelection] is true
-  ///
-  /// Default Value: [Icon(Icons.check_box_outline_blank)]
-  final Widget deSelectedListTileTrailingWidget;
+  /// A delegate used to sort the list of items after every search
+  final ListSortDelegate<T>? listSortDelegate;
 
   /// Specifies whether a modal bottom sheet should be displayed using the root navigator
   ///
@@ -156,6 +126,69 @@ class DropDown<T> {
   /// The [bottomSheetListener] is triggered with a [DraggableScrollableNotification]
   /// when changes occur in the BottomSheet's draggable scrollable area
   final BottomSheetListener? bottomSheetListener;
+
+  DropDownOptions({
+    Key? key,
+    this.enableMultipleSelection = false,
+    this.maxSelectedItems,
+    this.onMaxSelectionReached,
+    this.onSelected,
+    this.onMultipleSelected,
+    this.onSingleSelected,
+    this.listItemBuilder,
+    this.searchDelegate,
+    this.searchOnEmpty = false,
+    this.listSortDelegate,
+    this.useRootNavigator = false,
+    this.enableDrag = true,
+    this.isDismissible = true,
+    this.initialChildSize = 0.7,
+    this.minChildSize = 0.3,
+    this.maxChildSize = 0.9,
+    this.bottomSheetListener,
+  });
+}
+
+/// Manages the style and appearance of a dropdown
+class DropDownStyle {
+  /// The padding applied to the `ListView` that contains the dropdown items
+  ///
+  /// If not provided (i.e., null), [EdgeInsets.zero] will be applied
+  final EdgeInsets? listViewPadding;
+
+  /// The widget used as a separator between items in the dropdown list
+  ///
+  /// This can be any widget, such as a `Divider` or `SizedBox`
+  ///
+  /// If not provided (i.e., null), a default `Divider` with a color of
+  /// [Colors.black12] and a height of 0 will be applied
+  final Widget? listViewSeparatorWidget;
+
+  /// The padding applied to the content of each `ListTile` in the dropdown list
+  ///
+  /// If not provided (i.e., null), the default padding of
+  /// [EdgeInsets.symmetric(horizontal: 20)] will be applied
+  final EdgeInsets? listTileContentPadding;
+
+  /// Defines the background color of each `ListTile` in the dropdown list
+  final Color? listTileColor;
+
+  /// Defines the background color of each selected `ListTile` in the dropdown list
+  final Color? listSelectedTileColor;
+
+  /// The widget displayed as a trailing icon when a list item is selected
+  ///
+  /// This is used only when [enableMultipleSelection] is true
+  ///
+  /// Default Value: [Icon(Icons.check_box)]
+  final Widget selectedListTileTrailingWidget;
+
+  /// The widget displayed as a trailing icon when a list item is not selected
+  ///
+  /// This is used only when [enableMultipleSelection] is true
+  ///
+  /// Default Value: [Icon(Icons.check_box_outline_blank)]
+  final Widget deSelectedListTileTrailingWidget;
 
   /// Sets the background color of the dropdown
   ///
@@ -283,30 +316,7 @@ class DropDown<T> {
   /// Default Value: [Deselect All]
   final String deSelectAllButtonText;
 
-  /// A delegate used to configure the custom search functionality in the dropdown
-  final SearchDelegate<T>? searchDelegate;
-
-  /// Controls whether the search list will be queried when the query string is empty.
-  ///
-  /// Particularly helpful when [searchDelegate] is set.
-  ///
-  /// Default Value: [false], The widget will not search when the query string is empty
-  /// Set to [true] to search when the string is empty.
-  final bool searchOnEmpty;
-
-  /// A delegate used to sort the list of items after every search
-  final ListSortDelegate<T>? listSortDelegate;
-
-  DropDown({
-    Key? key,
-    required this.data,
-    this.onSelected,
-    this.onMultipleSelected,
-    this.onSingleSelected,
-    this.listItemBuilder,
-    this.enableMultipleSelection = false,
-    this.maxSelectedItems,
-    this.onMaxSelectionReached,
+  DropDownStyle({
     this.listViewPadding,
     this.listViewSeparatorWidget,
     this.listTileContentPadding,
@@ -318,13 +328,6 @@ class DropDown<T> {
     this.deSelectedListTileTrailingWidget = const Icon(
       Icons.check_box_outline_blank,
     ),
-    this.useRootNavigator = false,
-    this.enableDrag = true,
-    this.isDismissible = true,
-    this.initialChildSize = 0.7,
-    this.minChildSize = 0.3,
-    this.maxChildSize = 0.9,
-    this.bottomSheetListener,
     this.dropDownBackgroundColor = Colors.transparent,
     this.dropDownPadding,
     this.dropDownHeaderPadding,
@@ -345,18 +348,38 @@ class DropDown<T> {
     this.selectAllButtonText = 'Select All',
     this.deSelectAllTextButtonChild,
     this.deSelectAllButtonText = 'Deselect All',
-    this.searchDelegate,
-    this.searchOnEmpty = false,
-    this.listSortDelegate,
   });
 }
 
 /// Manages the state and behavior of a dropdown
 /// This includes configuring and displaying a modal bottom sheet containing the dropdown items
-class DropDownState<T> {
-  /// The `DropDown` configuration object that defines the behavior, appearance,
-  /// and other properties of the dropdown menu
-  final DropDown<T> dropDown;
+class DropDown<T> {
+  /// The data for the dropdown
+  ///
+  /// If left blank, [unbuiltData] will used.
+  final List<SelectedListItem<T>>? data;
+
+  /// The data for the dropdown that is unbuilt
+  ///
+  /// Will be used if [data] is left blank.
+  /// Each item in the list will be wrapped in a [SelectedListItem].
+  final List<T>? unbuiltData;
+
+  /// The drop down options
+  ///
+  /// If left blank, a default [DropDownOptions] will be used.
+  final DropDownOptions<T>? options;
+
+  /// The style for the drop down
+  ///
+  /// If left blank, [styleBuilder] will be used to build a style.
+  /// If there is no provided builder, a default [DropDownStyle] will be used.
+  final DropDownStyle? style;
+
+  /// A style builder to make a [DropDownStyle] if [style] is not already provided.
+  ///
+  /// If left blank, a default [DropDownStyle] will be used.
+  final DropDownStyleBuilder? styleBuilder;
 
   /// The shape of the bottom sheet
   ///
@@ -364,22 +387,31 @@ class DropDownState<T> {
   /// [RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)))]
   final ShapeBorder? shapeBorder;
 
-  DropDownState({
-    required this.dropDown,
+  DropDown({
+    this.data,
+    this.unbuiltData,
+    this.options,
+    this.style,
+    this.styleBuilder,
     this.shapeBorder,
   });
 
-  /// Displays the dropdown menu as a modal bottom sheet
-  ///
-  /// [context] is the BuildContext used to display the modal bottom sheet
-  ///
-  /// This method uses the configurations defined in the `dropDown` object
-  void showModal(BuildContext context) {
+  /// Show the drop down modal.
+  void show(BuildContext context) {
+    DropDownOptions<T> modalOptions = options ?? DropDownOptions<T>();
+
+    List<SelectedListItem<T>> modalData = data ??
+        unbuiltData
+            ?.map<SelectedListItem<T>>(
+                (T item) => SelectedListItem<T>(data: item))
+            .toList() ??
+        [];
+
     showModalBottomSheet(
-      useRootNavigator: dropDown.useRootNavigator,
+      useRootNavigator: modalOptions.useRootNavigator,
       isScrollControlled: true,
-      enableDrag: dropDown.enableDrag,
-      isDismissible: dropDown.isDismissible,
+      enableDrag: modalOptions.enableDrag,
+      isDismissible: modalOptions.isDismissible,
       shape: shapeBorder ??
           const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
@@ -388,41 +420,45 @@ class DropDownState<T> {
           ),
       context: context,
       clipBehavior: Clip.hardEdge,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return MainBody<T>(dropDown: dropDown);
-          },
+      builder: (BuildContext context) {
+        return DropDownBody<T>(
+          data: modalData,
+          options: modalOptions,
+          style: style ?? styleBuilder?.call(context) ?? DropDownStyle(),
         );
       },
     );
   }
 }
 
-/// This is main class to display the bottom sheet body
-class MainBody<T> extends StatefulWidget {
-  /// The `DropDown` configuration object that defines the behavior, appearance,
-  /// and other properties of the dropdown menu
-  final DropDown<T> dropDown;
+/// This is the dropdown widget will be displayed in the bottom sheet body
+class DropDownBody<T> extends StatefulWidget {
+  final List<SelectedListItem<T>> data;
 
-  const MainBody({
-    required this.dropDown,
+  final DropDownOptions<T> options;
+
+  final DropDownStyle style;
+
+  const DropDownBody({
+    required this.data,
+    required this.options,
+    required this.style,
     super.key,
   });
 
   @override
-  State<MainBody<T>> createState() => _MainBodyState<T>();
+  State<DropDownBody<T>> createState() => _DropDownBodyState<T>();
 }
 
-class _MainBodyState<T> extends State<MainBody<T>> {
-  /// This list will set when the list of data is not available
-  List<SelectedListItem<T>> mainList = [];
+class _DropDownBodyState<T> extends State<DropDownBody<T>> {
+  /// The list of items that are currently being displayed
+  List<SelectedListItem<T>> list = [];
 
   @override
   void initState() {
     super.initState();
 
-    mainList = widget.dropDown.data;
+    list = widget.data;
 
     _sortSearchList();
 
@@ -431,18 +467,18 @@ class _MainBodyState<T> extends State<MainBody<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final isSelectAll = mainList.fold(true, (p, e) => p && (e.isSelected));
+    final isSelectAll = list.fold(true, (p, e) => p && (e.isSelected));
     return NotificationListener<DraggableScrollableNotification>(
-      onNotification: widget.dropDown.bottomSheetListener,
+      onNotification: widget.options.bottomSheetListener,
       child: DraggableScrollableSheet(
-        initialChildSize: widget.dropDown.initialChildSize,
-        minChildSize: widget.dropDown.minChildSize,
-        maxChildSize: widget.dropDown.maxChildSize,
+        initialChildSize: widget.options.initialChildSize,
+        minChildSize: widget.options.minChildSize,
+        maxChildSize: widget.options.maxChildSize,
         expand: false,
         builder: (BuildContext context, ScrollController scrollController) {
           return Container(
-            color: widget.dropDown.dropDownBackgroundColor,
-            padding: widget.dropDown.dropDownPadding ??
+            color: widget.style.dropDownBackgroundColor,
+            padding: widget.style.dropDownPadding ??
                 EdgeInsets.only(
                   bottom: MediaQuery.of(context).padding.bottom,
                 ),
@@ -450,7 +486,7 @@ class _MainBodyState<T> extends State<MainBody<T>> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: widget.dropDown.dropDownHeaderPadding ??
+                  padding: widget.style.dropDownHeaderPadding ??
                       const EdgeInsets.only(
                         left: 20.0,
                         right: 20.0,
@@ -460,21 +496,21 @@ class _MainBodyState<T> extends State<MainBody<T>> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       /// Bottom sheet title text
-                      (widget.dropDown.bottomSheetTitle != null)
+                      (widget.style.bottomSheetTitle != null)
                           ? Expanded(
-                              child: widget.dropDown.bottomSheetTitle!,
+                              child: widget.style.bottomSheetTitle!,
                             )
                           : const Spacer(),
 
                       /// Submit Elevated Button
-                      if (widget.dropDown.enableMultipleSelection)
+                      if (widget.options.enableMultipleSelection)
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             ElevatedButton(
                               onPressed: onSubmitButtonPressed,
-                              child: widget.dropDown.submitButtonChild ??
-                                  Text(widget.dropDown.submitButtonText),
+                              child: widget.style.submitButtonChild ??
+                                  Text(widget.style.submitButtonText),
                             ),
 
                             /// Clear Elevated Button
@@ -482,8 +518,8 @@ class _MainBodyState<T> extends State<MainBody<T>> {
                               padding: const EdgeInsets.only(left: 8.0),
                               child: ElevatedButton(
                                 onPressed: onClearButtonPressed,
-                                child: widget.dropDown.clearButtonChild ??
-                                    Text(widget.dropDown.clearButtonText),
+                                child: widget.style.clearButtonChild ??
+                                    Text(widget.style.clearButtonText),
                               ),
                             ),
                           ],
@@ -493,42 +529,42 @@ class _MainBodyState<T> extends State<MainBody<T>> {
                 ),
 
                 /// A [TextField] that displays a list of suggestions as the user types with clear button.
-                if (widget.dropDown.isSearchVisible)
+                if (widget.style.isSearchVisible)
                   Padding(
-                    padding: widget.dropDown.searchTextFieldPadding ??
+                    padding: widget.style.searchTextFieldPadding ??
                         const EdgeInsets.symmetric(
                           horizontal: 20.0,
                           vertical: 10.0,
                         ),
-                    child: widget.dropDown.searchWidget ??
+                    child: widget.style.searchWidget ??
                         SearchTextField(
                           onTextChanged: _buildSearchList,
-                          searchHintText: widget.dropDown.searchHintText,
-                          searchFillColor: widget.dropDown.searchFillColor,
-                          searchCursorColor: widget.dropDown.searchCursorColor,
+                          searchHintText: widget.style.searchHintText,
+                          searchFillColor: widget.style.searchFillColor,
+                          searchCursorColor: widget.style.searchCursorColor,
                         ),
                   ),
 
                 /// Select or Deselect TextButton when enableMultipleSelection is enabled
-                if (widget.dropDown.enableMultipleSelection &&
-                    widget.dropDown.isSelectAllVisible &&
-                    mainList.isNotEmpty)
+                if (widget.options.enableMultipleSelection &&
+                    widget.style.isSelectAllVisible &&
+                    list.isNotEmpty)
                   Align(
                     alignment: Alignment.centerRight,
                     child: Padding(
-                      padding: widget.dropDown.selectAllTextButtonPadding ??
+                      padding: widget.style.selectAllTextButtonPadding ??
                           EdgeInsets.zero,
                       child: TextButton(
                         onPressed: () => setState(() {
-                          for (var element in mainList) {
+                          for (var element in list) {
                             element.isSelected = !isSelectAll;
                           }
                         }),
                         child: isSelectAll
-                            ? widget.dropDown.deSelectAllTextButtonChild ??
-                                Text(widget.dropDown.deSelectAllButtonText)
-                            : widget.dropDown.selectAllTextButtonChild ??
-                                Text(widget.dropDown.selectAllButtonText),
+                            ? widget.style.deSelectAllTextButtonChild ??
+                                Text(widget.style.deSelectAllButtonText)
+                            : widget.style.selectAllTextButtonChild ??
+                                Text(widget.style.selectAllButtonText),
                       ),
                     ),
                   ),
@@ -537,61 +573,56 @@ class _MainBodyState<T> extends State<MainBody<T>> {
                 Flexible(
                   child: ListView.separated(
                     controller: scrollController,
-                    itemCount: mainList.length,
-                    padding: widget.dropDown.listViewPadding ?? EdgeInsets.zero,
+                    itemCount: list.length,
+                    padding: widget.style.listViewPadding ?? EdgeInsets.zero,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      bool isSelected = mainList[index].isSelected;
+                      bool isSelected = list[index].isSelected;
                       return Material(
                         color: Colors.transparent,
                         clipBehavior: Clip.hardEdge,
                         child: ListTile(
                           onTap: () {
-                            if (widget.dropDown.enableMultipleSelection) {
+                            if (widget.options.enableMultipleSelection) {
                               if (!isSelected &&
-                                  widget.dropDown.maxSelectedItems != null) {
-                                if (mainList
-                                        .where((e) => e.isSelected)
-                                        .length >=
-                                    widget.dropDown.maxSelectedItems!) {
-                                  widget.dropDown.onMaxSelectionReached?.call();
+                                  widget.options.maxSelectedItems != null) {
+                                if (list.where((e) => e.isSelected).length >=
+                                    widget.options.maxSelectedItems!) {
+                                  widget.options.onMaxSelectionReached?.call();
                                   return;
                                 }
                               }
                               setState(() {
-                                mainList[index].isSelected = !isSelected;
+                                list[index].isSelected = !isSelected;
                               });
                             } else {
-                              widget.dropDown.onSelected
-                                  ?.call([mainList[index]]);
+                              widget.options.onSelected?.call([list[index]]);
 
-                              widget.dropDown.onSingleSelected
-                                  ?.call(mainList[index]);
+                              widget.options.onSingleSelected
+                                  ?.call(list[index]);
 
                               _onUnFocusKeyboardAndPop();
                             }
                           },
-                          title: widget.dropDown.listItemBuilder
-                                  ?.call(index, mainList[index]) ??
+                          title: widget.options.listItemBuilder
+                                  ?.call(index, list[index]) ??
                               Text(
-                                mainList[index].data.toString(),
+                                list[index].data.toString(),
                               ),
-                          trailing: widget.dropDown.enableMultipleSelection
+                          trailing: widget.options.enableMultipleSelection
                               ? isSelected
-                                  ? widget
-                                      .dropDown.selectedListTileTrailingWidget
+                                  ? widget.style.selectedListTileTrailingWidget
                                   : widget
-                                      .dropDown.deSelectedListTileTrailingWidget
+                                      .style.deSelectedListTileTrailingWidget
                               : const SizedBox.shrink(),
-                          contentPadding:
-                              widget.dropDown.listTileContentPadding ??
-                                  const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                  ),
+                          contentPadding: widget.style.listTileContentPadding ??
+                              const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
                           tileColor: (isSelected
-                                  ? widget.dropDown.listSelectedTileColor
+                                  ? widget.style.listSelectedTileColor
                                   : null) ??
-                              widget.dropDown.listTileColor ??
+                              widget.style.listTileColor ??
                               Colors.transparent,
                         ),
                       );
@@ -608,7 +639,7 @@ class _MainBodyState<T> extends State<MainBody<T>> {
   }
 
   Widget get getSeparatorWidget =>
-      widget.dropDown.listViewSeparatorWidget ??
+      widget.style.listViewSeparatorWidget ??
       const Divider(
         color: Colors.black12,
         height: 0,
@@ -617,18 +648,18 @@ class _MainBodyState<T> extends State<MainBody<T>> {
   /// Handle the submit button pressed
   void onSubmitButtonPressed() {
     List<SelectedListItem<T>> selectedList =
-        widget.dropDown.data.where((element) => element.isSelected).toList();
+        widget.data.where((element) => element.isSelected).toList();
 
-    widget.dropDown.onSelected?.call(selectedList);
+    widget.options.onSelected?.call(selectedList);
 
-    widget.dropDown.onMultipleSelected?.call(selectedList);
+    widget.options.onMultipleSelected?.call(selectedList);
 
     _onUnFocusKeyboardAndPop();
   }
 
   /// Handle the clear button pressed
   void onClearButtonPressed() {
-    for (final element in mainList) {
+    for (final element in list) {
       element.isSelected = false;
     }
 
@@ -637,17 +668,16 @@ class _MainBodyState<T> extends State<MainBody<T>> {
 
   /// This helps when search enabled & show the filtered data in list.
   void _buildSearchList(String query) {
-    if (query.isNotEmpty || widget.dropDown.searchOnEmpty) {
-      mainList =
-          widget.dropDown.searchDelegate?.call(query, widget.dropDown.data) ??
-              widget.dropDown.data
-                  .where((element) => element.data
-                      .toString()
-                      .toLowerCase()
-                      .contains(query.toLowerCase()))
-                  .toList();
+    if (query.isNotEmpty || widget.options.searchOnEmpty) {
+      list = widget.options.searchDelegate?.call(query, widget.data) ??
+          widget.data
+              .where((element) => element.data
+                  .toString()
+                  .toLowerCase()
+                  .contains(query.toLowerCase()))
+              .toList();
     } else {
-      mainList = widget.dropDown.data;
+      list = widget.data;
     }
 
     _sortSearchList();
@@ -655,9 +685,10 @@ class _MainBodyState<T> extends State<MainBody<T>> {
     setState(() {});
   }
 
+  /// Sorts the list items using the [DropDownOptions.listSortDelegate]
   void _sortSearchList() {
-    if (widget.dropDown.listSortDelegate != null) {
-      mainList.sort(widget.dropDown.listSortDelegate);
+    if (widget.options.listSortDelegate != null) {
+      list.sort(widget.options.listSortDelegate);
     }
   }
 
@@ -669,7 +700,7 @@ class _MainBodyState<T> extends State<MainBody<T>> {
 
   /// This helps to add listener on search field controller
   void _setSearchWidgetListener() {
-    TextFormField? searchField = widget.dropDown.searchWidget;
+    TextFormField? searchField = widget.style.searchWidget;
 
     searchField?.controller?.addListener(() {
       _buildSearchList(searchField.controller?.text ?? '');
