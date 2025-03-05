@@ -502,7 +502,6 @@ class _MainBodyState<T> extends State<MainBody<T>> {
                         ),
                     child: widget.dropDown.searchWidget ??
                         SearchTextField(
-                          dropDown: widget.dropDown,
                           onTextChanged: _buildSearchList,
                           searchHintText: widget.dropDown.searchHintText,
                           searchFillColor: widget.dropDown.searchFillColor,
