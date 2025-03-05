@@ -1,5 +1,4 @@
 import 'package:ff_drop_down_list/ff_drop_down_list.dart';
-import 'package:ff_drop_down_list/model/selected_list_item.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
@@ -11,7 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
       title: kTitle,
       home: MyHomePage(),
       debugShowCheckedModeBanner: false,
@@ -165,9 +166,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// Handles the text field tap for the city
   void onCityTextFieldTap() {
-    DropDownState<String>(
-      dropDown: DropDown<String>(
+    DropDown<String>(
+      data: _listOfCities,
+      options: DropDownOptions(
+        enableMultipleSelection: true,
+        maxSelectedItems: 3,
         isDismissible: true,
+        onSelected: (selectedItems) {
+          List<String> list = [];
+          for (var item in selectedItems) {
+            list.add(item.data);
+          }
+          showSnackBar(list.toString());
+        },
+      ),
+      styleBuilder: (context) => DropDownStyle(
+        searchCursorColor: Theme.of(context).colorScheme.onPrimaryContainer,
         bottomSheetTitle: const Text(
           kCities,
           style: TextStyle(
@@ -177,37 +191,24 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         submitButtonText: 'Save',
         clearButtonText: 'Clear',
-        data: _listOfCities,
-        listTileColor: Colors.cyan[50],
-        listSelectedTileColor: Colors.cyan[100],
-        onSelected: (selectedItems) {
-          List<String> list = [];
-          for (var item in selectedItems) {
-            list.add(item.data);
-          }
-          showSnackBar(list.toString());
-        },
-        enableMultipleSelection: true,
-        maxSelectedItems: 3,
+        listTileColor: Theme.of(context).brightness == Brightness.light
+            ? Colors.cyan[100]
+            : Colors.cyan[700],
+        listSelectedTileColor: Theme.of(context).brightness == Brightness.light
+            ? Colors.cyan[200]
+            : Colors.cyan[800],
       ),
-    ).showModal(context);
+    ).show(context);
   }
 
   /// Handles the text field tap for the language
   void onLanguageTextFieldTap() {
-    DropDownState<LanguageModel>(
-      dropDown: DropDown<LanguageModel>(
+    DropDown<LanguageModel>(
+      data: _listOfLanguages,
+      options: DropDownOptions<LanguageModel>(
+        enableMultipleSelection: true,
+        maxSelectedItems: 3,
         isDismissible: true,
-        bottomSheetTitle: const Text(
-          kLanguages,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20.0,
-          ),
-        ),
-        submitButtonText: 'Save',
-        clearButtonText: 'Clear',
-        data: _listOfLanguages,
         listItemBuilder: (int index, SelectedListItem<LanguageModel> dataItem) {
           return Text(
             '${dataItem.data.name} : ${dataItem.data.code}',
@@ -228,10 +229,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   item.data.code.toLowerCase().contains(query.toLowerCase()))
               .toList();
         },
-        enableMultipleSelection: true,
-        maxSelectedItems: 3,
       ),
-    ).showModal(context);
+      style: DropDownStyle(
+        bottomSheetTitle: const Text(
+          kLanguages,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20.0,
+          ),
+        ),
+        submitButtonText: 'Save',
+        clearButtonText: 'Clear',
+      ),
+    ).show(context);
   }
 
   void showSnackBar(String message) {
