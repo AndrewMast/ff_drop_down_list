@@ -116,6 +116,8 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              TextButton(
+                  onPressed: launchExample, child: Text('Launch Example')),
               const SizedBox(height: 30.0),
               const Text(
                 kRegister,
@@ -162,6 +164,26 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  /// Launches the basic example
+  void launchExample() {
+    DropDown<String>(
+      data: <SelectedListItem<String>>[
+        SelectedListItem<String>(data: 'Tokyo'),
+        SelectedListItem<String>(data: 'New York'),
+        SelectedListItem<String>(data: 'London'),
+      ],
+      options: DropDownOptions(
+        onSingleSelected: (SelectedListItem<String> selectedItem) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(selectedItem.data),
+            ),
+          );
+        },
+      ),
+    ).show(context);
   }
 
   /// Handles the text field tap for the city
