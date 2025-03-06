@@ -286,13 +286,13 @@ class DropDownStyle {
 
   /// This is the fill color for the input field
   ///
-  /// Default Value: [Colors.black12]
-  final Color searchFillColor;
+  /// If null, will default to the theme's default input decoration fill color.
+  final Color? searchFillColor;
 
   /// This is the cursor color for the input field
   ///
-  /// Default Value: [Colors.black]
-  final Color searchCursorColor;
+  /// If null, will default to the theme's default input cursor color.
+  final Color? searchCursorColor;
 
   /// Controls the visibility of the "select all" widget when [enableMultipleSelection] is true
   ///
@@ -358,8 +358,8 @@ class DropDownStyle {
     this.searchTextFieldPadding,
     this.searchWidget,
     this.searchHintText = 'Search',
-    this.searchFillColor = Colors.black12,
-    this.searchCursorColor = Colors.black,
+    this.searchFillColor,
+    this.searchCursorColor,
     this.isSelectAllVisible = true,
     this.selectAllButtonPadding,
     this.selectAllButtonChild,
