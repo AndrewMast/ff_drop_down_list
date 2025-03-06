@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.2.0
+  sdk: ">=3.2.0 <4.0.0"
   flutter: '>=3.16.0' # Build using this version
 
 # Dependencies specify other packages that your package needs in order to work.
@@ -39,8 +39,8 @@ dependencies:
 
   # A dropdown widget with rich customization options, supporting single or multiple selection,
   # an integrated search feature in a bottom sheet.
-  # https://pub.dev/packages/drop_down_list
-  drop_down_list:
+  # https://pub.dev/packages/ff_drop_down_list
+  ff_drop_down_list:
     path: ../
 
 dev_dependencies:

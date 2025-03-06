@@ -1,5 +1,4 @@
-import 'package:drop_down_list/drop_down_list.dart';
-import 'package:drop_down_list/model/selected_list_item.dart';
+import 'package:ff_drop_down_list/ff_drop_down_list.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
@@ -11,7 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
       title: kTitle,
       home: MyHomePage(),
       debugShowCheckedModeBanner: false,
@@ -115,6 +116,8 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              TextButton(
+                  onPressed: launchExample, child: Text('Launch Example')),
               const SizedBox(height: 30.0),
               const Text(
                 kRegister,
@@ -163,12 +166,45 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  /// Launches the basic example
+  void launchExample() {
+    DropDown<String>(
+      data: <SelectedListItem<String>>[
+        SelectedListItem<String>(data: 'Tokyo'),
+        SelectedListItem<String>(data: 'New York'),
+        SelectedListItem<String>(data: 'London'),
+      ],
+      options: DropDownOptions(
+        onSingleSelected: (SelectedListItem<String> selectedItem) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(selectedItem.data),
+            ),
+          );
+        },
+      ),
+    ).show(context);
+  }
+
   /// Handles the text field tap for the city
   void onCityTextFieldTap() {
-    DropDownState<String>(
-      dropDown: DropDown<String>(
+    DropDown<String>(
+      data: _listOfCities,
+      options: DropDownOptions(
+        enableMultipleSelection: true,
+        maxSelectedItems: 3,
         isDismissible: true,
-        bottomSheetTitle: const Text(
+        onSelected: (selectedItems) {
+          List<String> list = [];
+          for (var item in selectedItems) {
+            list.add(item.data);
+          }
+          showSnackBar(list.toString());
+        },
+      ),
+      styleBuilder: (context) => DropDownStyle(
+        searchCursorColor: Theme.of(context).colorScheme.onPrimaryContainer,
+        headerWidget: const Text(
           kCities,
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -177,36 +213,25 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         submitButtonText: 'Save',
         clearButtonText: 'Clear',
-        data: _listOfCities,
-        onSelected: (selectedItems) {
-          List<String> list = [];
-          for (var item in selectedItems) {
-            list.add(item.data);
-          }
-          showSnackBar(list.toString());
-        },
-        enableMultipleSelection: true,
-        maxSelectedItems: 3,
+        tileColor: Theme.of(context).brightness == Brightness.light
+            ? Colors.cyan[100]
+            : Colors.cyan[700],
+        selectedTileColor: Theme.of(context).brightness == Brightness.light
+            ? Colors.cyan[200]
+            : Colors.cyan[800],
       ),
-    ).showModal(context);
+    ).show(context);
   }
 
   /// Handles the text field tap for the language
   void onLanguageTextFieldTap() {
-    DropDownState<LanguageModel>(
-      dropDown: DropDown<LanguageModel>(
+    DropDown<LanguageModel>(
+      data: _listOfLanguages,
+      options: DropDownOptions<LanguageModel>(
+        enableMultipleSelection: true,
+        maxSelectedItems: 3,
         isDismissible: true,
-        bottomSheetTitle: const Text(
-          kLanguages,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20.0,
-          ),
-        ),
-        submitButtonText: 'Save',
-        clearButtonText: 'Clear',
-        data: _listOfLanguages,
-        listItemBuilder: (index, dataItem) {
+        listItemBuilder: (int index, SelectedListItem<LanguageModel> dataItem) {
           return Text(
             '${dataItem.data.name} : ${dataItem.data.code}',
           );
@@ -218,17 +243,27 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           showSnackBar(list.toString());
         },
-        searchDelegate: (query, dataItems) {
+        searchDelegate:
+            (String query, List<SelectedListItem<LanguageModel>> dataItems) {
           return dataItems
               .where((item) =>
                   item.data.name.toLowerCase().contains(query.toLowerCase()) ||
                   item.data.code.toLowerCase().contains(query.toLowerCase()))
               .toList();
         },
-        enableMultipleSelection: true,
-        maxSelectedItems: 3,
       ),
-    ).showModal(context);
+      style: DropDownStyle(
+        headerWidget: const Text(
+          kLanguages,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20.0,
+          ),
+        ),
+        submitButtonText: 'Save',
+        clearButtonText: 'Clear',
+      ),
+    ).show(context);
   }
 
   void showSnackBar(String message) {
