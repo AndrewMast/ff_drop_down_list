@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'drop_down.dart';
-
 /// This is search text field class
 class SearchTextField extends StatefulWidget {
-  /// The `DropDown` configuration object that defines the behavior, appearance,
-  /// and other properties of the dropdown menu
-  final DropDown dropDown;
-
   /// Called when the user initiates a change to the search text field
   final Function(String) onTextChanged;
 
@@ -21,7 +15,6 @@ class SearchTextField extends StatefulWidget {
   final Color? searchCursorColor;
 
   const SearchTextField({
-    required this.dropDown,
     required this.onTextChanged,
     this.searchHintText,
     this.searchFillColor,
