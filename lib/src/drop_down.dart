@@ -18,17 +18,17 @@ class SelectedListItem<T> {
 }
 
 /// A callback function that is invoked when items are selected
-typedef ItemSelectionCallBack<T> = void Function(
+typedef ItemSelectionCallback<T> = void Function(
   List<SelectedListItem<T>> selectedItems,
 );
 
 /// A callback function that is invoked when multiple items are selected
-typedef MultipleItemSelectionCallBack<T> = void Function(
+typedef MultipleItemSelectionCallback<T> = void Function(
   List<SelectedListItem<T>> selectedItems,
 );
 
 /// A callback function that is invoked when a single item is selected
-typedef SingleItemSelectionCallBack<T> = void Function(
+typedef SingleItemSelectionCallback<T> = void Function(
   SelectedListItem<T> selectedItem,
 );
 
@@ -76,13 +76,13 @@ class DropDownOptions<T> {
   final VoidCallback? onMaxSelectionReached;
 
   /// A callback function triggered when items are selected from the list
-  final ItemSelectionCallBack<T>? onSelected;
+  final ItemSelectionCallback<T>? onSelected;
 
   /// A callback function triggered when items are selected from the list
-  final MultipleItemSelectionCallBack<T>? onMultipleSelected;
+  final MultipleItemSelectionCallback<T>? onMultipleSelected;
 
   /// A callback function triggered when a single item is selected from the list
-  final SingleItemSelectionCallBack<T>? onSingleSelected;
+  final SingleItemSelectionCallback<T>? onSingleSelected;
 
   /// A function that takes an [index] and [dataItem] as a parameter and returns a custom widget
   /// to display for the list item at that index
@@ -121,19 +121,19 @@ class DropDownOptions<T> {
   /// displaying the [DropDown] widget in [DraggableScrollableSheet]
   ///
   /// Default Value: [0.7]
-  final double initialChildSize;
+  final double initialSheetSize;
 
   /// The minimum fractional value of the parent container's height to use when
   /// displaying the [DropDown] widget in [DraggableScrollableSheet]
   ///
   /// Default Value: [0.3]
-  final double minChildSize;
+  final double minSheetSize;
 
   /// The maximum fractional value of the parent container's height to use when
   /// displaying the [DropDown] widget in [DraggableScrollableSheet]
   ///
   /// Default Value: [0.9]
-  final double maxChildSize;
+  final double maxSheetSize;
 
   /// A listener that monitors events bubbling up from the BottomSheet
   ///
@@ -156,9 +156,9 @@ class DropDownOptions<T> {
     this.useRootNavigator = false,
     this.enableDrag = true,
     this.isDismissible = true,
-    this.initialChildSize = 0.7,
-    this.minChildSize = 0.3,
-    this.maxChildSize = 0.9,
+    this.initialSheetSize = 0.7,
+    this.minSheetSize = 0.3,
+    this.maxSheetSize = 0.9,
     this.bottomSheetListener,
   });
 }
@@ -168,7 +168,7 @@ class DropDownStyle {
   /// The padding applied to the `ListView` that contains the dropdown items
   ///
   /// If not provided (i.e., null), [EdgeInsets.zero] will be applied
-  final EdgeInsets? listViewPadding;
+  final EdgeInsets? listPadding;
 
   /// The widget used as a separator between items in the dropdown list
   ///
@@ -176,56 +176,60 @@ class DropDownStyle {
   ///
   /// If not provided (i.e., null), a default `Divider` with a color of
   /// [Colors.black12] and a height of 0 will be applied
-  final Widget? listViewSeparatorWidget;
+  final Widget? listSeparator;
 
   /// The padding applied to the content of each `ListTile` in the dropdown list
   ///
   /// If not provided (i.e., null), the default padding of
   /// [EdgeInsets.symmetric(horizontal: 20)] will be applied
-  final EdgeInsets? listTileContentPadding;
+  final EdgeInsets? tileContentPadding;
 
   /// Defines the background color of each `ListTile` in the dropdown list
-  final Color? listTileColor;
+  ///
+  /// Defaults to [Colors.transparent]
+  final Color? tileColor;
 
   /// Defines the background color of each selected `ListTile` in the dropdown list
-  final Color? listSelectedTileColor;
+  ///
+  /// Defaults to [tileColor]
+  final Color? selectedTileColor;
 
   /// The widget displayed as a trailing icon when a list item is selected
   ///
   /// This is used only when [enableMultipleSelection] is true
   ///
   /// Default Value: [Icon(Icons.check_box)]
-  final Widget selectedListTileTrailingWidget;
+  final Widget selectedTileTrailingWidget;
 
   /// The widget displayed as a trailing icon when a list item is not selected
   ///
   /// This is used only when [enableMultipleSelection] is true
   ///
   /// Default Value: [Icon(Icons.check_box_outline_blank)]
-  final Widget deSelectedListTileTrailingWidget;
+  final Widget unselectedTileTrailingWidget;
 
   /// Sets the background color of the dropdown
   ///
   /// Default Value: [Colors.transparent]
-  final Color dropDownBackgroundColor;
+  final Color backgroundColor;
 
   /// The padding applied to the dropdown container
   ///
   /// If not provided (i.e., null), the default value will be
   /// [EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)]
-  final EdgeInsets? dropDownPadding;
+  final EdgeInsets? padding;
 
   /// The padding applied to the dropdown header
   ///
   /// If not provided (i.e., null), the default value will be
   /// [EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0)]
-  final EdgeInsets? dropDownHeaderPadding;
+  final EdgeInsets? headerPadding;
 
   /// The widget displayed as the title of the bottom sheet
   /// This allows customization of the title content
   ///
   /// If not provided, no title will be displayed
-  final Widget? bottomSheetTitle;
+  final Widget? headerWidget;
 
   /// Defines a custom widget to display as the child of the submit button
   /// when [enableMultipleSelection] is true
@@ -298,19 +302,19 @@ class DropDownStyle {
   /// The padding applied to the "select all" and "deselect all" TextButtons
   ///
   /// If null, [EdgeInsets.zero] will be applied as the default padding
-  final EdgeInsets? selectAllTextButtonPadding;
+  final EdgeInsets? selectAllButtonPadding;
 
   /// Defines a custom widget to display as the child of the selectAll text button
   /// when [enableMultipleSelection] and [isSelectAllVisible] is true
   ///
   /// This is typically used with an [TextButton]
   /// If not provided, a default text button child will be used
-  final Widget? selectAllTextButtonChild;
+  final Widget? selectAllButtonChild;
 
   /// Specifies the text displayed on the selectAll text button
   /// when [enableMultipleSelection] and [isSelectAllVisible] is true
   ///
-  /// This is only used if a custom [selectAllTextButtonChild] widget is not provided
+  /// This is only used if a custom [selectAllButtonChild] widget is not provided
   ///
   /// Default Value: [Select All]
   final String selectAllButtonText;
@@ -320,32 +324,32 @@ class DropDownStyle {
   ///
   /// This is typically used with an [TextButton]
   /// If not provided, a default text button child will be used
-  final Widget? deSelectAllTextButtonChild;
+  final Widget? deselectAllButtonChild;
 
   /// Specifies the text displayed on the deSelectAll text button
   /// when [enableMultipleSelection] and [isSelectAllVisible] is true
   ///
-  /// This is only used if a custom [deSelectAllTextButtonChild] widget is not provided
+  /// This is only used if a custom [deselectAllButtonChild] widget is not provided
   ///
   /// Default Value: [Deselect All]
-  final String deSelectAllButtonText;
+  final String deselectAllButtonText;
 
   DropDownStyle({
-    this.listViewPadding,
-    this.listViewSeparatorWidget,
-    this.listTileContentPadding,
-    this.listTileColor,
-    this.listSelectedTileColor,
-    this.selectedListTileTrailingWidget = const Icon(
+    this.listPadding,
+    this.listSeparator,
+    this.tileContentPadding,
+    this.tileColor,
+    this.selectedTileColor,
+    this.selectedTileTrailingWidget = const Icon(
       Icons.check_box,
     ),
-    this.deSelectedListTileTrailingWidget = const Icon(
+    this.unselectedTileTrailingWidget = const Icon(
       Icons.check_box_outline_blank,
     ),
-    this.dropDownBackgroundColor = Colors.transparent,
-    this.dropDownPadding,
-    this.dropDownHeaderPadding,
-    this.bottomSheetTitle,
+    this.backgroundColor = Colors.transparent,
+    this.padding,
+    this.headerPadding,
+    this.headerWidget,
     this.submitButtonChild,
     this.submitButtonText = 'Submit',
     this.clearButtonChild,
@@ -357,11 +361,11 @@ class DropDownStyle {
     this.searchFillColor = Colors.black12,
     this.searchCursorColor = Colors.black,
     this.isSelectAllVisible = true,
-    this.selectAllTextButtonPadding,
-    this.selectAllTextButtonChild,
+    this.selectAllButtonPadding,
+    this.selectAllButtonChild,
     this.selectAllButtonText = 'Select All',
-    this.deSelectAllTextButtonChild,
-    this.deSelectAllButtonText = 'Deselect All',
+    this.deselectAllButtonChild,
+    this.deselectAllButtonText = 'Deselect All',
   });
 }
 
@@ -485,14 +489,14 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: widget.options.bottomSheetListener,
       child: DraggableScrollableSheet(
-        initialChildSize: widget.options.initialChildSize,
-        minChildSize: widget.options.minChildSize,
-        maxChildSize: widget.options.maxChildSize,
+        initialChildSize: widget.options.initialSheetSize,
+        minChildSize: widget.options.minSheetSize,
+        maxChildSize: widget.options.maxSheetSize,
         expand: false,
         builder: (BuildContext context, ScrollController scrollController) {
           return Container(
-            color: widget.style.dropDownBackgroundColor,
-            padding: widget.style.dropDownPadding ??
+            color: widget.style.backgroundColor,
+            padding: widget.style.padding ??
                 EdgeInsets.only(
                   bottom: MediaQuery.of(context).padding.bottom,
                 ),
@@ -500,7 +504,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: widget.style.dropDownHeaderPadding ??
+                  padding: widget.style.headerPadding ??
                       const EdgeInsets.only(
                         left: 20.0,
                         right: 20.0,
@@ -510,9 +514,9 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       /// Bottom sheet title text
-                      (widget.style.bottomSheetTitle != null)
+                      (widget.style.headerWidget != null)
                           ? Expanded(
-                              child: widget.style.bottomSheetTitle!,
+                              child: widget.style.headerWidget!,
                             )
                           : const Spacer(),
 
@@ -566,7 +570,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: Padding(
-                      padding: widget.style.selectAllTextButtonPadding ??
+                      padding: widget.style.selectAllButtonPadding ??
                           EdgeInsets.zero,
                       child: TextButton(
                         onPressed: () => setState(() {
@@ -575,9 +579,9 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                           }
                         }),
                         child: isSelectAll
-                            ? widget.style.deSelectAllTextButtonChild ??
-                                Text(widget.style.deSelectAllButtonText)
-                            : widget.style.selectAllTextButtonChild ??
+                            ? widget.style.deselectAllButtonChild ??
+                                Text(widget.style.deselectAllButtonText)
+                            : widget.style.selectAllButtonChild ??
                                 Text(widget.style.selectAllButtonText),
                       ),
                     ),
@@ -588,7 +592,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                   child: ListView.separated(
                     controller: scrollController,
                     itemCount: list.length,
-                    padding: widget.style.listViewPadding ?? EdgeInsets.zero,
+                    padding: widget.style.listPadding ?? EdgeInsets.zero,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       bool isSelected = list[index].isSelected;
@@ -625,18 +629,17 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                               ),
                           trailing: widget.options.enableMultipleSelection
                               ? isSelected
-                                  ? widget.style.selectedListTileTrailingWidget
-                                  : widget
-                                      .style.deSelectedListTileTrailingWidget
+                                  ? widget.style.selectedTileTrailingWidget
+                                  : widget.style.unselectedTileTrailingWidget
                               : const SizedBox.shrink(),
-                          contentPadding: widget.style.listTileContentPadding ??
+                          contentPadding: widget.style.tileContentPadding ??
                               const EdgeInsets.symmetric(
                                 horizontal: 20,
                               ),
                           tileColor: (isSelected
-                                  ? widget.style.listSelectedTileColor
+                                  ? widget.style.selectedTileColor
                                   : null) ??
-                              widget.style.listTileColor ??
+                              widget.style.tileColor ??
                               Colors.transparent,
                         ),
                       );
@@ -653,7 +656,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   }
 
   Widget get getSeparatorWidget =>
-      widget.style.listViewSeparatorWidget ??
+      widget.style.listSeparator ??
       const Divider(
         color: Colors.black12,
         height: 0,
