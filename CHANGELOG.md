@@ -8,3 +8,5 @@
 * Restructured the drop down classes to allow for context-aware styling. `DropDownStyle` and `DropDownOptions` instead of `DropDown` for options. `DropDown` is now used to launch the modal instead of `DropDownState`.
 * Moved `SelectedListItem` to the main library file to make usage easier.
 * Renamed style and option parameter names to improve clarity.
+* Updated example project to reflect changes.
+* Updated README to reflect changes.

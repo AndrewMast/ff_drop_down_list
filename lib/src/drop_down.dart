@@ -44,7 +44,7 @@ typedef SearchDelegate<T> = List<SelectedListItem<T>> Function(
   List<SelectedListItem<T>> dataItems,
 );
 
-/// A function type definition for searching through a list of items based on the user's query
+/// A function type definition for sorting through the list of items.
 typedef ListSortDelegate<T> = int Function(
   SelectedListItem<T> a,
   SelectedListItem<T> b,
@@ -78,7 +78,7 @@ class DropDownOptions<T> {
   /// A callback function triggered when items are selected from the list
   final ItemSelectionCallback<T>? onSelected;
 
-  /// A callback function triggered when items are selected from the list
+  /// A callback function triggered when multiple items are selected from the list
   final MultipleItemSelectionCallback<T>? onMultipleSelected;
 
   /// A callback function triggered when a single item is selected from the list
@@ -377,18 +377,18 @@ class DropDown<T> {
   /// If left blank, [unbuiltData] will used.
   final List<SelectedListItem<T>>? data;
 
-  /// The data for the dropdown that is unbuilt
+  /// The unbuilt data for the dropdown
   ///
   /// Will be used if [data] is left blank.
   /// Each item in the list will be wrapped in a [SelectedListItem].
   final List<T>? unbuiltData;
 
-  /// The drop down options
+  /// The options for the dropdown
   ///
   /// If left blank, a default [DropDownOptions] will be used.
   final DropDownOptions<T>? options;
 
-  /// The style for the drop down
+  /// The style for the dropdown
   ///
   /// If left blank, [styleBuilder] will be used to build a style.
   /// If there is no provided builder, a default [DropDownStyle] will be used.
@@ -399,7 +399,7 @@ class DropDown<T> {
   /// If left blank, a default [DropDownStyle] will be used.
   final DropDownStyleBuilder? styleBuilder;
 
-  /// The shape of the bottom sheet
+  /// The border shape of the bottom sheet
   ///
   /// If not provided (i.e., null), the default value will be
   /// [RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)))]
