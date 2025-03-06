@@ -182,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       styleBuilder: (context) => DropDownStyle(
         searchCursorColor: Theme.of(context).colorScheme.onPrimaryContainer,
-        bottomSheetTitle: const Text(
+        headerWidget: const Text(
           kCities,
           style: TextStyle(
             fontWeight: FontWeight.bold,
@@ -191,10 +191,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         submitButtonText: 'Save',
         clearButtonText: 'Clear',
-        listTileColor: Theme.of(context).brightness == Brightness.light
+        tileColor: Theme.of(context).brightness == Brightness.light
             ? Colors.cyan[100]
             : Colors.cyan[700],
-        listSelectedTileColor: Theme.of(context).brightness == Brightness.light
+        selectedTileColor: Theme.of(context).brightness == Brightness.light
             ? Colors.cyan[200]
             : Colors.cyan[800],
       ),
@@ -231,7 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       style: DropDownStyle(
-        bottomSheetTitle: const Text(
+        headerWidget: const Text(
           kLanguages,
           style: TextStyle(
             fontWeight: FontWeight.bold,
