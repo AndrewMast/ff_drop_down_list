@@ -1,3 +1,4 @@
+import 'package:ff_drop_down_list/model/contextual_property.dart';
 import 'package:flutter/material.dart';
 
 /// This is search text field class
@@ -39,13 +40,19 @@ class _SearchTextFieldState extends State<SearchTextField> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: _editingController,
-      cursorColor: widget.searchCursorColor,
+      cursorColor: ContextualProperty.resolveAs(
+        widget.searchCursorColor,
+        context,
+      ),
       onChanged: (value) {
         widget.onTextChanged(value);
       },
       decoration: InputDecoration(
         filled: true,
-        fillColor: widget.searchFillColor,
+        fillColor: ContextualProperty.resolveAs(
+          widget.searchFillColor,
+          context,
+        ),
         contentPadding: const EdgeInsets.only(right: 15),
         hintText: widget.searchHintText,
         border: const OutlineInputBorder(

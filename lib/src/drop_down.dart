@@ -1,3 +1,4 @@
+import 'package:ff_drop_down_list/model/contextual_property.dart';
 import 'package:flutter/material.dart';
 
 import 'search_text_field.dart';
@@ -501,7 +502,10 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
         expand: false,
         builder: (BuildContext context, ScrollController scrollController) {
           return Container(
-            color: widget.style.backgroundColor,
+            color: ContextualProperty.resolveAs(
+              widget.style.backgroundColor,
+              context,
+            ),
             padding: widget.style.padding ??
                 EdgeInsets.only(
                   bottom: MediaQuery.of(context).padding.bottom,
@@ -642,19 +646,25 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                               const EdgeInsets.symmetric(
                                 horizontal: 20,
                               ),
-                          tileColor: (isSelected
-                                  ? widget.style.selectedTileColor
-                                  : null) ??
-                              widget.style.tileColor ??
-                              Colors.transparent,
+                          tileColor: ContextualProperty.resolveAs(
+                            (isSelected
+                                    ? widget.style.selectedTileColor
+                                    : null) ??
+                                widget.style.tileColor ??
+                                Colors.transparent,
+                            context,
+                          ),
                         ),
                       );
                     },
                     separatorBuilder: (context, index) =>
                         widget.style.listSeparator ??
                         Divider(
-                          color: widget.style.listSeparatorColor ??
-                              Colors.transparent,
+                          color: ContextualProperty.resolveAs(
+                            widget.style.listSeparatorColor ??
+                                Colors.transparent,
+                            context,
+                          ),
                           height: 0,
                         ),
                   ),

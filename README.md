@@ -166,6 +166,7 @@ DropDown<String>(
 <br/>
 
 ## Custom `Color` Models
+These custom models can be used in any option that accepts a `Color`.
 | Name              | Usage                                                      | Description                                                                                                                                                  |
 |-------------------|------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `BrightnessColor` | `BrightnessColor(light: Colors.black, dark: Colors.white)` | A class extended from `Color` which allows a light and a dark color to be chosen to be rendered based on the theme brightness of the current `BuildContext`. |
