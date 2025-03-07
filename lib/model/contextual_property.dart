@@ -24,7 +24,7 @@ abstract interface class ContextualProperty<T> {
   static ContextualProperty<T> resolveWith<T>(
     ContextualPropertyResolver<T> callback,
   ) =>
-      _ContextualPropertyWith<T>(callback);
+      ContextualPropertyWith<T>(callback);
 
   /// Linearly interpolate between two [ContextualProperty]s.
   static ContextualProperty<T?>? lerp<T>(
@@ -45,13 +45,18 @@ abstract interface class ContextualProperty<T> {
   T resolve(BuildContext context);
 }
 
-class _ContextualPropertyWith<T> implements ContextualProperty<T> {
-  final ContextualPropertyResolver<T> _resolve;
+class ContextualPropertyWith<T> implements ContextualProperty<T> {
+  final ContextualPropertyResolver<T> resolver;
 
-  _ContextualPropertyWith(this._resolve);
+  ContextualPropertyWith(this.resolver);
 
   @override
-  T resolve(BuildContext context) => _resolve(context);
+  T resolve(BuildContext context) => resolver(context);
+}
+
+mixin ContextualPropertyWithResolver<T> implements ContextualPropertyWith<T> {
+  @override
+  T resolve(BuildContext context) => resolver(context);
 }
 
 class _LerpProperties<T> implements ContextualProperty<T?> {
@@ -77,16 +82,12 @@ interface class ThemedProperty<T> extends ContextualProperty<T> {
   const ThemedProperty(this.resolver);
 
   @override
-  T resolve(BuildContext context) {
-    return resolver(Theme.of(context));
-  }
+  T resolve(BuildContext context) => resolver(Theme.of(context));
 }
 
 mixin ContextualThemed<T> implements ThemedProperty<T> {
   @override
-  T resolve(BuildContext context) {
-    return resolver(Theme.of(context));
-  }
+  T resolve(BuildContext context) => resolver(Theme.of(context));
 }
 
 interface class BrightnessProperty<T> extends ContextualProperty<T> {

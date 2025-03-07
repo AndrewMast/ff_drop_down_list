@@ -192,3 +192,19 @@ class ThemedColor extends Color with ContextualThemed<Color?> {
   ThemedColor.themedFallback(this.resolver, {int fallback = 0x00000000})
       : super(resolver(ThemeData.fallback())?.toARGB32() ?? fallback);
 }
+
+class ContextualColor extends Color
+    with ContextualPropertyWithResolver<Color?> {
+  @override
+  final ContextualPropertyResolver<Color?> resolver;
+
+  /// Create a [Color] that can be resolved from a [BuildContext] object.
+  ///
+  /// If not resolved using [ContextualProperty.resolveAs], the color
+  /// will be displayed as the default color, [Colors.transparent].
+  const ContextualColor(this.resolver) : super(0x00000000);
+
+  /// Create a [ContextualColor] using the provided fallback color integer.
+  const ContextualColor.fallback(this.resolver, {int fallback = 0x00000000})
+      : super(fallback);
+}

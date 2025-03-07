@@ -167,26 +167,28 @@ DropDown<String>(
 
 ## Custom `Color` Models
 These custom models can be used in any option that accepts a `Color`.
-| Name              | Basic Usage                                                | Description                                                                                                                                                  |
-|-------------------|------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `BrightnessColor` | `BrightnessColor(light: Colors.black, dark: Colors.white)` | A class extended from `Color` which allows a light and a dark color to be chosen to be rendered based on the theme brightness of the current `BuildContext`. |
-| `ThemedColor`     | `ThemedColor((ThemeData theme) => theme.primaryColor)`     | A class extended from `Color` which allows for custom colors based on the theme of the current `BuildContext`.                                               |
+| Name              | Basic Usage                                                                            | Description                                                                                                                                                  |
+|-------------------|----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `BrightnessColor` | `BrightnessColor(light: Colors.black, dark: Colors.white)`                             | A class extended from `Color` which allows a light and a dark color to be chosen to be rendered based on the theme brightness of the current `BuildContext`. |
+| `ThemedColor`     | `ThemedColor((ThemeData theme) => theme.primaryColor)`                                 | A class extended from `Color` which allows for custom colors based on the theme of the current `BuildContext`.                                               |
+| `ContextualColor` | `ContextualColor((BuildContext context) => FlutterFlowTheme.of(context).primaryText)`  | A class extended from `Color` which allows for custom colors based on the current `BuildContext`.                                                            |
 
 <br>
 
-| Model             | Constructor                                                                                | Description |
-|-------------------|--------------------------------------------------------------------------------------------|-------------|
-| `BrightnessColor` | `BrightnessColor({Color? light, Color? dark})`                                             | |
+| Model             | Constructor                                                                                | Description                                                                                             |
+|-------------------|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| `BrightnessColor` | `BrightnessColor({Color? light, Color? dark})`                                             |                                                                                                         |
 |                   | `BrightnessColor.alpha({Color? light, Color? dark, double alpha})`                         | Alias for `BrightnessColor(light: light.withValues(alpha: alpha), dark: dark.withValues(alpha: alpha))` |
-|                   | `BrightnessColor.inverted({Color? light})`                                                 | Alias for `BrightnessColor(light: light, dark: light.inverted)` |
-|                   | `BrightnessColor.inverted({Color? dark})`                                                  | Alias for `BrightnessColor(light: dark.inverted, dark: dark)` |
-|                   | `BrightnessColor.invertedOnDark(Color light)`                                              | Alias for `BrightnessColor.inverted(light: light) ` |
-|                   | `BrightnessColor.invertedOnLight(Color dark)`                                              | Alias for `BrightnessColor.inverted(dark: dark) ` |
-|                   | `BrightnessColor.bw()`                                                                     | Alias for `BrightnessColor(light: Colors.black, dark: Colors.white)` |
-|                   | `BrightnessColor.wb()`                                                                     | Alias for `BrightnessColor(light: Colors.white, dark: Colors.black)` |
-|                   | `BrightnessColor.bwa(double alpha)`                                                        | Alias for `BrightnessColor.alpha(light: Colors.black, dark: Colors.white, alpha: alpha)` |
-|                   | `BrightnessColor.wba(double alpha)`                                                        | Alias for `BrightnessColor.alpha(light: Colors.white, dark: Colors.black, alpha: alpha)` |
-| `ThemedColor`     | `ThemedColor(Color? Function(ThemeData theme))`                                            | |
+|                   | `BrightnessColor.inverted({Color? light})`                                                 | Alias for `BrightnessColor(light: light, dark: light.inverted)`                                         |
+|                   | `BrightnessColor.inverted({Color? dark})`                                                  | Alias for `BrightnessColor(light: dark.inverted, dark: dark)`                                           |
+|                   | `BrightnessColor.invertedOnDark(Color light)`                                              | Alias for `BrightnessColor.inverted(light: light) `                                                     |
+|                   | `BrightnessColor.invertedOnLight(Color dark)`                                              | Alias for `BrightnessColor.inverted(dark: dark) `                                                       |
+|                   | `BrightnessColor.bw()`                                                                     | Alias for `BrightnessColor(light: Colors.black, dark: Colors.white)`                                    |
+|                   | `BrightnessColor.wb()`                                                                     | Alias for `BrightnessColor(light: Colors.white, dark: Colors.black)`                                    |
+|                   | `BrightnessColor.bwa(double alpha)`                                                        | Alias for `BrightnessColor.alpha(light: Colors.black, dark: Colors.white, alpha: alpha)`                |
+|                   | `BrightnessColor.wba(double alpha)`                                                        | Alias for `BrightnessColor.alpha(light: Colors.white, dark: Colors.black, alpha: alpha)`                |
+| `ThemedColor`     | `ThemedColor(Color? Function(ThemeData theme))`                                            |                                                                                                         |
+| `ContextualColor` | `ContextualColor(Color? Function(BuildContext context))`                                   |                                                                                                         |
 
 <br/>
 
