@@ -6,6 +6,7 @@
 * Allow for all options to utilize new contextual color models.
 * Changed `listSeparatorColor` default from `Colors.transparent` to `BrightnessColor.bwa(alpha: 0.08)` and changed `SearchTextField` icon colors to be dependant on the brightness.
 * Added documentation for the `BrightnessColor` and `ThemedColor` models.
+* Added `contextualize` method for `Color` class.
 
 ## 0.0.1
 

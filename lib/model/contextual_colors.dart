@@ -7,6 +7,18 @@ extension InvertColors on Color {
       withValues(alpha: a, red: 1.0 - r, green: 1.0 - g, blue: 1.0 - b);
 }
 
+extension ContextualizeColors on Color {
+  Color contextualize(BuildContext context) {
+    return ContextualProperty.resolveAs(this, context);
+  }
+}
+
+extension ContextualizeNullableColors on Color? {
+  Color? contextualize(BuildContext context) {
+    return ContextualProperty.resolveAs(this, context);
+  }
+}
+
 class BrightnessColor extends Color with ContextualBrightness<Color> {
   @override
   final Color light;
