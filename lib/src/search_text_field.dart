@@ -64,15 +64,26 @@ class _SearchTextFieldState extends State<SearchTextField> {
             Radius.circular(8.0),
           ),
         ),
-        prefixIcon: const IconButton(
-          icon: Icon(Icons.search),
+        prefixIcon: IconButton(
+          icon: Icon(
+            Icons.search,
+            color: BrightnessProperty.resolveAs(
+              Colors.black,
+              Colors.white,
+              context,
+            ).withValues(alpha: 0.5),
+          ),
           onPressed: null,
         ),
         suffixIcon: GestureDetector(
           onTap: onClearTap,
-          child: const Icon(
-            Icons.cancel,
-            color: Colors.grey,
+          child: Icon(
+            Icons.clear,
+            color: BrightnessProperty.resolveAs(
+              Colors.black,
+              Colors.white,
+              context,
+            ).withValues(alpha: 0.5),
           ),
         ),
       ),

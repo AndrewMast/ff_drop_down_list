@@ -1,4 +1,5 @@
 import 'package:ff_drop_down_list/model/contextual_property.dart';
+import 'package:ff_drop_down_list/model/contextual_colors.dart';
 import 'package:flutter/material.dart';
 
 import 'search_text_field.dart';
@@ -662,7 +663,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                         Divider(
                           color: ContextualProperty.resolveAs(
                             widget.style.listSeparatorColor ??
-                                Colors.transparent,
+                                BrightnessColor.bwa(alpha: 0.08),
                             context,
                           ),
                           height: 0,
