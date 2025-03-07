@@ -1,4 +1,5 @@
 import 'package:ff_drop_down_list/ff_drop_down_list.dart';
+import 'package:ff_drop_down_list/model/contextual_colors.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
@@ -213,12 +214,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         submitButtonText: 'Save',
         clearButtonText: 'Clear',
-        tileColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.cyan[100]
-            : Colors.cyan[700],
-        selectedTileColor: Theme.of(context).brightness == Brightness.light
-            ? Colors.cyan[200]
-            : Colors.cyan[800],
+        tileColor: BrightnessColor(
+            light: Colors.cyan.shade100, dark: Colors.cyan.shade700),
+        selectedTileColor: BrightnessColor(
+            light: Colors.cyan.shade200, dark: Colors.cyan.shade800),
       ),
     ).show(context);
   }
@@ -253,6 +252,11 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       style: DropDownStyle(
+        listSeparatorColor: BrightnessColor(
+          light: Colors.black12,
+          dark: Colors.white12,
+        ),
+        tileColor: ThemedColor((theme) => theme.primaryColor),
         headerWidget: const Text(
           kLanguages,
           style: TextStyle(
