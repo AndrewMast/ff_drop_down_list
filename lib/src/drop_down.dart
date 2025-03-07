@@ -175,8 +175,13 @@ class DropDownStyle {
   /// This can be any widget, such as a `Divider` or `SizedBox`
   ///
   /// If not provided (i.e., null), a default `Divider` with a color of
-  /// [Colors.black12] and a height of 0 will be applied
+  /// [Colors.transparent] and a height of 0 will be applied
   final Widget? listSeparator;
+
+  /// Defines the color of the default list separator `Divider`.
+  ///
+  /// Defaults to [Colors.transparent]
+  final Color? listSeparatorColor;
 
   /// The padding applied to the content of each `ListTile` in the dropdown list
   ///
@@ -337,6 +342,7 @@ class DropDownStyle {
   DropDownStyle({
     this.listPadding,
     this.listSeparator,
+    this.listSeparatorColor,
     this.tileContentPadding,
     this.tileColor,
     this.selectedTileColor,
@@ -644,7 +650,13 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                         ),
                       );
                     },
-                    separatorBuilder: (context, index) => getSeparatorWidget,
+                    separatorBuilder: (context, index) =>
+                        widget.style.listSeparator ??
+                        Divider(
+                          color: widget.style.listSeparatorColor ??
+                              Colors.transparent,
+                          height: 0,
+                        ),
                   ),
                 ),
               ],
@@ -654,13 +666,6 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
       ),
     );
   }
-
-  Widget get getSeparatorWidget =>
-      widget.style.listSeparator ??
-      const Divider(
-        color: Colors.black12,
-        height: 0,
-      );
 
   /// Handle the submit button pressed
   void onSubmitButtonPressed() {

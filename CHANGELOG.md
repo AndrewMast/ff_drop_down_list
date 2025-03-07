@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Removed the default values for `searchFillColor` and `searchCursorColor` (now defaults to `null`).
+* Added style option `listSeparatorColor` to customize the default color of the list separator divider, which has been changed from `Colors.black12` to `Colors.transparent`.
 
 ## 0.0.1
 
