@@ -165,6 +165,14 @@ DropDown<String>(
 
 <br/>
 
+## Custom `Color` Models
+| Name              | Usage                                                      | Description                                                                                                                                                  |
+|-------------------|------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `BrightnessColor` | `BrightnessColor(light: Colors.black, dark: Colors.white)` | A class extended from `Color` which allows a light and a dark color to be chosen to be rendered based on the theme brightness of the current `BuildContext`. |
+| `ThemedColor`     | `ThemedColor((ThemeData theme) => theme.primaryColor)`     | A class extended from `Color` which allows for custom colors based on the theme of the current `BuildContext`.                                               |
+
+<br/>
+
 # Contribution
 
 Contributions to this project are welcome. Feel free to open issues and to submit pull requests for general fixes or improvements.
