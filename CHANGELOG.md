@@ -1,5 +1,9 @@
 ## Unreleased
 
+## 0.0.3
+
+* Fixed `Color.toARGB32()` not working on Flutter 3.27.3 by adding an extension.
+
 ## 0.0.2
 
 * Removed the default values for `searchFillColor` and `searchCursorColor` (now defaults to `null`).
