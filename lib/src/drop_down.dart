@@ -487,9 +487,9 @@ class DropDown<T> {
 
   /// Show the drop down modal.
   void show(BuildContext context) {
-    DropDownOptions<T> modalOptions = options ?? DropDownOptions<T>();
+    final DropDownOptions<T> modalOptions = options ?? DropDownOptions<T>();
 
-    List<SelectedListItem<T>> modalData =
+    final List<SelectedListItem<T>> modalData =
         data ?? unbuiltData?.asSelectedListItems() ?? [];
 
     showModalBottomSheet(
