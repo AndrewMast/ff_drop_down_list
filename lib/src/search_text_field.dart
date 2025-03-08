@@ -43,6 +43,11 @@ class SearchTextField extends StatefulWidget {
   /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
   final Color? suffixColor;
 
+  /// Controls whether the search input field will autofocus
+  ///
+  /// Default Value: [false]
+  final bool autofocus;
+
   const SearchTextField({
     required this.onTextChanged,
     this.hintText,
@@ -53,6 +58,7 @@ class SearchTextField extends StatefulWidget {
     this.prefixColor,
     Widget? suffixIcon,
     this.suffixColor,
+    this.autofocus = false,
     super.key,
   })  : borderRadius =
             borderRadius ?? const BorderRadius.all(Radius.circular(24.0)),
@@ -83,6 +89,7 @@ class _SearchTextFieldState extends State<SearchTextField> {
       onChanged: (value) {
         widget.onTextChanged(value);
       },
+      autofocus: widget.autofocus,
       decoration: InputDecoration(
         isDense: true,
         filled: true,

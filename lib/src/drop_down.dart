@@ -355,6 +355,11 @@ class DropDownStyle {
   /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
   final Color? searchSuffixColor;
 
+  /// Controls whether the search input field will autofocus
+  ///
+  /// Default Value: [false]
+  final bool searchAutofocus;
+
   /// Controls the visibility of the "select all" widget when [enableMultipleSelection] is true
   ///
   /// Default Value: [true]
@@ -428,6 +433,7 @@ class DropDownStyle {
     this.searchPrefixColor,
     this.searchSuffixIcon,
     this.searchSuffixColor,
+    this.searchAutofocus = false,
     this.isSelectAllVisible = false,
     this.selectAllButtonPadding,
     this.selectAllButtonChild,
@@ -628,6 +634,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                           prefixColor: widget.style.searchPrefixColor,
                           suffixIcon: widget.style.searchSuffixIcon,
                           suffixColor: widget.style.searchSuffixColor,
+                          autofocus: widget.style.searchAutofocus,
                         ),
                   )
 
