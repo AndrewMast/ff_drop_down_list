@@ -220,6 +220,12 @@ class DropDownStyle {
   /// Default Value: [Colors.transparent]
   final Color backgroundColor;
 
+  /// The border shape of the bottom sheet
+  ///
+  /// If not provided (i.e., null), the default value will be
+  /// [RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)))]
+  final ShapeBorder? border;
+
   /// The padding applied to the dropdown container
   ///
   /// If not provided (i.e., null), the default value will be
@@ -382,6 +388,7 @@ class DropDownStyle {
       Icons.check_box_outline_blank,
     ),
     this.backgroundColor = Colors.transparent,
+    this.border,
     this.padding,
     this.headerPadding,
     this.headerWidget,
@@ -439,20 +446,17 @@ class DropDown<T> {
   /// If left blank, a default [DropDownStyle] will be used.
   final DropDownStyleBuilder? styleBuilder;
 
-  /// The border shape of the bottom sheet
-  ///
-  /// If not provided (i.e., null), the default value will be
-  /// [RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)))]
-  final ShapeBorder? shapeBorder;
-
   DropDown({
     this.data,
     this.unbuiltData,
     this.options,
     this.style,
     this.styleBuilder,
-    this.shapeBorder,
   });
+
+  DropDownStyle getStyle(BuildContext context) {
+    return style ?? styleBuilder?.call(context) ?? DropDownStyle();
+  }
 
   /// Show the drop down modal.
   void show(BuildContext context) {
@@ -470,10 +474,10 @@ class DropDown<T> {
       isScrollControlled: true,
       enableDrag: modalOptions.enableDrag,
       isDismissible: modalOptions.isDismissible,
-      shape: shapeBorder ??
+      shape: getStyle(context).border ??
           const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
-              top: Radius.circular(15.0),
+              top: Radius.circular(24.0),
             ),
           ),
       context: context,
@@ -482,7 +486,7 @@ class DropDown<T> {
         return DropDownBody<T>(
           data: modalData,
           options: modalOptions,
-          style: style ?? styleBuilder?.call(context) ?? DropDownStyle(),
+          style: getStyle(context),
         );
       },
     );

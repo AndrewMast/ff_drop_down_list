@@ -75,7 +75,6 @@ DropDown<String>(
 | `DropDownOptions<T>? options`        | The options for the dropdown.                                                 |
 | `DropDownStyle? style`               | The style for the dropdown.                                                   |
 | `DropDownStyleBuilder? styleBuilder` | A style builder to make a `DropDownStyle` if `style` is not already provided. |
-| `ShapeBorder? shapeBorder`           | The border shape of the bottom sheet                                          |
 
 <br/>
 
@@ -121,6 +120,7 @@ DropDown<String>(
 | `Widget selectedTileTrailingWidget`   | `Icon(Icons.check_box)`                                                                            | The widget displayed as a trailing icon when a list item is selected and when `enableMultipleSelection` is `true`.                                 |
 | `Widget unselectedTileTrailingWidget` | `Icon(Icons.check_box_outline_blank)`                                                              | The widget displayed as a trailing icon when a list item is not selected and when `enableMultipleSelection` is `true`.                             |
 | `Color backgroundColor`               | `Colors.transparent`                                                                               | Sets the background color of the dropdown.                                                                                                         |
+| `ShapeBorder? border`                 | `RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)))`          | The border shape of the bottom sheet.                                                                                                              |
 | `EdgeInsets? padding`                 | `EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)`                                   | The padding applied to the dropdown container.                                                                                                     |
 | `EdgeInsets? headerPadding`           | `EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0)`                                              | The padding applied to the dropdown header.                                                                                                        |
 | `Widget? headerWidget`                |                                                                                                    | The widget displayed as the title of the bottom sheet.                                                                                             |

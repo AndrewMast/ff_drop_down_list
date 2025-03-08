@@ -9,6 +9,7 @@
 * Added `contextualize` method for `Color` class.
 * Added `ContextualColor` model and its documentation.
 * Added additional options to `SearchTextField` to allow for custom icons and colors. Improved overall look and spacing of the search text field.
+* Moved `shapeBorder` from `DropDown` class to `DropDownOptions` as `border`. Changed default to a rounded border of `24.0` instead of `15.0`.
 
 ## 0.0.1
 
