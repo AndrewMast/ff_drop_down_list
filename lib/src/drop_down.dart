@@ -13,10 +13,31 @@ class SelectedListItem<T> {
   /// Tha data of the item
   final T data;
 
-  SelectedListItem({
-    required this.data,
-    this.isSelected = false,
-  });
+  /// Create a new [SelectedListItem].
+  SelectedListItem({required this.data, this.isSelected = false});
+
+  /// Create a new selected [SelectedListItem].
+  SelectedListItem.selected(this.data) : isSelected = true;
+
+  /// Create a new unselected [SelectedListItem].
+  SelectedListItem.unselected(this.data) : isSelected = false;
+
+  /// Build a new [SelectedListItem].
+  static SelectedListItem<T> from<T>(T data, {bool isSelected = false}) {
+    return SelectedListItem(data: data, isSelected: isSelected);
+  }
+
+  /// Build a [SelectedListItem] list.
+  static List<SelectedListItem<T>> list<T>(List<T> items) {
+    return items.map(from<T>).toList();
+  }
+}
+
+extension ListAsSelectedListItems<T> on List<T> {
+  /// Convert the list into a list of [SelectedListItem].
+  List<SelectedListItem<T>> asSelectedListItems() {
+    return SelectedListItem.list(this);
+  }
 }
 
 /// A callback function that is invoked when items are selected
@@ -462,12 +483,8 @@ class DropDown<T> {
   void show(BuildContext context) {
     DropDownOptions<T> modalOptions = options ?? DropDownOptions<T>();
 
-    List<SelectedListItem<T>> modalData = data ??
-        unbuiltData
-            ?.map<SelectedListItem<T>>(
-                (T item) => SelectedListItem<T>(data: item))
-            .toList() ??
-        [];
+    List<SelectedListItem<T>> modalData =
+        data ?? unbuiltData?.asSelectedListItems() ?? [];
 
     showModalBottomSheet(
       useRootNavigator: modalOptions.useRootNavigator,
