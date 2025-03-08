@@ -1,3 +1,18 @@
+## Unreleased
+
+* Removed the default values for `searchFillColor` and `searchCursorColor` (now defaults to `null`).
+* Added style option `listSeparatorColor` to customize the default color of the list separator divider, which has been changed from `Colors.black12` to `Colors.transparent`.
+* Added contextual color models `BrightnessColor` and `ThemedColor` to allow for contextually aware colors ([see more](README#custom-color-models)).
+* Allow for all options to utilize new contextual color models.
+* Changed `listSeparatorColor` default from `Colors.transparent` to `BrightnessColor.bwa(alpha: 0.08)` and changed `SearchTextField` icon colors to be dependant on the brightness.
+* Added documentation for the `BrightnessColor` and `ThemedColor` models.
+* Added `contextualize` method for `Color` class.
+* Added `ContextualColor` model and its documentation.
+* Added additional options to `SearchTextField` to allow for custom icons and colors. Improved overall look and spacing of the search text field.
+* Moved `shapeBorder` from `DropDown` class to `DropDownOptions` as `border`. Changed default to a rounded border of `24.0` instead of `15.0`.
+* Added new constructors and static helper methods to `SelectedListItem` class.
+* Added option to autofocus `SearchTextField`.
+
 ## 0.0.1
 
 * Initial creation of `ff_drop_down_list` library, forked from `drop_down_list` library [(Mindinventory/drop_down_list)](https://github.com/Mindinventory/drop_down_list).

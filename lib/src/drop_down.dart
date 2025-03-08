@@ -1,3 +1,5 @@
+import 'package:ff_drop_down_list/model/contextual_property.dart';
+import 'package:ff_drop_down_list/model/contextual_colors.dart';
 import 'package:flutter/material.dart';
 
 import 'search_text_field.dart';
@@ -11,10 +13,31 @@ class SelectedListItem<T> {
   /// Tha data of the item
   final T data;
 
-  SelectedListItem({
-    required this.data,
-    this.isSelected = false,
-  });
+  /// Create a new [SelectedListItem].
+  SelectedListItem({required this.data, this.isSelected = false});
+
+  /// Create a new selected [SelectedListItem].
+  SelectedListItem.selected(this.data) : isSelected = true;
+
+  /// Create a new unselected [SelectedListItem].
+  SelectedListItem.unselected(this.data) : isSelected = false;
+
+  /// Build a new [SelectedListItem].
+  static SelectedListItem<T> from<T>(T data, {bool isSelected = false}) {
+    return SelectedListItem(data: data, isSelected: isSelected);
+  }
+
+  /// Build a [SelectedListItem] list.
+  static List<SelectedListItem<T>> list<T>(List<T> items) {
+    return items.map(from<T>).toList();
+  }
+}
+
+extension ListAsSelectedListItems<T> on List<T> {
+  /// Convert the list into a list of [SelectedListItem].
+  List<SelectedListItem<T>> asSelectedListItems() {
+    return SelectedListItem.list(this);
+  }
 }
 
 /// A callback function that is invoked when items are selected
@@ -175,8 +198,13 @@ class DropDownStyle {
   /// This can be any widget, such as a `Divider` or `SizedBox`
   ///
   /// If not provided (i.e., null), a default `Divider` with a color of
-  /// [Colors.black12] and a height of 0 will be applied
+  /// [Colors.transparent] and a height of 0 will be applied
   final Widget? listSeparator;
+
+  /// Defines the color of the default list separator `Divider`.
+  ///
+  /// Defaults to [Colors.transparent]
+  final Color? listSeparatorColor;
 
   /// The padding applied to the content of each `ListTile` in the dropdown list
   ///
@@ -212,6 +240,12 @@ class DropDownStyle {
   ///
   /// Default Value: [Colors.transparent]
   final Color backgroundColor;
+
+  /// The border shape of the bottom sheet
+  ///
+  /// If not provided (i.e., null), the default value will be
+  /// [RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)))]
+  final ShapeBorder? border;
 
   /// The padding applied to the dropdown container
   ///
@@ -284,15 +318,47 @@ class DropDownStyle {
   /// Default Value: [Search]
   final String searchHintText;
 
-  /// This is the fill color for the input field
+  /// The fill color for the search input field
   ///
-  /// Default Value: [Colors.black12]
-  final Color searchFillColor;
+  /// If null, will default to the theme's default input decoration fill color.
+  final Color? searchFillColor;
 
-  /// This is the cursor color for the input field
+  /// The color of the cursor for the search input field
   ///
-  /// Default Value: [Colors.black]
-  final Color searchCursorColor;
+  /// If null, will default to the theme's default input cursor color.
+  final Color? searchCursorColor;
+
+  /// The border radius of the search input field
+  ///
+  /// Default Value: [BorderRadius.circular(24.0)]
+  final BorderRadius? searchBorderRadius;
+
+  /// The prefix icon for the search input field
+  ///
+  /// Default Value: [Icon(Icons.search)]
+  final Widget? searchPrefixIcon;
+
+  /// The prefix icon color for the search input field
+  ///
+  /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
+  final Color? searchPrefixColor;
+
+  /// The suffix icon for the search input field
+  ///
+  /// Pressing this icon clears the input field.
+  ///
+  /// Default Value: [Icon(Icons.clear)]
+  final Widget? searchSuffixIcon;
+
+  /// The suffix icon color for the search input field
+  ///
+  /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
+  final Color? searchSuffixColor;
+
+  /// Controls whether the search input field will autofocus
+  ///
+  /// Default Value: [false]
+  final bool searchAutofocus;
 
   /// Controls the visibility of the "select all" widget when [enableMultipleSelection] is true
   ///
@@ -337,6 +403,7 @@ class DropDownStyle {
   DropDownStyle({
     this.listPadding,
     this.listSeparator,
+    this.listSeparatorColor,
     this.tileContentPadding,
     this.tileColor,
     this.selectedTileColor,
@@ -347,6 +414,7 @@ class DropDownStyle {
       Icons.check_box_outline_blank,
     ),
     this.backgroundColor = Colors.transparent,
+    this.border,
     this.padding,
     this.headerPadding,
     this.headerWidget,
@@ -358,9 +426,15 @@ class DropDownStyle {
     this.searchTextFieldPadding,
     this.searchWidget,
     this.searchHintText = 'Search',
-    this.searchFillColor = Colors.black12,
-    this.searchCursorColor = Colors.black,
-    this.isSelectAllVisible = true,
+    this.searchFillColor,
+    this.searchCursorColor,
+    this.searchBorderRadius,
+    this.searchPrefixIcon,
+    this.searchPrefixColor,
+    this.searchSuffixIcon,
+    this.searchSuffixColor,
+    this.searchAutofocus = false,
+    this.isSelectAllVisible = false,
     this.selectAllButtonPadding,
     this.selectAllButtonChild,
     this.selectAllButtonText = 'Select All',
@@ -399,41 +473,34 @@ class DropDown<T> {
   /// If left blank, a default [DropDownStyle] will be used.
   final DropDownStyleBuilder? styleBuilder;
 
-  /// The border shape of the bottom sheet
-  ///
-  /// If not provided (i.e., null), the default value will be
-  /// [RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(15.0)))]
-  final ShapeBorder? shapeBorder;
-
   DropDown({
     this.data,
     this.unbuiltData,
     this.options,
     this.style,
     this.styleBuilder,
-    this.shapeBorder,
   });
+
+  DropDownStyle getStyle(BuildContext context) {
+    return style ?? styleBuilder?.call(context) ?? DropDownStyle();
+  }
 
   /// Show the drop down modal.
   void show(BuildContext context) {
     DropDownOptions<T> modalOptions = options ?? DropDownOptions<T>();
 
-    List<SelectedListItem<T>> modalData = data ??
-        unbuiltData
-            ?.map<SelectedListItem<T>>(
-                (T item) => SelectedListItem<T>(data: item))
-            .toList() ??
-        [];
+    List<SelectedListItem<T>> modalData =
+        data ?? unbuiltData?.asSelectedListItems() ?? [];
 
     showModalBottomSheet(
       useRootNavigator: modalOptions.useRootNavigator,
       isScrollControlled: true,
       enableDrag: modalOptions.enableDrag,
       isDismissible: modalOptions.isDismissible,
-      shape: shapeBorder ??
+      shape: getStyle(context).border ??
           const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
-              top: Radius.circular(15.0),
+              top: Radius.circular(24.0),
             ),
           ),
       context: context,
@@ -442,7 +509,7 @@ class DropDown<T> {
         return DropDownBody<T>(
           data: modalData,
           options: modalOptions,
-          style: style ?? styleBuilder?.call(context) ?? DropDownStyle(),
+          style: getStyle(context),
         );
       },
     );
@@ -495,7 +562,10 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
         expand: false,
         builder: (BuildContext context, ScrollController scrollController) {
           return Container(
-            color: widget.style.backgroundColor,
+            color: ContextualProperty.resolveAs(
+              widget.style.backgroundColor,
+              context,
+            ),
             padding: widget.style.padding ??
                 EdgeInsets.only(
                   bottom: MediaQuery.of(context).padding.bottom,
@@ -503,69 +573,81 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Padding(
-                  padding: widget.style.headerPadding ??
-                      const EdgeInsets.only(
-                        left: 20.0,
-                        right: 20.0,
-                        top: 10.0,
-                      ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      /// Bottom sheet title text
-                      (widget.style.headerWidget != null)
-                          ? Expanded(
-                              child: widget.style.headerWidget!,
-                            )
-                          : const Spacer(),
-
-                      /// Submit Elevated Button
-                      if (widget.options.enableMultipleSelection)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ElevatedButton(
-                              onPressed: onSubmitButtonPressed,
-                              child: widget.style.submitButtonChild ??
-                                  Text(widget.style.submitButtonText),
-                            ),
-
-                            /// Clear Elevated Button
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: ElevatedButton(
-                                onPressed: onClearButtonPressed,
-                                child: widget.style.clearButtonChild ??
-                                    Text(widget.style.clearButtonText),
-                              ),
-                            ),
-                          ],
+                if (widget.style.headerWidget != null ||
+                    widget.options.enableMultipleSelection)
+                  Padding(
+                    padding: widget.style.headerPadding ??
+                        const EdgeInsets.only(
+                          left: 20.0,
+                          right: 20.0,
+                          top: 10.0,
                         ),
-                    ],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        /// Bottom sheet title text
+                        (widget.style.headerWidget != null)
+                            ? Expanded(
+                                child: widget.style.headerWidget!,
+                              )
+                            : const Spacer(),
+
+                        /// Submit Elevated Button
+                        if (widget.options.enableMultipleSelection)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton(
+                                onPressed: onSubmitButtonPressed,
+                                child: widget.style.submitButtonChild ??
+                                    Text(widget.style.submitButtonText),
+                              ),
+
+                              /// Clear Elevated Button
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: ElevatedButton(
+                                  onPressed: onClearButtonPressed,
+                                  child: widget.style.clearButtonChild ??
+                                      Text(widget.style.clearButtonText),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
                   ),
-                ),
 
                 /// A [TextField] that displays a list of suggestions as the user types with clear button.
                 if (widget.style.isSearchVisible)
                   Padding(
                     padding: widget.style.searchTextFieldPadding ??
-                        const EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                          vertical: 10.0,
-                        ),
+                        const EdgeInsets.all(10),
                     child: widget.style.searchWidget ??
                         SearchTextField(
                           onTextChanged: _buildSearchList,
-                          searchHintText: widget.style.searchHintText,
-                          searchFillColor: widget.style.searchFillColor,
-                          searchCursorColor: widget.style.searchCursorColor,
+                          hintText: widget.style.searchHintText,
+                          fillColor: widget.style.searchFillColor,
+                          cursorColor: widget.style.searchCursorColor,
+                          borderRadius: widget.style.searchBorderRadius,
+                          prefixIcon: widget.style.searchPrefixIcon,
+                          prefixColor: widget.style.searchPrefixColor,
+                          suffixIcon: widget.style.searchSuffixIcon,
+                          suffixColor: widget.style.searchSuffixColor,
+                          autofocus: widget.style.searchAutofocus,
                         ),
-                  ),
+                  )
+
+                /// The search is not visible, add some padding.
+                else if (widget.style.headerWidget != null ||
+                    widget.options.enableMultipleSelection)
+                  const Padding(padding: EdgeInsets.only(bottom: 10)),
 
                 /// Select or Deselect TextButton when enableMultipleSelection is enabled
-                if (widget.options.enableMultipleSelection &&
-                    widget.style.isSelectAllVisible &&
+                /// and maxSelectedItems is not set
+                if (widget.style.isSelectAllVisible &&
+                    widget.options.enableMultipleSelection &&
+                    widget.options.maxSelectedItems == null &&
                     list.isNotEmpty)
                   Align(
                     alignment: Alignment.centerRight,
@@ -636,15 +718,27 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                               const EdgeInsets.symmetric(
                                 horizontal: 20,
                               ),
-                          tileColor: (isSelected
-                                  ? widget.style.selectedTileColor
-                                  : null) ??
-                              widget.style.tileColor ??
-                              Colors.transparent,
+                          tileColor: ContextualProperty.resolveAs(
+                            (isSelected
+                                    ? widget.style.selectedTileColor
+                                    : null) ??
+                                widget.style.tileColor ??
+                                Colors.transparent,
+                            context,
+                          ),
                         ),
                       );
                     },
-                    separatorBuilder: (context, index) => getSeparatorWidget,
+                    separatorBuilder: (context, index) =>
+                        widget.style.listSeparator ??
+                        Divider(
+                          color: ContextualProperty.resolveAs(
+                            widget.style.listSeparatorColor ??
+                                BrightnessColor.bwa(alpha: 0.08),
+                            context,
+                          ),
+                          height: 0,
+                        ),
                   ),
                 ),
               ],
@@ -654,13 +748,6 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
       ),
     );
   }
-
-  Widget get getSeparatorWidget =>
-      widget.style.listSeparator ??
-      const Divider(
-        color: Colors.black12,
-        height: 0,
-      );
 
   /// Handle the submit button pressed
   void onSubmitButtonPressed() {
