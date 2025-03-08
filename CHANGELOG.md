@@ -8,6 +8,7 @@
 * Added documentation for the `BrightnessColor` and `ThemedColor` models.
 * Added `contextualize` method for `Color` class.
 * Added `ContextualColor` model and its documentation.
+* Added additional options to `SearchTextField` to allow for custom icons and colors. Improved overall look and spacing of the search text field.
 
 ## 0.0.1
 

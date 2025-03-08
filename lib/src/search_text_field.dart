@@ -1,3 +1,4 @@
+import 'package:ff_drop_down_list/model/contextual_colors.dart';
 import 'package:ff_drop_down_list/model/contextual_property.dart';
 import 'package:flutter/material.dart';
 
@@ -7,21 +8,56 @@ class SearchTextField extends StatefulWidget {
   final Function(String) onTextChanged;
 
   /// Used to show the hint text into the search text field
-  final String? searchHintText;
+  final String? hintText;
 
-  /// The fill color of the search text field
-  final Color? searchFillColor;
+  /// The fill color for the search input field
+  final Color? fillColor;
 
-  /// The color of the cursor of the search text field
-  final Color? searchCursorColor;
+  /// The color of the cursor for the search input field
+  final Color? cursorColor;
+
+  /// The border radius of the search input field
+  ///
+  /// Default Value: [BorderRadius.circular(24.0)]
+  final BorderRadius borderRadius;
+
+  /// The prefix icon for the search input field
+  ///
+  /// Default Value: [Icon(Icons.search)]
+  final Widget prefixIcon;
+
+  /// The prefix icon color for the search input field
+  ///
+  /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
+  final Color? prefixColor;
+
+  /// The suffix icon for the search input field
+  ///
+  /// Pressing this icon clears the search text field.
+  ///
+  /// Default Value: [Icon(Icons.clear)]
+  final Widget suffixIcon;
+
+  /// The suffix icon color for the search input field
+  ///
+  /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
+  final Color? suffixColor;
 
   const SearchTextField({
     required this.onTextChanged,
-    this.searchHintText,
-    this.searchFillColor,
-    this.searchCursorColor,
+    this.hintText,
+    this.fillColor,
+    this.cursorColor,
+    BorderRadius? borderRadius,
+    Widget? prefixIcon,
+    this.prefixColor,
+    Widget? suffixIcon,
+    this.suffixColor,
     super.key,
-  });
+  })  : borderRadius =
+            borderRadius ?? const BorderRadius.all(Radius.circular(24.0)),
+        prefixIcon = prefixIcon ?? const Icon(Icons.search),
+        suffixIcon = suffixIcon ?? const Icon(Icons.clear);
 
   @override
   State<SearchTextField> createState() => _SearchTextFieldState();
@@ -41,57 +77,50 @@ class _SearchTextFieldState extends State<SearchTextField> {
     return TextFormField(
       controller: _editingController,
       cursorColor: ContextualProperty.resolveAs(
-        widget.searchCursorColor,
+        widget.cursorColor,
         context,
       ),
       onChanged: (value) {
         widget.onTextChanged(value);
       },
       decoration: InputDecoration(
+        isDense: true,
         filled: true,
         fillColor: ContextualProperty.resolveAs(
-          widget.searchFillColor,
+          widget.fillColor,
           context,
         ),
-        contentPadding: const EdgeInsets.only(right: 15),
-        hintText: widget.searchHintText,
-        border: const OutlineInputBorder(
+        contentPadding: EdgeInsets.zero,
+        hintText: widget.hintText,
+        border: OutlineInputBorder(
           borderSide: BorderSide(
             width: 0,
             style: BorderStyle.none,
           ),
-          borderRadius: BorderRadius.all(
-            Radius.circular(8.0),
-          ),
+          borderRadius: widget.borderRadius,
         ),
         prefixIcon: IconButton(
-          icon: Icon(
-            Icons.search,
-            color: BrightnessProperty.resolveAs(
-              Colors.black,
-              Colors.white,
-              context,
-            ).withValues(alpha: 0.5),
+          icon: widget.prefixIcon,
+          iconSize: 24,
+          disabledColor: ContextualProperty.resolveAs(
+            widget.prefixColor ?? BrightnessColor.bwa(alpha: 0.5),
+            context,
           ),
           onPressed: null,
         ),
-        suffixIcon: GestureDetector(
-          onTap: onClearTap,
-          child: Icon(
-            Icons.clear,
-            color: BrightnessProperty.resolveAs(
-              Colors.black,
-              Colors.white,
-              context,
-            ).withValues(alpha: 0.5),
+        suffixIcon: IconButton(
+          icon: widget.suffixIcon,
+          iconSize: 24,
+          color: ContextualProperty.resolveAs(
+            widget.suffixColor ?? BrightnessColor.bwa(alpha: 0.5),
+            context,
           ),
+          onPressed: () {
+            widget.onTextChanged('');
+            _editingController.clear();
+          },
         ),
       ),
     );
-  }
-
-  void onClearTap() {
-    widget.onTextChanged('');
-    _editingController.clear();
   }
 }

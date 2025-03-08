@@ -291,15 +291,42 @@ class DropDownStyle {
   /// Default Value: [Search]
   final String searchHintText;
 
-  /// This is the fill color for the input field
+  /// The fill color for the search input field
   ///
   /// If null, will default to the theme's default input decoration fill color.
   final Color? searchFillColor;
 
-  /// This is the cursor color for the input field
+  /// The color of the cursor for the search input field
   ///
   /// If null, will default to the theme's default input cursor color.
   final Color? searchCursorColor;
+
+  /// The border radius of the search input field
+  ///
+  /// Default Value: [BorderRadius.circular(24.0)]
+  final BorderRadius? searchBorderRadius;
+
+  /// The prefix icon for the search input field
+  ///
+  /// Default Value: [Icon(Icons.search)]
+  final Widget? searchPrefixIcon;
+
+  /// The prefix icon color for the search input field
+  ///
+  /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
+  final Color? searchPrefixColor;
+
+  /// The suffix icon for the search input field
+  ///
+  /// Pressing this icon clears the input field.
+  ///
+  /// Default Value: [Icon(Icons.clear)]
+  final Widget? searchSuffixIcon;
+
+  /// The suffix icon color for the search input field
+  ///
+  /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
+  final Color? searchSuffixColor;
 
   /// Controls the visibility of the "select all" widget when [enableMultipleSelection] is true
   ///
@@ -368,7 +395,12 @@ class DropDownStyle {
     this.searchHintText = 'Search',
     this.searchFillColor,
     this.searchCursorColor,
-    this.isSelectAllVisible = true,
+    this.searchBorderRadius,
+    this.searchPrefixIcon,
+    this.searchPrefixColor,
+    this.searchSuffixIcon,
+    this.searchSuffixColor,
+    this.isSelectAllVisible = false,
     this.selectAllButtonPadding,
     this.selectAllButtonChild,
     this.selectAllButtonText = 'Select All',
@@ -514,69 +546,80 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Padding(
-                  padding: widget.style.headerPadding ??
-                      const EdgeInsets.only(
-                        left: 20.0,
-                        right: 20.0,
-                        top: 10.0,
-                      ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      /// Bottom sheet title text
-                      (widget.style.headerWidget != null)
-                          ? Expanded(
-                              child: widget.style.headerWidget!,
-                            )
-                          : const Spacer(),
-
-                      /// Submit Elevated Button
-                      if (widget.options.enableMultipleSelection)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ElevatedButton(
-                              onPressed: onSubmitButtonPressed,
-                              child: widget.style.submitButtonChild ??
-                                  Text(widget.style.submitButtonText),
-                            ),
-
-                            /// Clear Elevated Button
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: ElevatedButton(
-                                onPressed: onClearButtonPressed,
-                                child: widget.style.clearButtonChild ??
-                                    Text(widget.style.clearButtonText),
-                              ),
-                            ),
-                          ],
+                if (widget.style.headerWidget != null ||
+                    widget.options.enableMultipleSelection)
+                  Padding(
+                    padding: widget.style.headerPadding ??
+                        const EdgeInsets.only(
+                          left: 20.0,
+                          right: 20.0,
+                          top: 10.0,
                         ),
-                    ],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        /// Bottom sheet title text
+                        (widget.style.headerWidget != null)
+                            ? Expanded(
+                                child: widget.style.headerWidget!,
+                              )
+                            : const Spacer(),
+
+                        /// Submit Elevated Button
+                        if (widget.options.enableMultipleSelection)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton(
+                                onPressed: onSubmitButtonPressed,
+                                child: widget.style.submitButtonChild ??
+                                    Text(widget.style.submitButtonText),
+                              ),
+
+                              /// Clear Elevated Button
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: ElevatedButton(
+                                  onPressed: onClearButtonPressed,
+                                  child: widget.style.clearButtonChild ??
+                                      Text(widget.style.clearButtonText),
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
                   ),
-                ),
 
                 /// A [TextField] that displays a list of suggestions as the user types with clear button.
                 if (widget.style.isSearchVisible)
                   Padding(
                     padding: widget.style.searchTextFieldPadding ??
-                        const EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                          vertical: 10.0,
-                        ),
+                        const EdgeInsets.all(10),
                     child: widget.style.searchWidget ??
                         SearchTextField(
                           onTextChanged: _buildSearchList,
-                          searchHintText: widget.style.searchHintText,
-                          searchFillColor: widget.style.searchFillColor,
-                          searchCursorColor: widget.style.searchCursorColor,
+                          hintText: widget.style.searchHintText,
+                          fillColor: widget.style.searchFillColor,
+                          cursorColor: widget.style.searchCursorColor,
+                          borderRadius: widget.style.searchBorderRadius,
+                          prefixIcon: widget.style.searchPrefixIcon,
+                          prefixColor: widget.style.searchPrefixColor,
+                          suffixIcon: widget.style.searchSuffixIcon,
+                          suffixColor: widget.style.searchSuffixColor,
                         ),
-                  ),
+                  )
+
+                /// The search is not visible, add some padding.
+                else if (widget.style.headerWidget != null ||
+                    widget.options.enableMultipleSelection)
+                  const Padding(padding: EdgeInsets.only(bottom: 10)),
 
                 /// Select or Deselect TextButton when enableMultipleSelection is enabled
-                if (widget.options.enableMultipleSelection &&
-                    widget.style.isSelectAllVisible &&
+                /// and maxSelectedItems is not set
+                if (widget.style.isSelectAllVisible &&
+                    widget.options.enableMultipleSelection &&
+                    widget.options.maxSelectedItems == null &&
                     list.isNotEmpty)
                   Align(
                     alignment: Alignment.centerRight,
