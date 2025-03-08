@@ -4,7 +4,7 @@
 
 * Removed the default values for `searchFillColor` and `searchCursorColor` (now defaults to `null`).
 * Added style option `listSeparatorColor` to customize the default color of the list separator divider, which has been changed from `Colors.black12` to `Colors.transparent`.
-* Added contextual color models `BrightnessColor` and `ThemedColor` to allow for contextually aware colors ([see more](README#custom-color-models)).
+* Added contextual color models `BrightnessColor` and `ThemedColor` to allow for contextually aware colors ([see more](README.md#custom-color-models)).
 * Allow for all options to utilize new contextual color models.
 * Changed `listSeparatorColor` default from `Colors.transparent` to `BrightnessColor.bwa(alpha: 0.08)` and changed `SearchTextField` icon colors to be dependant on the brightness.
 * Added documentation for the `BrightnessColor` and `ThemedColor` models.
