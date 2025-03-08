@@ -12,6 +12,7 @@
 * Moved `shapeBorder` from `DropDown` class to `DropDownOptions` as `border`. Changed default to a rounded border of `24.0` instead of `15.0`.
 * Added new constructors and static helper methods to `SelectedListItem` class.
 * Added option to autofocus `SearchTextField`.
+* Upgraded minimum Flutter SDK to 3.27.0.
 
 ## 0.0.1
 
