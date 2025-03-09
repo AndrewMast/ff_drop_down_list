@@ -1,28 +1,71 @@
+/// Provides colors that can change depending on the current [BuildContext].
+library;
+
 import 'package:ff_drop_down_list/model/contextual_property.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' show ColorSpace;
 
+/// Provides the [inverted] getter to invert a color.
 extension InvertColors on Color {
+  /// Invert the color.
   Color get inverted =>
       withValues(alpha: a, red: 1.0 - r, green: 1.0 - g, blue: 1.0 - b);
 }
 
+/// Provides the [contextualize] method which runs [ContextualProperty.resolveAs].
 extension ContextualizeColors on Color {
+  /// Contextualizes the color if it is an instance of [BrightnessColor],
+  /// [ThemedColor], or [ContextualColor].
+  ///
+  /// Runs [ContextualProperty.resolveAs] to resolve the Color.
   Color contextualize(BuildContext context) {
     return ContextualProperty.resolveAs(this, context);
   }
 }
 
+/// Provides the [contextualize] method which runs [ContextualProperty.resolveAs].
 extension ContextualizeNullableColors on Color? {
+  /// Contextualizes the color if it is an instance of [BrightnessColor],
+  /// [ThemedColor], or [ContextualColor].
+  ///
+  /// Runs [ContextualProperty.resolveAs] to resolve the Color.
   Color? contextualize(BuildContext context) {
     return ContextualProperty.resolveAs(this, context);
   }
 }
 
+/// Allows for a color to change depending on the [Brightness] of
+/// the theme for the current [BuildContext].
+///
+/// Run [ContextualizeColors.contextualize] (`Color.contextualize`) or
+/// [ContextualProperty.resolveAs] to resolve the correct color for
+/// a given [BuildContext].
+///
+/// ```dart
+/// BrightnessColor iconColor = BrightnessColor(
+///   light: Colors.black,
+///   dark: Colors.white,
+/// );
+///
+/// BrightnessColor? otherColor = BrightnessColor.bwa(alpha: 0.5);
+///
+/// Widget build(BuildContext context) {
+///   return IconButton(
+///     icon: const Icon(Icons.search),
+///     color: iconColor.contextualize(context),
+///     focusColor: ContextualProperty.resolveAs<Color?>(otherColor, context),
+///     onPressed: () {},
+///   );
+/// }
+/// ```
 class BrightnessColor extends Color with ContextualBrightness<Color> {
+  /// The color to display when the brightness of the theme
+  /// for the current [BuildContext] is [Brightness.light].
   @override
   final Color light;
 
+  /// The color to display when the brightness of the theme
+  /// for the current [BuildContext] is [Brightness.dark].
   @override
   final Color dark;
 
@@ -171,7 +214,14 @@ class BrightnessColor extends Color with ContextualBrightness<Color> {
       );
 }
 
+/// Allows for a color to change depending on the [ThemeData] of
+/// the current [BuildContext].
+///
+/// Run [ContextualizeColors.contextualize] (`Color.contextualize`) or
+/// [ContextualProperty.resolveAs] to resolve the correct color for
+/// a given [BuildContext].
 class ThemedColor extends Color with ContextualThemed<Color?> {
+  /// The function to resolve [Color] with the given [ThemeData].
   @override
   final ThemedPropertyResolver<Color?> resolver;
 
@@ -193,7 +243,10 @@ class ThemedColor extends Color with ContextualThemed<Color?> {
       : super(resolver(ThemeData.fallback())?.toARGB32() ?? fallback);
 }
 
+/// Adds the [toARGB32] method to [Color] which gets
+/// added to the Flutter SDK in version 3.29
 extension ColorToArgb32 on Color {
+  /// Converts the Color into an [int] value.
   int toARGB32() {
     return _floatToInt8(a) << 24 |
         _floatToInt8(r) << 16 |
@@ -206,8 +259,14 @@ extension ColorToArgb32 on Color {
   }
 }
 
+/// Allows for a color to change depending on the current [BuildContext].
+///
+/// Run [ContextualizeColors.contextualize] (`Color.contextualize`) or
+/// [ContextualProperty.resolveAs] to resolve the correct color for
+/// a given [BuildContext].
 class ContextualColor extends Color
     with ContextualPropertyWithResolver<Color?> {
+  /// The function to resolve [Color] with the given [BuildContext].
   @override
   final ContextualPropertyResolver<Color?> resolver;
 

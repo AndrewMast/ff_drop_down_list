@@ -6,11 +6,12 @@ import 'search_text_field.dart';
 
 /// This is a model class used to represent an item in a selectable list
 class SelectedListItem<T> {
-  /// Indicates whether the item is selected
-  /// Default Value: [false]
+  /// Indicates whether the item is selected.
+  ///
+  /// Default Value: `false`
   bool isSelected;
 
-  /// Tha data of the item
+  /// Tha data of the item.
   final T data;
 
   /// Create a new [SelectedListItem].
@@ -86,7 +87,7 @@ class DropDownOptions<T> {
   /// Enables single or multiple selection for the drop down list items
   /// Set to `true` to allow multiple items to be selected at once
   ///
-  /// Default Value: [false]
+  /// Default Value: `false`
   final bool enableMultipleSelection;
 
   /// The maximum number of items that can be selected when [enableMultipleSelection] is true
@@ -107,19 +108,19 @@ class DropDownOptions<T> {
   /// A callback function triggered when a single item is selected from the list
   final SingleItemSelectionCallback<T>? onSingleSelected;
 
-  /// A function that takes an [index] and [dataItem] as a parameter and returns a custom widget
-  /// to display for the list item at that index
+  /// A function that takes an [int] index and [SelectedListItem] item as a parameter
+  /// and returns a custom widget to display for the list item at that index.
   final ListItemBuilder<T>? listItemBuilder;
 
-  /// A delegate used to configure the custom search functionality in the dropdown
+  /// A delegate used to configure the custom search functionality in the dropdown.
   final SearchDelegate<T>? searchDelegate;
 
   /// Controls whether the search list will be queried when the query string is empty.
   ///
   /// Particularly helpful when [searchDelegate] is set.
   ///
-  /// Default Value: [false], The widget will not search when the query string is empty
-  /// Set to [true] to search when the string is empty.
+  /// Default Value: `false`, The widget will not search when the query string is empty
+  /// Set to `true` to search when the string is empty.
   final bool searchOnEmpty;
 
   /// A delegate used to sort the list of items after every search
@@ -127,35 +128,35 @@ class DropDownOptions<T> {
 
   /// Specifies whether a modal bottom sheet should be displayed using the root navigator
   ///
-  /// Default Value: [false]
+  /// Default Value: `false`
   final bool useRootNavigator;
 
   /// Specifies whether the bottom sheet can be dragged up and down and dismissed by swiping downwards
   ///
-  /// Default Value: [true]
+  /// Default Value: `true`
   final bool enableDrag;
 
   /// Specifies whether the bottom sheet will be dismissed when the user taps on the scrim
   ///
-  /// Default Value: [true]
+  /// Default Value: `true`
   final bool isDismissible;
 
   /// The initial fractional value of the parent container's height to use when
   /// displaying the [DropDown] widget in [DraggableScrollableSheet]
   ///
-  /// Default Value: [0.7]
+  /// Default Value: `0.7`
   final double initialSheetSize;
 
   /// The minimum fractional value of the parent container's height to use when
   /// displaying the [DropDown] widget in [DraggableScrollableSheet]
   ///
-  /// Default Value: [0.3]
+  /// Default Value: `0.3`
   final double minSheetSize;
 
   /// The maximum fractional value of the parent container's height to use when
   /// displaying the [DropDown] widget in [DraggableScrollableSheet]
   ///
-  /// Default Value: [0.9]
+  /// Default Value: `0.9`
   final double maxSheetSize;
 
   /// A listener that monitors events bubbling up from the BottomSheet
@@ -224,14 +225,14 @@ class DropDownStyle {
 
   /// The widget displayed as a trailing icon when a list item is selected
   ///
-  /// This is used only when [enableMultipleSelection] is true
+  /// This is used only when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// Default Value: [Icon(Icons.check_box)]
   final Widget selectedTileTrailingWidget;
 
   /// The widget displayed as a trailing icon when a list item is not selected
   ///
-  /// This is used only when [enableMultipleSelection] is true
+  /// This is used only when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// Default Value: [Icon(Icons.check_box_outline_blank)]
   final Widget unselectedTileTrailingWidget;
@@ -266,37 +267,37 @@ class DropDownStyle {
   final Widget? headerWidget;
 
   /// Defines a custom widget to display as the child of the submit button
-  /// when [enableMultipleSelection] is true
+  /// when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// This is typically used with an [ElevatedButton]
   /// If not provided, a default button child will be used
   final Widget? submitButtonChild;
 
-  /// Specifies the text displayed on the submit button when [enableMultipleSelection] is true
+  /// Specifies the text displayed on the submit button when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// This is only used if a custom [submitButtonChild] widget is not provided
   ///
-  /// Default Value: [Submit]
+  /// Default Value: `"Submit"`
   final String submitButtonText;
 
   /// Defines a custom widget to display as the child of the clear button
-  /// when [enableMultipleSelection] is true
+  /// when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// This is typically used with an [ElevatedButton]
   /// If not provided, a default button child will be used
   final Widget? clearButtonChild;
 
-  /// Specifies the text displayed on the clear button when [enableMultipleSelection] is true
+  /// Specifies the text displayed on the clear button when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// This is only used if a custom [clearButtonChild] widget is not provided
   ///
-  /// Default Value: [Clear]
+  /// Default Value: `"Clear"`
   final String clearButtonText;
 
   /// Controls the visibility of the search widget
   ///
-  /// Default Value: [true], The widget will be visible by default
-  /// Set to [false] to hide the widget
+  /// Default Value: `true`, The widget will be visible by default
+  /// Set to `false` to hide the widget
   final bool isSearchVisible;
 
   /// The padding applied to the search text field
@@ -315,7 +316,7 @@ class DropDownStyle {
 
   /// Specifies the text displayed on the search widget as hint text
   ///
-  /// Default Value: [Search]
+  /// Default Value: `"Search"`
   final String searchHintText;
 
   /// The fill color for the search input field
@@ -357,12 +358,12 @@ class DropDownStyle {
 
   /// Controls whether the search input field will autofocus
   ///
-  /// Default Value: [false]
+  /// Default Value: `false`
   final bool searchAutofocus;
 
-  /// Controls the visibility of the "select all" widget when [enableMultipleSelection] is true
+  /// Controls the visibility of the "select all" widget when [DropDownOptions.enableMultipleSelection] is true
   ///
-  /// Default Value: [true]
+  /// Default Value: `true`
   final bool isSelectAllVisible;
 
   /// The padding applied to the "select all" and "deselect all" TextButtons
@@ -371,33 +372,33 @@ class DropDownStyle {
   final EdgeInsets? selectAllButtonPadding;
 
   /// Defines a custom widget to display as the child of the selectAll text button
-  /// when [enableMultipleSelection] and [isSelectAllVisible] is true
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
   ///
   /// This is typically used with an [TextButton]
   /// If not provided, a default text button child will be used
   final Widget? selectAllButtonChild;
 
   /// Specifies the text displayed on the selectAll text button
-  /// when [enableMultipleSelection] and [isSelectAllVisible] is true
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
   ///
   /// This is only used if a custom [selectAllButtonChild] widget is not provided
   ///
-  /// Default Value: [Select All]
+  /// Default Value: `"Select All"`
   final String selectAllButtonText;
 
   /// Defines a custom widget to display as the child of the deSelectAll text button
-  /// when [enableMultipleSelection] and [isSelectAllVisible] is true
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
   ///
   /// This is typically used with an [TextButton]
   /// If not provided, a default text button child will be used
   final Widget? deselectAllButtonChild;
 
   /// Specifies the text displayed on the deSelectAll text button
-  /// when [enableMultipleSelection] and [isSelectAllVisible] is true
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
   ///
   /// This is only used if a custom [deselectAllButtonChild] widget is not provided
   ///
-  /// Default Value: [Deselect All]
+  /// Default Value: `"Deselect All"`
   final String deselectAllButtonText;
 
   DropDownStyle({

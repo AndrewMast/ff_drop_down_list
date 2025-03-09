@@ -1,3 +1,6 @@
+/// Provides a way of creating properties that can change depending on the [BuildContext].
+library;
+
 import 'package:flutter/material.dart';
 
 typedef ContextualPropertyResolver<T> = T Function(BuildContext context);
