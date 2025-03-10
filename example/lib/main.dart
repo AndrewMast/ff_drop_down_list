@@ -170,11 +170,11 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Launches the basic example
   void launchExample() {
     DropDown<String>(
-      data: <SelectedListItem<String>>[
+      data: DropDownData(<SelectedListItem<String>>[
         SelectedListItem<String>(data: 'Tokyo'),
         SelectedListItem<String>(data: 'New York'),
         SelectedListItem<String>(data: 'London'),
-      ],
+      ]),
       options: DropDownOptions(
         onSingleSelected: (SelectedListItem<String> selectedItem) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -190,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Handles the text field tap for the city
   void onCityTextFieldTap() {
     DropDown<String>(
-      data: _listOfCities,
+      data: DropDownData(_listOfCities),
       options: DropDownOptions(
         enableMultipleSelection: true,
         maxSelectedItems: 3,
@@ -203,29 +203,29 @@ class _MyHomePageState extends State<MyHomePage> {
           showSnackBar(list.toString());
         },
       ),
-      styleBuilder: (context) => DropDownStyle(
-        searchCursorColor: Theme.of(context).colorScheme.onPrimaryContainer,
-        headerWidget: const Text(
-          kCities,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20.0,
-          ),
-        ),
-        submitButtonText: 'Save',
-        clearButtonText: 'Clear',
-        tileColor: BrightnessColor(
-            light: Colors.cyan.shade100, dark: Colors.cyan.shade700),
-        selectedTileColor: BrightnessColor(
-            light: Colors.cyan.shade200, dark: Colors.cyan.shade800),
-      ),
+      style: DropDownStyle.build((context) => DropDownStyle(
+            searchCursorColor: Theme.of(context).colorScheme.onPrimaryContainer,
+            headerWidget: const Text(
+              kCities,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+              ),
+            ),
+            submitButtonText: 'Save',
+            clearButtonText: 'Clear',
+            tileColor: BrightnessColor(
+                light: Colors.cyan.shade100, dark: Colors.cyan.shade700),
+            selectedTileColor: BrightnessColor(
+                light: Colors.cyan.shade200, dark: Colors.cyan.shade800),
+          )),
     ).show(context);
   }
 
   /// Handles the text field tap for the language
   void onLanguageTextFieldTap() {
     DropDown<LanguageModel>(
-      data: _listOfLanguages,
+      data: DropDownData(_listOfLanguages),
       options: DropDownOptions<LanguageModel>(
         enableMultipleSelection: true,
         maxSelectedItems: 3,

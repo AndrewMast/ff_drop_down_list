@@ -120,7 +120,8 @@ typedef BottomSheetListener = bool Function(
 );
 
 /// A function type definition for building a [DropDownStyle]
-typedef DropDownStyleBuilder = DropDownStyle Function(BuildContext context);
+typedef DropDownStyleBuilder = DropDownStyle Function(
+    BuildContext context, DropDownStyle baseStyle);
 
 /// Manages the options and behavior of a dropdown
 class DropDownOptions<T> {
@@ -205,7 +206,7 @@ class DropDownOptions<T> {
   /// when changes occur in the BottomSheet's draggable scrollable area
   final BottomSheetListener? bottomSheetListener;
 
-  DropDownOptions({
+  const DropDownOptions({
     Key? key,
     this.enableMultipleSelection = false,
     this.maxSelectedItems,
@@ -441,7 +442,13 @@ class DropDownStyle {
   /// Default Value: `"Deselect All"`
   final String deselectAllButtonText;
 
-  DropDownStyle({
+  /// A style builder to make a [DropDownStyle]
+  ///
+  /// If provided, all other style options will be ignored in favor of
+  /// the style options in the [DropDownStyle] returned by the builder.
+  final DropDownStyleBuilder? builder;
+
+  const DropDownStyle({
     this.listPadding,
     this.listSeparator,
     this.listSeparatorColor,
@@ -481,22 +488,31 @@ class DropDownStyle {
     this.selectAllButtonText = 'Select All',
     this.deselectAllButtonChild,
     this.deselectAllButtonText = 'Deselect All',
+    this.builder,
   });
+
+  const DropDownStyle.build(DropDownStyleBuilder builder)
+      : this(builder: builder);
+
+  DropDownStyle resolve(BuildContext context) =>
+      builder?.call(context, this) ?? this;
+}
+
+/// Manages the data of a dropdown
+class DropDownData<T> {
+  /// The data for the dropdown
+  final List<SelectedListItem<T>> data;
+
+  const DropDownData(this.data);
+
+  DropDownData.raw(List<T> items) : this(items.asSelectedListItems());
 }
 
 /// Manages the state and behavior of a dropdown
 /// This includes configuring and displaying a modal bottom sheet containing the dropdown items
 class DropDown<T> {
   /// The data for the dropdown
-  ///
-  /// If left blank, [unbuiltData] will used.
-  final List<SelectedListItem<T>>? data;
-
-  /// The unbuilt data for the dropdown
-  ///
-  /// Will be used if [data] is left blank.
-  /// Each item in the list will be wrapped in a [SelectedListItem].
-  final List<T>? unbuiltData;
+  final DropDownData<T> data;
 
   /// The options for the dropdown
   ///
@@ -505,33 +521,22 @@ class DropDown<T> {
 
   /// The style for the dropdown
   ///
-  /// If left blank, [styleBuilder] will be used to build a style.
-  /// If there is no provided builder, a default [DropDownStyle] will be used.
+  /// If left blank, a default [DropDownStyle] will be used.
   final DropDownStyle? style;
 
-  /// A style builder to make a [DropDownStyle] if [style] is not already provided.
-  ///
-  /// If left blank, a default [DropDownStyle] will be used.
-  final DropDownStyleBuilder? styleBuilder;
-
-  DropDown({
-    this.data,
-    this.unbuiltData,
+  const DropDown({
+    required this.data,
     this.options,
     this.style,
-    this.styleBuilder,
   });
 
   DropDownStyle getStyle(BuildContext context) {
-    return style ?? styleBuilder?.call(context) ?? DropDownStyle();
+    return style?.resolve(context) ?? DropDownStyle();
   }
 
   /// Show the drop down modal.
   Future<DropDownResponse<T>?> show(BuildContext context) async {
     final DropDownOptions<T> modalOptions = options ?? DropDownOptions<T>();
-
-    final List<SelectedListItem<T>> modalData =
-        data ?? unbuiltData?.asSelectedListItems() ?? [];
 
     return showModalBottomSheet<DropDownResponse<T>>(
       useRootNavigator: modalOptions.useRootNavigator,
@@ -548,7 +553,7 @@ class DropDown<T> {
       clipBehavior: Clip.hardEdge,
       builder: (BuildContext context) {
         return DropDownBody<T>(
-          data: modalData,
+          data: data,
           options: modalOptions,
           style: getStyle(context),
         );
@@ -559,7 +564,7 @@ class DropDown<T> {
 
 /// This is the dropdown widget will be displayed in the bottom sheet body
 class DropDownBody<T> extends StatefulWidget {
-  final List<SelectedListItem<T>> data;
+  final DropDownData<T> data;
 
   final DropDownOptions<T> options;
 
@@ -584,7 +589,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   void initState() {
     super.initState();
 
-    list = widget.data;
+    list = widget.data.data;
 
     _sortSearchList();
 
@@ -788,7 +793,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   /// Handle the submit button pressed
   void onSubmitButtonPressed() {
     _submitMultiple(
-        widget.data.where((element) => element.isSelected).toList());
+        widget.data.data.where((element) => element.isSelected).toList());
   }
 
   /// Handle the clear button pressed
@@ -803,15 +808,15 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   /// This helps when search enabled & show the filtered data in list.
   void _buildSearchList(String query) {
     if (query.isNotEmpty || widget.options.searchOnEmpty) {
-      list = widget.options.searchDelegate?.call(query, widget.data) ??
-          widget.data
+      list = widget.options.searchDelegate?.call(query, widget.data.data) ??
+          widget.data.data
               .where((element) => element.data
                   .toString()
                   .toLowerCase()
                   .contains(query.toLowerCase()))
               .toList();
     } else {
-      list = widget.data;
+      list = widget.data.data;
     }
 
     _sortSearchList();
