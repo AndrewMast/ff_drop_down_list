@@ -41,6 +41,8 @@ DropDown<String>(
 ).show(context);
 ```
 
+The [example project](example/lib/main.dart) contains more examples if needed.
+
 <br/>
 
 # Documentation
@@ -225,6 +227,33 @@ These custom models can be used in any option that accepts a `Color`.
 # Contribution
 
 Contributions to this project are welcome. Feel free to open issues and to submit pull requests for general fixes or improvements.
+
+<br/>
+
+# Todo
+
+These are some things I would like to add to the next release.
+- [ ] Show a message when the drop down has no items (empty list)
+    - [ ] Display basic widget
+    - [ ] Add option to customize message
+    - [ ] Add option to display custom widget
+- [ ] Show a message when the drop down has no search results (but has items)
+    - [ ] Display basic widget ("no options found from X total"?)
+    - [ ] Add option to customize message (function?)
+    - [ ] Add option to display custom widget
+- [ ] Update example project to include more intuitive examples
+    - [ ] Add examples to show the full capability of this package
+    - [ ] Add new gif previews to README
+    - [ ] Add more examples to README
+- [ ] Add tests
+    - [ ] Add tests for drop down
+    - [ ] Add tests for contextual colors
+
+<br/>
+
+# Changelog
+
+See the list of changes in the [changelog](CHANGELOG.md).
 
 <br/>
 
