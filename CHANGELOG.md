@@ -1,5 +1,7 @@
 ## Unreleased
 
+## 0.0.4
+
 * Updated inline documentation.
 * Added `DropDownResponse` and now `DropDown.show` returns `Future<DropDownResponse?>`.
 * Added `DropDownData` and moved style builder to `DropDownStyle`.
