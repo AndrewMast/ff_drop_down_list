@@ -5,6 +5,7 @@
 * Added `DropDownData` and moved style builder to `DropDownStyle`.
 * Added asynchronous data support through `DropDownData.future()`. `DropDownStyle` now has options to display a data loading widget and a failure widget.
 * Added new constructors for `DropDown`.
+* Updated README to reflect documentation changes.
 
 ## 0.0.3
 
@@ -14,7 +15,7 @@
 
 * Removed the default values for `searchFillColor` and `searchCursorColor` (now defaults to `null`).
 * Added style option `listSeparatorColor` to customize the default color of the list separator divider, which has been changed from `Colors.black12` to `Colors.transparent`.
-* Added contextual color models `BrightnessColor` and `ThemedColor` to allow for contextually aware colors ([see more](README.md#custom-color-models)).
+* Added contextual color models `BrightnessColor` and `ThemedColor` to allow for contextually aware colors ([see more](README.md#custom-color-classes)).
 * Allow for all options to utilize new contextual color models.
 * Changed `listSeparatorColor` default from `Colors.transparent` to `BrightnessColor.bwa(alpha: 0.08)` and changed `SearchTextField` icon colors to be dependant on the brightness.
 * Added documentation for the `BrightnessColor` and `ThemedColor` models.
@@ -28,7 +29,7 @@
 
 ## 0.0.1
 
-* Initial creation of `ff_drop_down_list` library, forked from `drop_down_list` library [(Mindinventory/drop_down_list)](https://github.com/Mindinventory/drop_down_list).
+* Initial creation of `ff_drop_down_list` library, forked from `drop_down_list` library [(MindInventory/drop_down_list)](https://github.com/Mindinventory/drop_down_list).
 * Added `searchOnEmpty` option to allow the `searchDelegate` to search on an empty query.
 * Added `listSortDelegate` option that will be called in the widget `initState()` as well as after every search.
 * Added `onMultipleSelection` and `onSingleSelection` callbacks. When `enableMultipleSelection` is `true`, `onMultipleSelection` is called alongside `onSelection`. Otherwise, `onSelection` is called normally with the `onSingleSelection` being called with a single `SelectedListItem` (not a list).
