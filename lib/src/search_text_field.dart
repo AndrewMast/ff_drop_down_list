@@ -45,7 +45,7 @@ class SearchTextField extends StatefulWidget {
 
   /// Controls whether the search input field will autofocus
   ///
-  /// Default Value: [false]
+  /// Default Value: `false`
   final bool autofocus;
 
   const SearchTextField({

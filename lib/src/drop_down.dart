@@ -1,92 +1,126 @@
-import 'package:ff_drop_down_list/model/contextual_property.dart';
-import 'package:ff_drop_down_list/model/contextual_colors.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
+import '../model/contextual_property.dart';
+import '../model/contextual_colors.dart';
 import 'search_text_field.dart';
 
-/// This is a model class used to represent an item in a selectable list
-class SelectedListItem<T> {
-  /// Indicates whether the item is selected
-  /// Default Value: [false]
-  bool isSelected;
-
-  /// Tha data of the item
-  final T data;
-
-  /// Create a new [SelectedListItem].
-  SelectedListItem({required this.data, this.isSelected = false});
-
-  /// Create a new selected [SelectedListItem].
-  SelectedListItem.selected(this.data) : isSelected = true;
-
-  /// Create a new unselected [SelectedListItem].
-  SelectedListItem.unselected(this.data) : isSelected = false;
-
-  /// Build a new [SelectedListItem].
-  static SelectedListItem<T> from<T>(T data, {bool isSelected = false}) {
-    return SelectedListItem(data: data, isSelected: isSelected);
-  }
-
-  /// Build a [SelectedListItem] list.
-  static List<SelectedListItem<T>> list<T>(List<T> items) {
-    return items.map(from<T>).toList();
-  }
-}
-
-extension ListAsSelectedListItems<T> on List<T> {
-  /// Convert the list into a list of [SelectedListItem].
-  List<SelectedListItem<T>> asSelectedListItems() {
-    return SelectedListItem.list(this);
-  }
-}
+/// An alias for a [List] of [DropDownItem]s.
+typedef DropDownList<T> = List<DropDownItem<T>>;
 
 /// A callback function that is invoked when items are selected
-typedef ItemSelectionCallback<T> = void Function(
-  List<SelectedListItem<T>> selectedItems,
-);
+typedef ItemSelectedCallback<T> = void Function(DropDownList<T> items);
 
 /// A callback function that is invoked when multiple items are selected
-typedef MultipleItemSelectionCallback<T> = void Function(
-  List<SelectedListItem<T>> selectedItems,
-);
+typedef MultipleItemSelectedCallback<T> = void Function(DropDownList<T> items);
 
 /// A callback function that is invoked when a single item is selected
-typedef SingleItemSelectionCallback<T> = void Function(
-  SelectedListItem<T> selectedItem,
-);
+typedef SingleItemSelectedCallback<T> = void Function(DropDownItem<T> item);
 
 /// A function type definition for building a widget for a specific list item
-typedef ListItemBuilder<T> = Widget Function(
-  int index,
-  SelectedListItem<T> dataItem,
-);
+typedef ListItemBuilder<T> = Widget Function(int index, DropDownItem<T> item);
 
 /// A function type definition for searching through a list of items based on the user's query
-typedef SearchDelegate<T> = List<SelectedListItem<T>> Function(
+typedef SearchDelegate<T> = DropDownList<T> Function(
   String query,
-  List<SelectedListItem<T>> dataItems,
+  DropDownList<T> items,
 );
 
 /// A function type definition for sorting through the list of items.
-typedef ListSortDelegate<T> = int Function(
-  SelectedListItem<T> a,
-  SelectedListItem<T> b,
-);
+typedef SortDelegate<T> = int Function(DropDownItem<T> a, DropDownItem<T> b);
 
 /// A function type definition for handling notifications from a draggable bottom sheet
 typedef BottomSheetListener = bool Function(
-  DraggableScrollableNotification draggableScrollableNotification,
+  DraggableScrollableNotification notification,
 );
 
 /// A function type definition for building a [DropDownStyle]
 typedef DropDownStyleBuilder = DropDownStyle Function(BuildContext context);
+
+/// This is a model class used to represent an item in a selectable list
+class DropDownItem<T> {
+  /// Tha data of the item.
+  final T data;
+
+  /// Indicates whether the item is selected.
+  ///
+  /// Default Value: `false`
+  bool isSelected;
+
+  /// Create a new [DropDownItem].
+  DropDownItem(this.data, {this.isSelected = false});
+
+  /// Create a new selected [DropDownItem].
+  DropDownItem.selected(this.data) : isSelected = true;
+
+  /// Create a new unselected [DropDownItem].
+  DropDownItem.unselected(this.data) : isSelected = false;
+
+  /// Build a [DropDownItem] list.
+  static DropDownList<T> list<T>(List<T> items) {
+    return items.map((item) => DropDownItem(item)).toList();
+  }
+}
+
+/// Adds a method to convert a list into a list of [DropDownItem]s.
+extension ListAsDropDownItems<T> on List<T> {
+  /// Convert the list into a list of [DropDownItem]s.
+  DropDownList<T> asDropDownItems() => DropDownItem.list(this);
+}
+
+/// Adds a method to convert a list of [DropDownItem] into a normal list.
+extension ListAsItemData<T> on DropDownList<T> {
+  /// Convert the list from a list of [DropDownItem]s to a list of normal items.
+  List<T> asItemData() => map<T>((item) => item.data).toList();
+}
+
+/// Manages the data of a dropdown
+class DropDownData<T> {
+  /// The items for the dropdown
+  ///
+  /// If [future] is provided, these items will be ignored.
+  final DropDownList<T>? items;
+
+  /// A future that will return the items for the dropdown
+  final Future<DropDownList<T>>? future;
+
+  /// Whether the items are coming from a [Future]
+  bool get isFuture => future != null;
+
+  /// Create a data object from a list of [DropDownItem]s
+  const DropDownData(DropDownList<T> this.items) : future = null;
+
+  /// Create a data object from a list of items
+  DropDownData.raw(List<T> items) : this(items.asDropDownItems());
+
+  /// Create a data object from a future that will return a list of [DropDownItem]s
+  const DropDownData.future(Future<DropDownList<T>> this.future) : items = null;
+
+  /// Create a data object from a future that will return a list of items
+  DropDownData.rawFuture(Future<List<T>> future)
+      : this.future(future.then((list) => list.asDropDownItems()));
+
+  /// Create a data object from either a list of [DropDownItem]s
+  /// or a future that will return a list
+  DropDownData.from(FutureOr<DropDownList<T>> data)
+      : items = data is DropDownList<T> ? data : null,
+        future = data is Future<DropDownList<T>> ? data : null;
+
+  /// Create a data object from either a list of items
+  /// or a future that will return a list
+  DropDownData.fromRaw(FutureOr<List<T>> data)
+      : items = data is List<T> ? data.asDropDownItems() : null,
+        future = data is Future<List<T>>
+            ? data.then((list) => list.asDropDownItems())
+            : null;
+}
 
 /// Manages the options and behavior of a dropdown
 class DropDownOptions<T> {
   /// Enables single or multiple selection for the drop down list items
   /// Set to `true` to allow multiple items to be selected at once
   ///
-  /// Default Value: [false]
+  /// Default Value: `false`
   final bool enableMultipleSelection;
 
   /// The maximum number of items that can be selected when [enableMultipleSelection] is true
@@ -99,63 +133,63 @@ class DropDownOptions<T> {
   final VoidCallback? onMaxSelectionReached;
 
   /// A callback function triggered when items are selected from the list
-  final ItemSelectionCallback<T>? onSelected;
+  final ItemSelectedCallback<T>? onSelected;
 
   /// A callback function triggered when multiple items are selected from the list
-  final MultipleItemSelectionCallback<T>? onMultipleSelected;
+  final MultipleItemSelectedCallback<T>? onMultipleSelected;
 
   /// A callback function triggered when a single item is selected from the list
-  final SingleItemSelectionCallback<T>? onSingleSelected;
+  final SingleItemSelectedCallback<T>? onSingleSelected;
 
-  /// A function that takes an [index] and [dataItem] as a parameter and returns a custom widget
-  /// to display for the list item at that index
+  /// A function that takes an [int] index and [DropDownItem] item as a parameter
+  /// and returns a custom widget to display for the list item at that index.
   final ListItemBuilder<T>? listItemBuilder;
-
-  /// A delegate used to configure the custom search functionality in the dropdown
-  final SearchDelegate<T>? searchDelegate;
 
   /// Controls whether the search list will be queried when the query string is empty.
   ///
   /// Particularly helpful when [searchDelegate] is set.
   ///
-  /// Default Value: [false], The widget will not search when the query string is empty
-  /// Set to [true] to search when the string is empty.
+  /// Default Value: `false`, The widget will not search when the query string is empty
+  /// Set to `true` to search when the string is empty.
   final bool searchOnEmpty;
 
+  /// A delegate used to configure the custom search functionality in the dropdown.
+  final SearchDelegate<T>? searchDelegate;
+
   /// A delegate used to sort the list of items after every search
-  final ListSortDelegate<T>? listSortDelegate;
+  final SortDelegate<T>? sortDelegate;
 
   /// Specifies whether a modal bottom sheet should be displayed using the root navigator
   ///
-  /// Default Value: [false]
+  /// Default Value: `false`
   final bool useRootNavigator;
 
   /// Specifies whether the bottom sheet can be dragged up and down and dismissed by swiping downwards
   ///
-  /// Default Value: [true]
+  /// Default Value: `true`
   final bool enableDrag;
 
   /// Specifies whether the bottom sheet will be dismissed when the user taps on the scrim
   ///
-  /// Default Value: [true]
+  /// Default Value: `true`
   final bool isDismissible;
 
   /// The initial fractional value of the parent container's height to use when
   /// displaying the [DropDown] widget in [DraggableScrollableSheet]
   ///
-  /// Default Value: [0.7]
+  /// Default Value: `0.7`
   final double initialSheetSize;
 
   /// The minimum fractional value of the parent container's height to use when
   /// displaying the [DropDown] widget in [DraggableScrollableSheet]
   ///
-  /// Default Value: [0.3]
+  /// Default Value: `0.3`
   final double minSheetSize;
 
   /// The maximum fractional value of the parent container's height to use when
   /// displaying the [DropDown] widget in [DraggableScrollableSheet]
   ///
-  /// Default Value: [0.9]
+  /// Default Value: `0.9`
   final double maxSheetSize;
 
   /// A listener that monitors events bubbling up from the BottomSheet
@@ -164,7 +198,7 @@ class DropDownOptions<T> {
   /// when changes occur in the BottomSheet's draggable scrollable area
   final BottomSheetListener? bottomSheetListener;
 
-  DropDownOptions({
+  const DropDownOptions({
     Key? key,
     this.enableMultipleSelection = false,
     this.maxSelectedItems,
@@ -173,9 +207,9 @@ class DropDownOptions<T> {
     this.onMultipleSelected,
     this.onSingleSelected,
     this.listItemBuilder,
-    this.searchDelegate,
     this.searchOnEmpty = false,
-    this.listSortDelegate,
+    this.searchDelegate,
+    this.sortDelegate,
     this.useRootNavigator = false,
     this.enableDrag = true,
     this.isDismissible = true,
@@ -224,14 +258,14 @@ class DropDownStyle {
 
   /// The widget displayed as a trailing icon when a list item is selected
   ///
-  /// This is used only when [enableMultipleSelection] is true
+  /// This is used only when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// Default Value: [Icon(Icons.check_box)]
   final Widget selectedTileTrailingWidget;
 
   /// The widget displayed as a trailing icon when a list item is not selected
   ///
-  /// This is used only when [enableMultipleSelection] is true
+  /// This is used only when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// Default Value: [Icon(Icons.check_box_outline_blank)]
   final Widget unselectedTileTrailingWidget;
@@ -266,37 +300,37 @@ class DropDownStyle {
   final Widget? headerWidget;
 
   /// Defines a custom widget to display as the child of the submit button
-  /// when [enableMultipleSelection] is true
+  /// when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// This is typically used with an [ElevatedButton]
   /// If not provided, a default button child will be used
   final Widget? submitButtonChild;
 
-  /// Specifies the text displayed on the submit button when [enableMultipleSelection] is true
+  /// Specifies the text displayed on the submit button when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// This is only used if a custom [submitButtonChild] widget is not provided
   ///
-  /// Default Value: [Submit]
+  /// Default Value: `"Submit"`
   final String submitButtonText;
 
   /// Defines a custom widget to display as the child of the clear button
-  /// when [enableMultipleSelection] is true
+  /// when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// This is typically used with an [ElevatedButton]
   /// If not provided, a default button child will be used
   final Widget? clearButtonChild;
 
-  /// Specifies the text displayed on the clear button when [enableMultipleSelection] is true
+  /// Specifies the text displayed on the clear button when [DropDownOptions.enableMultipleSelection] is true
   ///
   /// This is only used if a custom [clearButtonChild] widget is not provided
   ///
-  /// Default Value: [Clear]
+  /// Default Value: `"Clear"`
   final String clearButtonText;
 
   /// Controls the visibility of the search widget
   ///
-  /// Default Value: [true], The widget will be visible by default
-  /// Set to [false] to hide the widget
+  /// Default Value: `true`, The widget will be visible by default
+  /// Set to `false` to hide the widget
   final bool isSearchVisible;
 
   /// The padding applied to the search text field
@@ -315,7 +349,7 @@ class DropDownStyle {
 
   /// Specifies the text displayed on the search widget as hint text
   ///
-  /// Default Value: [Search]
+  /// Default Value: `"Search"`
   final String searchHintText;
 
   /// The fill color for the search input field
@@ -357,12 +391,12 @@ class DropDownStyle {
 
   /// Controls whether the search input field will autofocus
   ///
-  /// Default Value: [false]
+  /// Default Value: `false`
   final bool searchAutofocus;
 
-  /// Controls the visibility of the "select all" widget when [enableMultipleSelection] is true
+  /// Controls the visibility of the "select all" widget when [DropDownOptions.enableMultipleSelection] is true
   ///
-  /// Default Value: [true]
+  /// Default Value: `true`
   final bool isSelectAllVisible;
 
   /// The padding applied to the "select all" and "deselect all" TextButtons
@@ -371,36 +405,59 @@ class DropDownStyle {
   final EdgeInsets? selectAllButtonPadding;
 
   /// Defines a custom widget to display as the child of the selectAll text button
-  /// when [enableMultipleSelection] and [isSelectAllVisible] is true
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
   ///
   /// This is typically used with an [TextButton]
   /// If not provided, a default text button child will be used
   final Widget? selectAllButtonChild;
 
   /// Specifies the text displayed on the selectAll text button
-  /// when [enableMultipleSelection] and [isSelectAllVisible] is true
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
   ///
   /// This is only used if a custom [selectAllButtonChild] widget is not provided
   ///
-  /// Default Value: [Select All]
+  /// Default Value: `"Select All"`
   final String selectAllButtonText;
 
   /// Defines a custom widget to display as the child of the deSelectAll text button
-  /// when [enableMultipleSelection] and [isSelectAllVisible] is true
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
   ///
   /// This is typically used with an [TextButton]
   /// If not provided, a default text button child will be used
   final Widget? deselectAllButtonChild;
 
   /// Specifies the text displayed on the deSelectAll text button
-  /// when [enableMultipleSelection] and [isSelectAllVisible] is true
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
   ///
   /// This is only used if a custom [deselectAllButtonChild] widget is not provided
   ///
-  /// Default Value: [Deselect All]
+  /// Default Value: `"Deselect All"`
   final String deselectAllButtonText;
 
-  DropDownStyle({
+  /// The widget to display when data is being loaded from [DropDownData.future]
+  ///
+  /// Default Value: [Align(alignment: Alignment.topCenter, child: CircularProgressIndicator())]
+  final Widget? dataLoadingWidget;
+
+  /// The widget to display when data fails to load from [DropDownData.future]
+  ///
+  /// By default the text is pulled from [dataFailureText].
+  ///
+  /// Default Value: [Align(alignment: Alignment.topCenter, child: Text('Unable to load data.'))]
+  final Widget? dataFailureWidget;
+
+  /// The text to display when data fails to load from [DropDownData.future]
+  ///
+  /// Default Value: `"Unable to load data."`
+  final String dataFailureText;
+
+  /// A style builder to make a [DropDownStyle]
+  ///
+  /// If provided, all other style options will be ignored in favor of
+  /// the style options in the [DropDownStyle] returned by the builder.
+  final DropDownStyleBuilder? builder;
+
+  const DropDownStyle({
     this.listPadding,
     this.listSeparator,
     this.listSeparatorColor,
@@ -440,22 +497,68 @@ class DropDownStyle {
     this.selectAllButtonText = 'Select All',
     this.deselectAllButtonChild,
     this.deselectAllButtonText = 'Deselect All',
+    this.dataLoadingWidget,
+    this.dataFailureWidget,
+    this.dataFailureText = 'Unable to load data.',
+    this.builder,
   });
+
+  /// Create a [DropDownStyle] that will use a [DropDownStyleBuilder]
+  /// to resolve its style options using the provided [BuildContext].
+  const DropDownStyle.build(DropDownStyleBuilder builder)
+      : this(builder: builder);
+
+  /// Resolves the style by potentially using the optional [builder]
+  /// to create a contextually aware [DropDownStyle]
+  DropDownStyle resolve(BuildContext context) => builder?.call(context) ?? this;
+}
+
+/// The response returned from a drop down
+class DropDownResponse<T> {
+  /// Whether the response contains multiple items or a singular one
+  final bool multipleSelection;
+
+  /// The single selected item, null if [multipleSelection] is `true`
+  final DropDownItem<T>? single;
+
+  /// The multiple selected items, null if [multipleSelection] is `false`
+  final DropDownList<T>? multiple;
+
+  /// The selected items
+  final DropDownList<T> items;
+
+  /// The data of the selected items
+  List<T> get data => items.map<T>((item) => item.data).toList();
+
+  /// Create a new response
+  DropDownResponse({
+    required this.items,
+    this.single,
+    this.multiple,
+    this.multipleSelection = false,
+  });
+
+  /// Create a new response for a single selected item
+  DropDownResponse.single(DropDownItem<T> singleItem)
+      : single = singleItem,
+        multiple = null,
+        items = [singleItem],
+        multipleSelection = false;
+
+  /// Create a new response for multiple selected items
+  DropDownResponse.multiple(DropDownList<T> multipleItems)
+      : single = null,
+        multiple = multipleItems,
+        items = multipleItems,
+        multipleSelection = true;
 }
 
 /// Manages the state and behavior of a dropdown
-/// This includes configuring and displaying a modal bottom sheet containing the dropdown items
+///
+/// This includes configuring and displaying a modal bottom sheet containing the dropdown items.
 class DropDown<T> {
   /// The data for the dropdown
-  ///
-  /// If left blank, [unbuiltData] will used.
-  final List<SelectedListItem<T>>? data;
-
-  /// The unbuilt data for the dropdown
-  ///
-  /// Will be used if [data] is left blank.
-  /// Each item in the list will be wrapped in a [SelectedListItem].
-  final List<T>? unbuiltData;
+  final DropDownData<T> data;
 
   /// The options for the dropdown
   ///
@@ -464,40 +567,42 @@ class DropDown<T> {
 
   /// The style for the dropdown
   ///
-  /// If left blank, [styleBuilder] will be used to build a style.
-  /// If there is no provided builder, a default [DropDownStyle] will be used.
+  /// If left blank, a default [DropDownStyle] will be used.
   final DropDownStyle? style;
 
-  /// A style builder to make a [DropDownStyle] if [style] is not already provided.
-  ///
-  /// If left blank, a default [DropDownStyle] will be used.
-  final DropDownStyleBuilder? styleBuilder;
-
-  DropDown({
-    this.data,
-    this.unbuiltData,
+  const DropDown({
+    required this.data,
     this.options,
     this.style,
-    this.styleBuilder,
   });
 
-  DropDownStyle getStyle(BuildContext context) {
-    return style ?? styleBuilder?.call(context) ?? DropDownStyle();
-  }
+  /// Create a [DropDown] using a list of [DropDownItem]s
+  DropDown.items(DropDownList<T> items, {this.options, this.style})
+      : data = DropDownData(items);
+
+  /// Create a [DropDown] using a list of items
+  DropDown.raw(List<T> items, {this.options, this.style})
+      : data = DropDownData.raw(items);
+
+  /// Create a [DropDown] using a future that will return a list of [DropDownItem]s
+  DropDown.future(Future<DropDownList<T>> future, {this.options, this.style})
+      : data = DropDownData.future(future);
+
+  /// Create a [DropDown] using a future that will return a list of items
+  DropDown.rawFuture(Future<List<T>> future, {this.options, this.style})
+      : data = DropDownData.rawFuture(future);
 
   /// Show the drop down modal.
-  void show(BuildContext context) {
+  Future<DropDownResponse<T>?> show(BuildContext context) async {
     final DropDownOptions<T> modalOptions = options ?? DropDownOptions<T>();
+    final DropDownStyle modalStyle = style?.resolve(context) ?? DropDownStyle();
 
-    final List<SelectedListItem<T>> modalData =
-        data ?? unbuiltData?.asSelectedListItems() ?? [];
-
-    showModalBottomSheet(
+    return showModalBottomSheet<DropDownResponse<T>>(
       useRootNavigator: modalOptions.useRootNavigator,
       isScrollControlled: true,
       enableDrag: modalOptions.enableDrag,
       isDismissible: modalOptions.isDismissible,
-      shape: getStyle(context).border ??
+      shape: modalStyle.border ??
           const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(24.0),
@@ -507,18 +612,18 @@ class DropDown<T> {
       clipBehavior: Clip.hardEdge,
       builder: (BuildContext context) {
         return DropDownBody<T>(
-          data: modalData,
+          data: data,
           options: modalOptions,
-          style: getStyle(context),
+          style: style?.resolve(context) ?? DropDownStyle(),
         );
       },
     );
   }
 }
 
-/// This is the dropdown widget will be displayed in the bottom sheet body
+/// This is the dropdown widget that will be displayed in the bottom sheet body
 class DropDownBody<T> extends StatefulWidget {
-  final List<SelectedListItem<T>> data;
+  final DropDownData<T> data;
 
   final DropDownOptions<T> options;
 
@@ -537,17 +642,46 @@ class DropDownBody<T> extends StatefulWidget {
 
 class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   /// The list of items that are currently being displayed
-  List<SelectedListItem<T>> list = [];
+  DropDownList<T> list = [];
+
+  /// The full, unfiltered list of items
+  DropDownList<T> unfilteredList = [];
+
+  /// The current search query
+  String? search;
+
+  /// Whether the [DropDownData.future] is loading
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
 
-    list = widget.data;
+    if (widget.data.isFuture) {
+      isLoading = true;
+    } else {
+      unfilteredList = list = widget.data.items ?? [];
+    }
 
     _sortSearchList();
 
     _setSearchWidgetListener();
+  }
+
+  /// Saves the data coming from the [DropDownData.future]
+  /// if the data has not been saved yet.
+  void _saveFutureData(DropDownList<T>? items) {
+    if (items != null && isLoading) {
+      isLoading = false;
+
+      unfilteredList = list = items;
+
+      if (search != null) {
+        _performSearch(search!);
+      }
+
+      _sortSearchList();
+    }
   }
 
   @override
@@ -625,7 +759,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                         const EdgeInsets.all(10),
                     child: widget.style.searchWidget ??
                         SearchTextField(
-                          onTextChanged: _buildSearchList,
+                          onTextChanged: _updateSearchQuery,
                           hintText: widget.style.searchHintText,
                           fillColor: widget.style.searchFillColor,
                           cursorColor: widget.style.searchCursorColor,
@@ -656,7 +790,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                           EdgeInsets.zero,
                       child: TextButton(
                         onPressed: () => setState(() {
-                          for (var element in list) {
+                          for (final element in list) {
                             element.isSelected = !isSelectAll;
                           }
                         }),
@@ -671,74 +805,103 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
                 /// ListView (list of data with check box for multiple selection & on tile tap single selection)
                 Flexible(
-                  child: ListView.separated(
-                    controller: scrollController,
-                    itemCount: list.length,
-                    padding: widget.style.listPadding ?? EdgeInsets.zero,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      bool isSelected = list[index].isSelected;
-                      return Material(
-                        color: Colors.transparent,
-                        clipBehavior: Clip.hardEdge,
-                        child: ListTile(
-                          onTap: () {
-                            if (widget.options.enableMultipleSelection) {
-                              if (!isSelected &&
-                                  widget.options.maxSelectedItems != null) {
-                                if (list.where((e) => e.isSelected).length >=
-                                    widget.options.maxSelectedItems!) {
-                                  widget.options.onMaxSelectionReached?.call();
-                                  return;
-                                }
-                              }
-                              setState(() {
-                                list[index].isSelected = !isSelected;
-                              });
-                            } else {
-                              widget.options.onSelected?.call([list[index]]);
+                  child: FutureBuilder<DropDownList<T>>(
+                    future: widget.data.future,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<DropDownList<T>> snapshot) {
+                      if (snapshot.hasData) {
+                        _saveFutureData(snapshot.data);
+                      }
 
-                              widget.options.onSingleSelected
-                                  ?.call(list[index]);
-
-                              _onUnFocusKeyboardAndPop();
-                            }
+                      if (snapshot.connectionState == ConnectionState.none ||
+                          snapshot.hasData) {
+                        return ListView.separated(
+                          controller: scrollController,
+                          itemCount: list.length,
+                          padding: widget.style.listPadding ?? EdgeInsets.zero,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            bool isSelected = list[index].isSelected;
+                            return Material(
+                              color: Colors.transparent,
+                              clipBehavior: Clip.hardEdge,
+                              child: ListTile(
+                                onTap: () {
+                                  if (widget.options.enableMultipleSelection) {
+                                    if (!isSelected &&
+                                        widget.options.maxSelectedItems !=
+                                            null) {
+                                      if (list
+                                              .where((e) => e.isSelected)
+                                              .length >=
+                                          widget.options.maxSelectedItems!) {
+                                        widget.options.onMaxSelectionReached
+                                            ?.call();
+                                        return;
+                                      }
+                                    }
+                                    setState(() {
+                                      list[index].isSelected = !isSelected;
+                                    });
+                                  } else {
+                                    _submitSingle(list[index]);
+                                  }
+                                },
+                                title: widget.options.listItemBuilder
+                                        ?.call(index, list[index]) ??
+                                    Text(
+                                      list[index].data.toString(),
+                                    ),
+                                trailing: widget.options.enableMultipleSelection
+                                    ? isSelected
+                                        ? widget
+                                            .style.selectedTileTrailingWidget
+                                        : widget
+                                            .style.unselectedTileTrailingWidget
+                                    : const SizedBox.shrink(),
+                                contentPadding:
+                                    widget.style.tileContentPadding ??
+                                        const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                        ),
+                                tileColor: ContextualProperty.resolveAs(
+                                  (isSelected
+                                          ? widget.style.selectedTileColor
+                                          : null) ??
+                                      widget.style.tileColor ??
+                                      Colors.transparent,
+                                  context,
+                                ),
+                              ),
+                            );
                           },
-                          title: widget.options.listItemBuilder
-                                  ?.call(index, list[index]) ??
-                              Text(
-                                list[index].data.toString(),
+                          separatorBuilder: (context, index) =>
+                              widget.style.listSeparator ??
+                              Divider(
+                                color: ContextualProperty.resolveAs(
+                                  widget.style.listSeparatorColor ??
+                                      BrightnessColor.bwa(alpha: 0.08),
+                                  context,
+                                ),
+                                height: 0,
                               ),
-                          trailing: widget.options.enableMultipleSelection
-                              ? isSelected
-                                  ? widget.style.selectedTileTrailingWidget
-                                  : widget.style.unselectedTileTrailingWidget
-                              : const SizedBox.shrink(),
-                          contentPadding: widget.style.tileContentPadding ??
-                              const EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
-                          tileColor: ContextualProperty.resolveAs(
-                            (isSelected
-                                    ? widget.style.selectedTileColor
-                                    : null) ??
-                                widget.style.tileColor ??
-                                Colors.transparent,
-                            context,
-                          ),
-                        ),
-                      );
+                        );
+                      } else if (snapshot.connectionState ==
+                              ConnectionState.active ||
+                          snapshot.connectionState == ConnectionState.waiting) {
+                        return widget.style.dataLoadingWidget ??
+                            const Align(
+                              alignment: Alignment.topCenter,
+                              child: CircularProgressIndicator(),
+                            );
+                      } else {
+                        return widget.style.dataFailureWidget ??
+                            Align(
+                              alignment: Alignment.topCenter,
+                              child: Text(widget.style.dataFailureText),
+                            );
+                      }
                     },
-                    separatorBuilder: (context, index) =>
-                        widget.style.listSeparator ??
-                        Divider(
-                          color: ContextualProperty.resolveAs(
-                            widget.style.listSeparatorColor ??
-                                BrightnessColor.bwa(alpha: 0.08),
-                            context,
-                          ),
-                          height: 0,
-                        ),
                   ),
                 ),
               ],
@@ -751,55 +914,79 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
   /// Handle the submit button pressed
   void onSubmitButtonPressed() {
-    List<SelectedListItem<T>> selectedList =
-        widget.data.where((element) => element.isSelected).toList();
-
-    widget.options.onSelected?.call(selectedList);
-
-    widget.options.onMultipleSelected?.call(selectedList);
-
-    _onUnFocusKeyboardAndPop();
+    _submitMultiple(unfilteredList.where((item) => item.isSelected).toList());
   }
 
   /// Handle the clear button pressed
   void onClearButtonPressed() {
-    for (final element in list) {
-      element.isSelected = false;
+    for (final item in unfilteredList) {
+      item.isSelected = false;
     }
 
     setState(() {});
   }
 
   /// This helps when search enabled & show the filtered data in list.
-  void _buildSearchList(String query) {
-    if (query.isNotEmpty || widget.options.searchOnEmpty) {
-      list = widget.options.searchDelegate?.call(query, widget.data) ??
-          widget.data
-              .where((element) => element.data
-                  .toString()
-                  .toLowerCase()
-                  .contains(query.toLowerCase()))
-              .toList();
-    } else {
-      list = widget.data;
-    }
+  void _updateSearchQuery(String query) {
+    search = query;
+
+    _performSearch(query);
 
     _sortSearchList();
 
     setState(() {});
   }
 
-  /// Sorts the list items using the [DropDownOptions.listSortDelegate]
-  void _sortSearchList() {
-    if (widget.options.listSortDelegate != null) {
-      list.sort(widget.options.listSortDelegate);
+  /// Perform the search on all of the items.
+  void _performSearch(String query) {
+    if (query.isNotEmpty || widget.options.searchOnEmpty) {
+      list = widget.options.searchDelegate?.call(query, unfilteredList) ??
+          _basicSearch(query);
+    } else {
+      list = unfilteredList;
     }
   }
 
+  /// Perform a basic search.
+  DropDownList<T> _basicSearch(String query) {
+    String searchQuery = query.toLowerCase();
+
+    return unfilteredList
+        .where(
+          (item) => item.data.toString().toLowerCase().contains(searchQuery),
+        )
+        .toList();
+  }
+
+  /// Sorts the list items using the [DropDownOptions.sortDelegate].
+  void _sortSearchList() {
+    if (widget.options.sortDelegate != null) {
+      list.sort(widget.options.sortDelegate);
+    }
+  }
+
+  /// Submits multiple items and closes the modal.
+  void _submitMultiple(DropDownList<T> items) {
+    widget.options.onSelected?.call(items);
+
+    widget.options.onMultipleSelected?.call(items);
+
+    _onUnFocusKeyboardAndPop(DropDownResponse.multiple(items));
+  }
+
+  /// Submits a single item and closes the modal.
+  void _submitSingle(DropDownItem<T> item) {
+    widget.options.onSelected?.call([item]);
+
+    widget.options.onSingleSelected?.call(item);
+
+    _onUnFocusKeyboardAndPop(DropDownResponse.single(item));
+  }
+
   /// This helps to UnFocus the keyboard & pop from the bottom sheet.
-  void _onUnFocusKeyboardAndPop() {
+  void _onUnFocusKeyboardAndPop([DropDownResponse<T>? response]) {
     FocusScope.of(context).unfocus();
-    Navigator.of(context).pop();
+    Navigator.of(context).pop<DropDownResponse<T>>(response);
   }
 
   /// This helps to add listener on search field controller
@@ -807,7 +994,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     TextFormField? searchField = widget.style.searchWidget;
 
     searchField?.controller?.addListener(() {
-      _buildSearchList(searchField.controller?.text ?? '');
+      _updateSearchQuery(searchField.controller?.text ?? '');
     });
   }
 }

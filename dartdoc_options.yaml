@@ -1,0 +1,5 @@
+dartdoc:
+  linkToSource:
+    root: '.'
+    uriTemplate: 'https://github.com/AndrewMast/ff_drop_down_list/blob/%r%/%f%#L%l%'
+    # uriTemplate: 'https://github.com/AndrewMast/ff_drop_down_list/blob/main/%f%#L%l%'

@@ -1,4 +1,4 @@
-// ignore: unnecessary_library_name
-library ff_drop_down_list;
+/// Provides a customizable drop down modal.
+library;
 
 export 'src/drop_down.dart';
