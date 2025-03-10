@@ -6,6 +6,7 @@
 * Added asynchronous data support through `DropDownData.future()`. `DropDownStyle` now has options to display a data loading widget and a failure widget.
 * Added new constructors for `DropDown`.
 * Updated README to reflect documentation changes.
+* Updated basic example in README and removed outdated preview gifs.
 
 ## 0.0.3
 

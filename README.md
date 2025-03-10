@@ -12,18 +12,6 @@ Forked from [MindInventory/drop_down_list](https://github.com/Mindinventory/drop
 
 <br/>
 
-# Preview
-
-### Dropdown with a Multiple Selection
-
-![drop_down_with_multiple_selection](https://github.com/AndrewMast/ff_drop_down_list/raw/main/screenshots/drop_down_with_multiple_selection.gif)
-
-### Dropdown with a Single Selection
-
-![drop_down_with_single_selection](https://github.com/AndrewMast/ff_drop_down_list/raw/main/screenshots/drop_down_with_single_selection.gif)
-
-<br/><br/>
-
 # Basic Usage
 
 Import it to your project file
@@ -32,15 +20,15 @@ Import it to your project file
 import 'package:ff_drop_down_list/ff_drop_down_list.dart';
 ```
 
-And add it in its most basic form like it:
+And create a drop down in its most basic form like so:
 
 ```dart
 DropDown<String>(
-  data: <DropDownItem<String>>[
-    DropDownItem<String>(data: 'Tokyo'),
-    DropDownItem<String>(data: 'New York'),
-    DropDownItem<String>(data: 'London'),
-  ],
+  data: DropDownData([
+    DropDownItem<String>('Tokyo'),
+    DropDownItem<String>('New York'),
+    DropDownItem<String>('London'),
+  ]),
   options: DropDownOptions(
     onSingleSelected: (DropDownItem<String> selectedItem) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -53,7 +41,7 @@ DropDown<String>(
 ).show(context);
 ```
 
-<br/><br/>
+<br/>
 
 # Documentation
 
