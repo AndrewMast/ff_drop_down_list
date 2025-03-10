@@ -9,57 +9,43 @@ import 'search_text_field.dart';
 typedef DropDownList<T> = List<DropDownItem<T>>;
 
 /// A callback function that is invoked when items are selected
-typedef ItemSelectionCallback<T> = void Function(
-  DropDownList<T> selectedItems,
-);
+typedef ItemSelectedCallback<T> = void Function(DropDownList<T> items);
 
 /// A callback function that is invoked when multiple items are selected
-typedef MultipleItemSelectionCallback<T> = void Function(
-  DropDownList<T> selectedItems,
-);
+typedef MultipleItemSelectedCallback<T> = void Function(DropDownList<T> items);
 
 /// A callback function that is invoked when a single item is selected
-typedef SingleItemSelectionCallback<T> = void Function(
-  DropDownItem<T> selectedItem,
-);
+typedef SingleItemSelectedCallback<T> = void Function(DropDownItem<T> item);
 
 /// A function type definition for building a widget for a specific list item
-typedef ListItemBuilder<T> = Widget Function(
-  int index,
-  DropDownItem<T> dataItem,
-);
+typedef ListItemBuilder<T> = Widget Function(int index, DropDownItem<T> item);
 
 /// A function type definition for searching through a list of items based on the user's query
 typedef SearchDelegate<T> = DropDownList<T> Function(
   String query,
-  DropDownList<T> dataItems,
+  DropDownList<T> items,
 );
 
 /// A function type definition for sorting through the list of items.
-typedef ListSortDelegate<T> = int Function(
-  DropDownItem<T> a,
-  DropDownItem<T> b,
-);
+typedef SortDelegate<T> = int Function(DropDownItem<T> a, DropDownItem<T> b);
 
 /// A function type definition for handling notifications from a draggable bottom sheet
 typedef BottomSheetListener = bool Function(
-  DraggableScrollableNotification draggableScrollableNotification,
+  DraggableScrollableNotification notification,
 );
 
 /// A function type definition for building a [DropDownStyle]
-typedef DropDownStyleBuilder = DropDownStyle Function(
-  BuildContext context,
-);
+typedef DropDownStyleBuilder = DropDownStyle Function(BuildContext context);
 
 /// This is a model class used to represent an item in a selectable list
 class DropDownItem<T> {
+  /// Tha data of the item.
+  final T data;
+
   /// Indicates whether the item is selected.
   ///
   /// Default Value: `false`
   bool isSelected;
-
-  /// Tha data of the item.
-  final T data;
 
   /// Create a new [DropDownItem].
   DropDownItem(this.data, {this.isSelected = false});
@@ -76,12 +62,14 @@ class DropDownItem<T> {
   }
 }
 
+/// Adds a method to convert a list into a list of [DropDownItem]s.
 extension ListAsDropDownItems<T> on List<T> {
   /// Convert the list into a list of [DropDownItem]s.
   DropDownList<T> asDropDownItems() => DropDownItem.list(this);
 }
 
-extension ListAsData<T> on DropDownList<T> {
+/// Adds a method to convert a list of [DropDownItem] into a normal list.
+extension ListAsItemData<T> on DropDownList<T> {
   /// Convert the list from a list of [DropDownItem]s to a list of normal items.
   List<T> asItemData() => map<T>((item) => item.data).toList();
 }
@@ -145,20 +133,17 @@ class DropDownOptions<T> {
   final VoidCallback? onMaxSelectionReached;
 
   /// A callback function triggered when items are selected from the list
-  final ItemSelectionCallback<T>? onSelected;
+  final ItemSelectedCallback<T>? onSelected;
 
   /// A callback function triggered when multiple items are selected from the list
-  final MultipleItemSelectionCallback<T>? onMultipleSelected;
+  final MultipleItemSelectedCallback<T>? onMultipleSelected;
 
   /// A callback function triggered when a single item is selected from the list
-  final SingleItemSelectionCallback<T>? onSingleSelected;
+  final SingleItemSelectedCallback<T>? onSingleSelected;
 
   /// A function that takes an [int] index and [DropDownItem] item as a parameter
   /// and returns a custom widget to display for the list item at that index.
   final ListItemBuilder<T>? listItemBuilder;
-
-  /// A delegate used to configure the custom search functionality in the dropdown.
-  final SearchDelegate<T>? searchDelegate;
 
   /// Controls whether the search list will be queried when the query string is empty.
   ///
@@ -168,8 +153,11 @@ class DropDownOptions<T> {
   /// Set to `true` to search when the string is empty.
   final bool searchOnEmpty;
 
+  /// A delegate used to configure the custom search functionality in the dropdown.
+  final SearchDelegate<T>? searchDelegate;
+
   /// A delegate used to sort the list of items after every search
-  final ListSortDelegate<T>? listSortDelegate;
+  final SortDelegate<T>? sortDelegate;
 
   /// Specifies whether a modal bottom sheet should be displayed using the root navigator
   ///
@@ -219,9 +207,9 @@ class DropDownOptions<T> {
     this.onMultipleSelected,
     this.onSingleSelected,
     this.listItemBuilder,
-    this.searchDelegate,
     this.searchOnEmpty = false,
-    this.listSortDelegate,
+    this.searchDelegate,
+    this.sortDelegate,
     this.useRootNavigator = false,
     this.enableDrag = true,
     this.isDismissible = true,
@@ -520,6 +508,8 @@ class DropDownStyle {
   const DropDownStyle.build(DropDownStyleBuilder builder)
       : this(builder: builder);
 
+  /// Resolves the style by potentially using the optional [builder]
+  /// to create a contextually aware [DropDownStyle]
   DropDownStyle resolve(BuildContext context) => builder?.call(context) ?? this;
 }
 
@@ -564,7 +554,8 @@ class DropDownResponse<T> {
 }
 
 /// Manages the state and behavior of a dropdown
-/// This includes configuring and displaying a modal bottom sheet containing the dropdown items
+///
+/// This includes configuring and displaying a modal bottom sheet containing the dropdown items.
 class DropDown<T> {
   /// The data for the dropdown
   final DropDownData<T> data;
@@ -630,7 +621,7 @@ class DropDown<T> {
   }
 }
 
-/// This is the dropdown widget will be displayed in the bottom sheet body
+/// This is the dropdown widget that will be displayed in the bottom sheet body
 class DropDownBody<T> extends StatefulWidget {
   final DropDownData<T> data;
 
@@ -677,8 +668,12 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     _setSearchWidgetListener();
   }
 
-  void saveFutureData(DropDownList<T>? items) {
+  /// Saves the data coming from the [DropDownData.future]
+  /// if the data has not been saved yet.
+  void _saveFutureData(DropDownList<T>? items) {
     if (items != null && isLoading) {
+      isLoading = false;
+
       unfilteredList = list = items;
 
       if (search != null) {
@@ -686,8 +681,6 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
       }
 
       _sortSearchList();
-
-      isLoading = false;
     }
   }
 
@@ -797,7 +790,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                           EdgeInsets.zero,
                       child: TextButton(
                         onPressed: () => setState(() {
-                          for (var element in list) {
+                          for (final element in list) {
                             element.isSelected = !isSelectAll;
                           }
                         }),
@@ -817,7 +810,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                     builder: (BuildContext context,
                         AsyncSnapshot<DropDownList<T>> snapshot) {
                       if (snapshot.hasData) {
-                        saveFutureData(snapshot.data);
+                        _saveFutureData(snapshot.data);
                       }
 
                       if (snapshot.connectionState == ConnectionState.none ||
@@ -944,6 +937,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     setState(() {});
   }
 
+  /// Perform the search on all of the items.
   void _performSearch(String query) {
     if (query.isNotEmpty || widget.options.searchOnEmpty) {
       list = widget.options.searchDelegate?.call(query, unfilteredList) ??
@@ -953,6 +947,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     }
   }
 
+  /// Perform a basic search.
   DropDownList<T> _basicSearch(String query) {
     String searchQuery = query.toLowerCase();
 
@@ -963,13 +958,14 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
         .toList();
   }
 
-  /// Sorts the list items using the [DropDownOptions.listSortDelegate]
+  /// Sorts the list items using the [DropDownOptions.sortDelegate].
   void _sortSearchList() {
-    if (widget.options.listSortDelegate != null) {
-      list.sort(widget.options.listSortDelegate);
+    if (widget.options.sortDelegate != null) {
+      list.sort(widget.options.sortDelegate);
     }
   }
 
+  /// Submits multiple items and closes the modal.
   void _submitMultiple(DropDownList<T> items) {
     widget.options.onSelected?.call(items);
 
@@ -978,6 +974,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     _onUnFocusKeyboardAndPop(DropDownResponse.multiple(items));
   }
 
+  /// Submits a single item and closes the modal.
   void _submitSingle(DropDownItem<T> item) {
     widget.options.onSelected?.call([item]);
 

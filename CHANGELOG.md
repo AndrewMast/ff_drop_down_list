@@ -7,6 +7,7 @@
 * Added new constructors for `DropDown`.
 * Updated README to reflect documentation changes.
 * Updated basic example in README and removed outdated preview gifs.
+* Renamed some of the type definitions and renamed the `listSortDelegate` option to `sortDelegate` to match the `searchDelegate` option.
 
 ## 0.0.3
 
