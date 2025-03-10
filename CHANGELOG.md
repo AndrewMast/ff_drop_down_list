@@ -1,11 +1,13 @@
 ## Unreleased
 
-## 0.0.3
-
-* Fixed `Color.toARGB32()` not working on Flutter 3.27.3 by adding an extension.
 * Updated inline documentation.
 * Added `DropDownResponse` and now `DropDown.show` returns `Future<DropDownResponse?>`.
 * Added `DropDownData` and moved style builder to `DropDownStyle`.
+* Added asynchronous data support through `DropDownData.future()`. `DropDownStyle` now has options to display a data loading widget and a failure widget.
+
+## 0.0.3
+
+* Fixed `Color.toARGB32()` not working on Flutter 3.27.3 by adding an extension.
 
 ## 0.0.2
 

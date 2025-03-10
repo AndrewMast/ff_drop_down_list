@@ -1,7 +1,8 @@
-import 'package:ff_drop_down_list/model/contextual_property.dart';
-import 'package:ff_drop_down_list/model/contextual_colors.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
+import '../model/contextual_property.dart';
+import '../model/contextual_colors.dart';
 import 'search_text_field.dart';
 
 /// This is a model class used to represent an item in a selectable list
@@ -120,8 +121,7 @@ typedef BottomSheetListener = bool Function(
 );
 
 /// A function type definition for building a [DropDownStyle]
-typedef DropDownStyleBuilder = DropDownStyle Function(
-    BuildContext context, DropDownStyle baseStyle);
+typedef DropDownStyleBuilder = DropDownStyle Function(BuildContext context);
 
 /// Manages the options and behavior of a dropdown
 class DropDownOptions<T> {
@@ -442,6 +442,23 @@ class DropDownStyle {
   /// Default Value: `"Deselect All"`
   final String deselectAllButtonText;
 
+  /// The widget to display when data is being loaded from [DropDownData.future]
+  ///
+  /// Default Value: [Align(alignment: Alignment.topCenter, child: CircularProgressIndicator())]
+  final Widget? dataLoadingWidget;
+
+  /// The widget to display when data fails to load from [DropDownData.future]
+  ///
+  /// By default the text is pulled from [dataFailureText].
+  ///
+  /// Default Value: [Align(alignment: Alignment.topCenter, child: Text('Unable to load data.'))]
+  final Widget? dataFailureWidget;
+
+  /// The text to display when data fails to load from [DropDownData.future]
+  ///
+  /// Default Value: `"Unable to load data."`
+  final String dataFailureText;
+
   /// A style builder to make a [DropDownStyle]
   ///
   /// If provided, all other style options will be ignored in favor of
@@ -488,24 +505,58 @@ class DropDownStyle {
     this.selectAllButtonText = 'Select All',
     this.deselectAllButtonChild,
     this.deselectAllButtonText = 'Deselect All',
+    this.dataLoadingWidget,
+    this.dataFailureWidget,
+    this.dataFailureText = 'Unable to load data.',
     this.builder,
   });
 
   const DropDownStyle.build(DropDownStyleBuilder builder)
       : this(builder: builder);
 
-  DropDownStyle resolve(BuildContext context) =>
-      builder?.call(context, this) ?? this;
+  DropDownStyle resolve(BuildContext context) => builder?.call(context) ?? this;
 }
 
 /// Manages the data of a dropdown
 class DropDownData<T> {
-  /// The data for the dropdown
-  final List<SelectedListItem<T>> data;
+  /// The items for the dropdown
+  ///
+  /// If [future] is provided, these items will be ignored.
+  final List<SelectedListItem<T>>? items;
 
-  const DropDownData(this.data);
+  /// A future that will return the items for the dropdown
+  final Future<List<SelectedListItem<T>>>? future;
 
+  /// Whether the items are coming from a [Future]
+  bool get isFuture => future != null;
+
+  /// Create a data object from a list of [SelectedListItem]s
+  const DropDownData(List<SelectedListItem<T>> this.items) : future = null;
+
+  /// Create a data object from a list of items
   DropDownData.raw(List<T> items) : this(items.asSelectedListItems());
+
+  /// Create a data object from a future that will return a list of [SelectedListItem]s
+  const DropDownData.future(Future<List<SelectedListItem<T>>> this.future)
+      : items = null;
+
+  /// Create a data object from a future that will return a list of items
+  DropDownData.rawFuture(Future<List<T>> future)
+      : this.future(future.then((list) => list.asSelectedListItems()));
+
+  /// Create a data object from either a list of [SelectedListItem]s
+  /// or a future that will return a list
+  DropDownData.from(FutureOr<List<SelectedListItem<T>>> data)
+      : items = data is List<SelectedListItem<T>> ? data : null,
+        future = data is Future<List<SelectedListItem<T>>> ? data : null;
+
+  /// Create a data object from either a list of items
+  /// or a future that will return a list
+  DropDownData.fromRaw(FutureOr<List<T>> data)
+      : items = data is List<T> ? data.asSelectedListItems() : null,
+        future = data is Future<List<T>>
+            ? data.then((list) => list.asSelectedListItems())
+            : null;
 }
 
 /// Manages the state and behavior of a dropdown
@@ -585,15 +636,42 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   /// The list of items that are currently being displayed
   List<SelectedListItem<T>> list = [];
 
+  /// The full, unfiltered list of items
+  List<SelectedListItem<T>> unfilteredList = [];
+
+  /// The current search query
+  String? search;
+
+  /// Whether the [DropDownData.future] is loading
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
 
-    list = widget.data.data;
+    if (widget.data.isFuture) {
+      isLoading = true;
+    } else {
+      unfilteredList = list = widget.data.items ?? [];
+    }
 
     _sortSearchList();
 
     _setSearchWidgetListener();
+  }
+
+  void saveFutureData(List<SelectedListItem<T>>? items) {
+    if (items != null && isLoading) {
+      unfilteredList = list = items;
+
+      if (search != null) {
+        _performSearch(search!);
+      }
+
+      _sortSearchList();
+
+      isLoading = false;
+    }
   }
 
   @override
@@ -671,7 +749,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                         const EdgeInsets.all(10),
                     child: widget.style.searchWidget ??
                         SearchTextField(
-                          onTextChanged: _buildSearchList,
+                          onTextChanged: _updateSearchQuery,
                           hintText: widget.style.searchHintText,
                           fillColor: widget.style.searchFillColor,
                           cursorColor: widget.style.searchCursorColor,
@@ -717,69 +795,103 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
                 /// ListView (list of data with check box for multiple selection & on tile tap single selection)
                 Flexible(
-                  child: ListView.separated(
-                    controller: scrollController,
-                    itemCount: list.length,
-                    padding: widget.style.listPadding ?? EdgeInsets.zero,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      bool isSelected = list[index].isSelected;
-                      return Material(
-                        color: Colors.transparent,
-                        clipBehavior: Clip.hardEdge,
-                        child: ListTile(
-                          onTap: () {
-                            if (widget.options.enableMultipleSelection) {
-                              if (!isSelected &&
-                                  widget.options.maxSelectedItems != null) {
-                                if (list.where((e) => e.isSelected).length >=
-                                    widget.options.maxSelectedItems!) {
-                                  widget.options.onMaxSelectionReached?.call();
-                                  return;
-                                }
-                              }
-                              setState(() {
-                                list[index].isSelected = !isSelected;
-                              });
-                            } else {
-                              _submitSingle(list[index]);
-                            }
+                  child: FutureBuilder<List<SelectedListItem<T>>>(
+                    future: widget.data.future,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<SelectedListItem<T>>> snapshot) {
+                      if (snapshot.hasData) {
+                        saveFutureData(snapshot.data);
+                      }
+
+                      if (snapshot.connectionState == ConnectionState.none ||
+                          snapshot.hasData) {
+                        return ListView.separated(
+                          controller: scrollController,
+                          itemCount: list.length,
+                          padding: widget.style.listPadding ?? EdgeInsets.zero,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            bool isSelected = list[index].isSelected;
+                            return Material(
+                              color: Colors.transparent,
+                              clipBehavior: Clip.hardEdge,
+                              child: ListTile(
+                                onTap: () {
+                                  if (widget.options.enableMultipleSelection) {
+                                    if (!isSelected &&
+                                        widget.options.maxSelectedItems !=
+                                            null) {
+                                      if (list
+                                              .where((e) => e.isSelected)
+                                              .length >=
+                                          widget.options.maxSelectedItems!) {
+                                        widget.options.onMaxSelectionReached
+                                            ?.call();
+                                        return;
+                                      }
+                                    }
+                                    setState(() {
+                                      list[index].isSelected = !isSelected;
+                                    });
+                                  } else {
+                                    _submitSingle(list[index]);
+                                  }
+                                },
+                                title: widget.options.listItemBuilder
+                                        ?.call(index, list[index]) ??
+                                    Text(
+                                      list[index].data.toString(),
+                                    ),
+                                trailing: widget.options.enableMultipleSelection
+                                    ? isSelected
+                                        ? widget
+                                            .style.selectedTileTrailingWidget
+                                        : widget
+                                            .style.unselectedTileTrailingWidget
+                                    : const SizedBox.shrink(),
+                                contentPadding:
+                                    widget.style.tileContentPadding ??
+                                        const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                        ),
+                                tileColor: ContextualProperty.resolveAs(
+                                  (isSelected
+                                          ? widget.style.selectedTileColor
+                                          : null) ??
+                                      widget.style.tileColor ??
+                                      Colors.transparent,
+                                  context,
+                                ),
+                              ),
+                            );
                           },
-                          title: widget.options.listItemBuilder
-                                  ?.call(index, list[index]) ??
-                              Text(
-                                list[index].data.toString(),
+                          separatorBuilder: (context, index) =>
+                              widget.style.listSeparator ??
+                              Divider(
+                                color: ContextualProperty.resolveAs(
+                                  widget.style.listSeparatorColor ??
+                                      BrightnessColor.bwa(alpha: 0.08),
+                                  context,
+                                ),
+                                height: 0,
                               ),
-                          trailing: widget.options.enableMultipleSelection
-                              ? isSelected
-                                  ? widget.style.selectedTileTrailingWidget
-                                  : widget.style.unselectedTileTrailingWidget
-                              : const SizedBox.shrink(),
-                          contentPadding: widget.style.tileContentPadding ??
-                              const EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
-                          tileColor: ContextualProperty.resolveAs(
-                            (isSelected
-                                    ? widget.style.selectedTileColor
-                                    : null) ??
-                                widget.style.tileColor ??
-                                Colors.transparent,
-                            context,
-                          ),
-                        ),
-                      );
+                        );
+                      } else if (snapshot.connectionState ==
+                              ConnectionState.active ||
+                          snapshot.connectionState == ConnectionState.waiting) {
+                        return widget.style.dataLoadingWidget ??
+                            const Align(
+                              alignment: Alignment.topCenter,
+                              child: CircularProgressIndicator(),
+                            );
+                      } else {
+                        return widget.style.dataFailureWidget ??
+                            Align(
+                              alignment: Alignment.topCenter,
+                              child: Text(widget.style.dataFailureText),
+                            );
+                      }
                     },
-                    separatorBuilder: (context, index) =>
-                        widget.style.listSeparator ??
-                        Divider(
-                          color: ContextualProperty.resolveAs(
-                            widget.style.listSeparatorColor ??
-                                BrightnessColor.bwa(alpha: 0.08),
-                            context,
-                          ),
-                          height: 0,
-                        ),
                   ),
                 ),
               ],
@@ -792,36 +904,46 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
   /// Handle the submit button pressed
   void onSubmitButtonPressed() {
-    _submitMultiple(
-        widget.data.data.where((element) => element.isSelected).toList());
+    _submitMultiple(unfilteredList.where((item) => item.isSelected).toList());
   }
 
   /// Handle the clear button pressed
   void onClearButtonPressed() {
-    for (final element in list) {
-      element.isSelected = false;
+    for (final item in unfilteredList) {
+      item.isSelected = false;
     }
 
     setState(() {});
   }
 
   /// This helps when search enabled & show the filtered data in list.
-  void _buildSearchList(String query) {
-    if (query.isNotEmpty || widget.options.searchOnEmpty) {
-      list = widget.options.searchDelegate?.call(query, widget.data.data) ??
-          widget.data.data
-              .where((element) => element.data
-                  .toString()
-                  .toLowerCase()
-                  .contains(query.toLowerCase()))
-              .toList();
-    } else {
-      list = widget.data.data;
-    }
+  void _updateSearchQuery(String query) {
+    search = query;
+
+    _performSearch(query);
 
     _sortSearchList();
 
     setState(() {});
+  }
+
+  void _performSearch(String query) {
+    if (query.isNotEmpty || widget.options.searchOnEmpty) {
+      list = widget.options.searchDelegate?.call(query, unfilteredList) ??
+          _basicSearch(query);
+    } else {
+      list = unfilteredList;
+    }
+  }
+
+  List<SelectedListItem<T>> _basicSearch(String query) {
+    String searchQuery = query.toLowerCase();
+
+    return unfilteredList
+        .where(
+          (item) => item.data.toString().toLowerCase().contains(searchQuery),
+        )
+        .toList();
   }
 
   /// Sorts the list items using the [DropDownOptions.listSortDelegate]
@@ -858,7 +980,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     TextFormField? searchField = widget.style.searchWidget;
 
     searchField?.controller?.addListener(() {
-      _buildSearchList(searchField.controller?.text ?? '');
+      _updateSearchQuery(searchField.controller?.text ?? '');
     });
   }
 }

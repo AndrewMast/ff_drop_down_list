@@ -170,11 +170,18 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Launches the basic example
   void launchExample() {
     DropDown<String>(
-      data: DropDownData(<SelectedListItem<String>>[
-        SelectedListItem<String>(data: 'Tokyo'),
-        SelectedListItem<String>(data: 'New York'),
-        SelectedListItem<String>(data: 'London'),
-      ]),
+      data: DropDownData.future(Future.delayed(
+        Duration(seconds: 2),
+        () => <SelectedListItem<String>>[
+          SelectedListItem<String>(data: kLondon),
+          SelectedListItem<String>(data: kRome),
+          SelectedListItem<String>(data: kParis),
+          SelectedListItem<String>(data: kTokyo),
+          SelectedListItem<String>(data: kMadrid),
+          SelectedListItem<String>(data: kNewYork),
+          SelectedListItem<String>(data: kBarcelona),
+        ],
+      )),
       options: DropDownOptions(
         onSingleSelected: (SelectedListItem<String> selectedItem) {
           ScaffoldMessenger.of(context).showSnackBar(
