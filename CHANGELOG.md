@@ -4,6 +4,7 @@
 
 * Fixed `Color.toARGB32()` not working on Flutter 3.27.3 by adding an extension.
 * Updated inline documentation.
+* Added `DropDownResponse` and now `DropDown.show` returns `Future<DropDownResponse?>`.
 
 ## 0.0.2
 

@@ -39,6 +39,8 @@ linter:
     slash_for_doc_comments: true
     avoid_multiple_declarations_per_line: true
     leading_newlines_in_multiline_strings: true
+    discarded_futures: true
+    unawaited_futures: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

@@ -64,6 +64,7 @@ DropDown<String>(
 | `DropDownOptions<T>`  | The options on how the dropdown should behave.  |
 | `DropDownStyle`       | The style on how the dropdown should look.      |
 | `SelectedListItem<T>` | The datatype for each dropdown item.            |
+| `DropDownResponse<T>` | The response returned from a drop down.         |
 
 <br/>
 
@@ -79,9 +80,9 @@ DropDown<String>(
 <br/>
 
 ## `DropDown<T>` Class Methods
-| Method                            | Description                                         |
-|-----------------------------------|-----------------------------------------------------|
-| `void show(BuildContext context)` | Displays the dropdown menu as a modal bottom sheet. |
+| Method                                                    | Description                                                                                               |
+|-----------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| `Future<DropDownResponse<T>?> show(BuildContext context)` | Displays the dropdown menu as a modal bottom sheet. Returns a future with a potential `DropDownResponse`.<br/><sup>See [DropDownResponse](#dropdownresponset-class-parameters) model.</sup> |
 
 <br/>
 
@@ -154,6 +155,17 @@ DropDown<String>(
 |-------------------|---------|-----------------------------------------|
 | `bool isSelected` | `false` | Indicates whether the item is selected. |
 | `T data`          |         | Tha data of the item.                   |
+
+<br/>
+
+## `DropDownResponse<T>` Class Parameters
+| Parameter                             | Description                                                          |
+|---------------------------------------|----------------------------------------------------------------------|
+| `bool multipleSelection`              | Whether the response contains multiple items or a singular one.      |
+| `SelectedListItem<T>? single`         | The single selected item, null if `multipleSelection` is `true`.     |
+| `List<SelectedListItem<T>>? multiple` | The multiple selected items, null if `multipleSelection` is `false`. |
+| `List<SelectedListItem<T>> items`     | The selected items.                                                  |
+| `List<T> data`                        | The data of the selected items.                                      |
 
 <br/>
 

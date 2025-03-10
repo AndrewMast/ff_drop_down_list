@@ -34,6 +34,46 @@ class SelectedListItem<T> {
   }
 }
 
+/// The response returned from a drop down
+class DropDownResponse<T> {
+  /// Whether the response contains multiple items or a singular one
+  final bool multipleSelection;
+
+  /// The single selected item, null if [multipleSelection] is `true`
+  final SelectedListItem<T>? single;
+
+  /// The multiple selected items, null if [multipleSelection] is `false`
+  final List<SelectedListItem<T>>? multiple;
+
+  /// The selected items
+  final List<SelectedListItem<T>> items;
+
+  /// The data of the selected items
+  List<T> get data => items.map<T>((item) => item.data).toList();
+
+  /// Create a new response
+  DropDownResponse({
+    required this.items,
+    this.single,
+    this.multiple,
+    this.multipleSelection = false,
+  });
+
+  /// Create a new response for a single selected item
+  DropDownResponse.single(SelectedListItem<T> singleItem)
+      : single = singleItem,
+        multiple = null,
+        items = [singleItem],
+        multipleSelection = false;
+
+  /// Create a new response for multiple selected items
+  DropDownResponse.multiple(List<SelectedListItem<T>> multipleItems)
+      : single = null,
+        multiple = multipleItems,
+        items = multipleItems,
+        multipleSelection = true;
+}
+
 extension ListAsSelectedListItems<T> on List<T> {
   /// Convert the list into a list of [SelectedListItem].
   List<SelectedListItem<T>> asSelectedListItems() {
@@ -487,13 +527,13 @@ class DropDown<T> {
   }
 
   /// Show the drop down modal.
-  void show(BuildContext context) {
+  Future<DropDownResponse<T>?> show(BuildContext context) async {
     final DropDownOptions<T> modalOptions = options ?? DropDownOptions<T>();
 
     final List<SelectedListItem<T>> modalData =
         data ?? unbuiltData?.asSelectedListItems() ?? [];
 
-    showModalBottomSheet(
+    return showModalBottomSheet<DropDownResponse<T>>(
       useRootNavigator: modalOptions.useRootNavigator,
       isScrollControlled: true,
       enableDrag: modalOptions.enableDrag,
@@ -697,12 +737,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                                 list[index].isSelected = !isSelected;
                               });
                             } else {
-                              widget.options.onSelected?.call([list[index]]);
-
-                              widget.options.onSingleSelected
-                                  ?.call(list[index]);
-
-                              _onUnFocusKeyboardAndPop();
+                              _submitSingle(list[index]);
                             }
                           },
                           title: widget.options.listItemBuilder
@@ -752,14 +787,8 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
   /// Handle the submit button pressed
   void onSubmitButtonPressed() {
-    List<SelectedListItem<T>> selectedList =
-        widget.data.where((element) => element.isSelected).toList();
-
-    widget.options.onSelected?.call(selectedList);
-
-    widget.options.onMultipleSelected?.call(selectedList);
-
-    _onUnFocusKeyboardAndPop();
+    _submitMultiple(
+        widget.data.where((element) => element.isSelected).toList());
   }
 
   /// Handle the clear button pressed
@@ -797,10 +826,26 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     }
   }
 
+  void _submitMultiple(List<SelectedListItem<T>> items) {
+    widget.options.onSelected?.call(items);
+
+    widget.options.onMultipleSelected?.call(items);
+
+    _onUnFocusKeyboardAndPop(DropDownResponse.multiple(items));
+  }
+
+  void _submitSingle(SelectedListItem<T> item) {
+    widget.options.onSelected?.call([item]);
+
+    widget.options.onSingleSelected?.call(item);
+
+    _onUnFocusKeyboardAndPop(DropDownResponse.single(item));
+  }
+
   /// This helps to UnFocus the keyboard & pop from the bottom sheet.
-  void _onUnFocusKeyboardAndPop() {
+  void _onUnFocusKeyboardAndPop([DropDownResponse<T>? response]) {
     FocusScope.of(context).unfocus();
-    Navigator.of(context).pop();
+    Navigator.of(context).pop<DropDownResponse<T>>(response);
   }
 
   /// This helps to add listener on search field controller
