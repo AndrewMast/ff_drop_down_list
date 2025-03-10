@@ -5,37 +5,40 @@ import '../model/contextual_property.dart';
 import '../model/contextual_colors.dart';
 import 'search_text_field.dart';
 
+/// An alias for a [List] of [DropDownItem]s.
+typedef DropDownList<T> = List<DropDownItem<T>>;
+
 /// A callback function that is invoked when items are selected
 typedef ItemSelectionCallback<T> = void Function(
-  List<SelectedListItem<T>> selectedItems,
+  DropDownList<T> selectedItems,
 );
 
 /// A callback function that is invoked when multiple items are selected
 typedef MultipleItemSelectionCallback<T> = void Function(
-  List<SelectedListItem<T>> selectedItems,
+  DropDownList<T> selectedItems,
 );
 
 /// A callback function that is invoked when a single item is selected
 typedef SingleItemSelectionCallback<T> = void Function(
-  SelectedListItem<T> selectedItem,
+  DropDownItem<T> selectedItem,
 );
 
 /// A function type definition for building a widget for a specific list item
 typedef ListItemBuilder<T> = Widget Function(
   int index,
-  SelectedListItem<T> dataItem,
+  DropDownItem<T> dataItem,
 );
 
 /// A function type definition for searching through a list of items based on the user's query
-typedef SearchDelegate<T> = List<SelectedListItem<T>> Function(
+typedef SearchDelegate<T> = DropDownList<T> Function(
   String query,
-  List<SelectedListItem<T>> dataItems,
+  DropDownList<T> dataItems,
 );
 
 /// A function type definition for sorting through the list of items.
 typedef ListSortDelegate<T> = int Function(
-  SelectedListItem<T> a,
-  SelectedListItem<T> b,
+  DropDownItem<T> a,
+  DropDownItem<T> b,
 );
 
 /// A function type definition for handling notifications from a draggable bottom sheet
@@ -44,10 +47,12 @@ typedef BottomSheetListener = bool Function(
 );
 
 /// A function type definition for building a [DropDownStyle]
-typedef DropDownStyleBuilder = DropDownStyle Function(BuildContext context);
+typedef DropDownStyleBuilder = DropDownStyle Function(
+  BuildContext context,
+);
 
 /// This is a model class used to represent an item in a selectable list
-class SelectedListItem<T> {
+class DropDownItem<T> {
   /// Indicates whether the item is selected.
   ///
   /// Default Value: `false`
@@ -56,30 +61,29 @@ class SelectedListItem<T> {
   /// Tha data of the item.
   final T data;
 
-  /// Create a new [SelectedListItem].
-  SelectedListItem({required this.data, this.isSelected = false});
+  /// Create a new [DropDownItem].
+  DropDownItem(this.data, {this.isSelected = false});
 
-  /// Create a new selected [SelectedListItem].
-  SelectedListItem.selected(this.data) : isSelected = true;
+  /// Create a new selected [DropDownItem].
+  DropDownItem.selected(this.data) : isSelected = true;
 
-  /// Create a new unselected [SelectedListItem].
-  SelectedListItem.unselected(this.data) : isSelected = false;
+  /// Create a new unselected [DropDownItem].
+  DropDownItem.unselected(this.data) : isSelected = false;
 
-  /// Build a new [SelectedListItem].
-  static SelectedListItem<T> from<T>(T data, {bool isSelected = false}) {
-    return SelectedListItem(data: data, isSelected: isSelected);
-  }
-
-  /// Build a [SelectedListItem] list.
-  static List<SelectedListItem<T>> list<T>(List<T> items) {
-    return items.map(from<T>).toList();
+  /// Build a [DropDownItem] list.
+  static DropDownList<T> list<T>(List<T> items) {
+    return items.map((item) => DropDownItem(item)).toList();
   }
 }
 
-extension ListAsSelectedListItems<T> on List<T> {
-  /// Convert the list into a list of [SelectedListItem]s.
-  List<SelectedListItem<T>> asSelectedListItems() =>
-      SelectedListItem.list(this);
+extension ListAsDropDownItems<T> on List<T> {
+  /// Convert the list into a list of [DropDownItem]s.
+  DropDownList<T> asDropDownItems() => DropDownItem.list(this);
+}
+
+extension ListAsData<T> on DropDownList<T> {
+  /// Convert the list from a list of [DropDownItem]s to a list of normal items.
+  List<T> asItemData() => map<T>((item) => item.data).toList();
 }
 
 /// Manages the data of a dropdown
@@ -87,40 +91,39 @@ class DropDownData<T> {
   /// The items for the dropdown
   ///
   /// If [future] is provided, these items will be ignored.
-  final List<SelectedListItem<T>>? items;
+  final DropDownList<T>? items;
 
   /// A future that will return the items for the dropdown
-  final Future<List<SelectedListItem<T>>>? future;
+  final Future<DropDownList<T>>? future;
 
   /// Whether the items are coming from a [Future]
   bool get isFuture => future != null;
 
-  /// Create a data object from a list of [SelectedListItem]s
-  const DropDownData(List<SelectedListItem<T>> this.items) : future = null;
+  /// Create a data object from a list of [DropDownItem]s
+  const DropDownData(DropDownList<T> this.items) : future = null;
 
   /// Create a data object from a list of items
-  DropDownData.raw(List<T> items) : this(items.asSelectedListItems());
+  DropDownData.raw(List<T> items) : this(items.asDropDownItems());
 
-  /// Create a data object from a future that will return a list of [SelectedListItem]s
-  const DropDownData.future(Future<List<SelectedListItem<T>>> this.future)
-      : items = null;
+  /// Create a data object from a future that will return a list of [DropDownItem]s
+  const DropDownData.future(Future<DropDownList<T>> this.future) : items = null;
 
   /// Create a data object from a future that will return a list of items
   DropDownData.rawFuture(Future<List<T>> future)
-      : this.future(future.then((list) => list.asSelectedListItems()));
+      : this.future(future.then((list) => list.asDropDownItems()));
 
-  /// Create a data object from either a list of [SelectedListItem]s
+  /// Create a data object from either a list of [DropDownItem]s
   /// or a future that will return a list
-  DropDownData.from(FutureOr<List<SelectedListItem<T>>> data)
-      : items = data is List<SelectedListItem<T>> ? data : null,
-        future = data is Future<List<SelectedListItem<T>>> ? data : null;
+  DropDownData.from(FutureOr<DropDownList<T>> data)
+      : items = data is DropDownList<T> ? data : null,
+        future = data is Future<DropDownList<T>> ? data : null;
 
   /// Create a data object from either a list of items
   /// or a future that will return a list
   DropDownData.fromRaw(FutureOr<List<T>> data)
-      : items = data is List<T> ? data.asSelectedListItems() : null,
+      : items = data is List<T> ? data.asDropDownItems() : null,
         future = data is Future<List<T>>
-            ? data.then((list) => list.asSelectedListItems())
+            ? data.then((list) => list.asDropDownItems())
             : null;
 }
 
@@ -150,7 +153,7 @@ class DropDownOptions<T> {
   /// A callback function triggered when a single item is selected from the list
   final SingleItemSelectionCallback<T>? onSingleSelected;
 
-  /// A function that takes an [int] index and [SelectedListItem] item as a parameter
+  /// A function that takes an [int] index and [DropDownItem] item as a parameter
   /// and returns a custom widget to display for the list item at that index.
   final ListItemBuilder<T>? listItemBuilder;
 
@@ -526,13 +529,13 @@ class DropDownResponse<T> {
   final bool multipleSelection;
 
   /// The single selected item, null if [multipleSelection] is `true`
-  final SelectedListItem<T>? single;
+  final DropDownItem<T>? single;
 
   /// The multiple selected items, null if [multipleSelection] is `false`
-  final List<SelectedListItem<T>>? multiple;
+  final DropDownList<T>? multiple;
 
   /// The selected items
-  final List<SelectedListItem<T>> items;
+  final DropDownList<T> items;
 
   /// The data of the selected items
   List<T> get data => items.map<T>((item) => item.data).toList();
@@ -546,14 +549,14 @@ class DropDownResponse<T> {
   });
 
   /// Create a new response for a single selected item
-  DropDownResponse.single(SelectedListItem<T> singleItem)
+  DropDownResponse.single(DropDownItem<T> singleItem)
       : single = singleItem,
         multiple = null,
         items = [singleItem],
         multipleSelection = false;
 
   /// Create a new response for multiple selected items
-  DropDownResponse.multiple(List<SelectedListItem<T>> multipleItems)
+  DropDownResponse.multiple(DropDownList<T> multipleItems)
       : single = null,
         multiple = multipleItems,
         items = multipleItems,
@@ -582,17 +585,16 @@ class DropDown<T> {
     this.style,
   });
 
-  /// Create a [DropDown] using a list of [SelectedListItem]s
-  DropDown.items(List<SelectedListItem<T>> items, {this.options, this.style})
+  /// Create a [DropDown] using a list of [DropDownItem]s
+  DropDown.items(DropDownList<T> items, {this.options, this.style})
       : data = DropDownData(items);
 
   /// Create a [DropDown] using a list of items
   DropDown.raw(List<T> items, {this.options, this.style})
       : data = DropDownData.raw(items);
 
-  /// Create a [DropDown] using a future that will return a list of [SelectedListItem]s
-  DropDown.future(Future<List<SelectedListItem<T>>> future,
-      {this.options, this.style})
+  /// Create a [DropDown] using a future that will return a list of [DropDownItem]s
+  DropDown.future(Future<DropDownList<T>> future, {this.options, this.style})
       : data = DropDownData.future(future);
 
   /// Create a [DropDown] using a future that will return a list of items
@@ -649,10 +651,10 @@ class DropDownBody<T> extends StatefulWidget {
 
 class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   /// The list of items that are currently being displayed
-  List<SelectedListItem<T>> list = [];
+  DropDownList<T> list = [];
 
   /// The full, unfiltered list of items
-  List<SelectedListItem<T>> unfilteredList = [];
+  DropDownList<T> unfilteredList = [];
 
   /// The current search query
   String? search;
@@ -675,7 +677,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     _setSearchWidgetListener();
   }
 
-  void saveFutureData(List<SelectedListItem<T>>? items) {
+  void saveFutureData(DropDownList<T>? items) {
     if (items != null && isLoading) {
       unfilteredList = list = items;
 
@@ -810,10 +812,10 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
                 /// ListView (list of data with check box for multiple selection & on tile tap single selection)
                 Flexible(
-                  child: FutureBuilder<List<SelectedListItem<T>>>(
+                  child: FutureBuilder<DropDownList<T>>(
                     future: widget.data.future,
                     builder: (BuildContext context,
-                        AsyncSnapshot<List<SelectedListItem<T>>> snapshot) {
+                        AsyncSnapshot<DropDownList<T>> snapshot) {
                       if (snapshot.hasData) {
                         saveFutureData(snapshot.data);
                       }
@@ -951,7 +953,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     }
   }
 
-  List<SelectedListItem<T>> _basicSearch(String query) {
+  DropDownList<T> _basicSearch(String query) {
     String searchQuery = query.toLowerCase();
 
     return unfilteredList
@@ -968,7 +970,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     }
   }
 
-  void _submitMultiple(List<SelectedListItem<T>> items) {
+  void _submitMultiple(DropDownList<T> items) {
     widget.options.onSelected?.call(items);
 
     widget.options.onMultipleSelected?.call(items);
@@ -976,7 +978,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     _onUnFocusKeyboardAndPop(DropDownResponse.multiple(items));
   }
 
-  void _submitSingle(SelectedListItem<T> item) {
+  void _submitSingle(DropDownItem<T> item) {
     widget.options.onSelected?.call([item]);
 
     widget.options.onSingleSelected?.call(item);

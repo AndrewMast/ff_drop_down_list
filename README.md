@@ -36,13 +36,13 @@ And add it in its most basic form like it:
 
 ```dart
 DropDown<String>(
-  data: <SelectedListItem<String>>[
-    SelectedListItem<String>(data: 'Tokyo'),
-    SelectedListItem<String>(data: 'New York'),
-    SelectedListItem<String>(data: 'London'),
+  data: <DropDownItem<String>>[
+    DropDownItem<String>(data: 'Tokyo'),
+    DropDownItem<String>(data: 'New York'),
+    DropDownItem<String>(data: 'London'),
   ],
   options: DropDownOptions(
-    onSingleSelected: (SelectedListItem<String> selectedItem) {
+    onSingleSelected: (DropDownItem<String> selectedItem) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(selectedItem.data),
@@ -64,45 +64,44 @@ DropDown<String>(
 | `DropDownData<T>`     | The data for the drop down.                     |
 | `DropDownOptions<T>`  | The options on how the dropdown should behave.  |
 | `DropDownStyle`       | The style on how the dropdown should look.      |
-| `SelectedListItem<T>` | The datatype for each dropdown item.            |
+| `DropDownItem<T>`     | The datatype for each dropdown item.            |
 | `DropDownResponse<T>` | The response returned from a drop down.         |
 
 <br/>
 
 ## `DropDown<T>` Class Parameters
-| Parameter                            | Description                                                                   |
-|--------------------------------------|-------------------------------------------------------------------------------|
-| `List<SelectedListItem<T>>? data`    | The data for the dropdown.                                                    |
-| `List<T>? unbuiltData`               | The unbuilt data for the dropdown. Only used if `data` is not provided.       |
-| `DropDownOptions<T>? options`        | The options for the dropdown.                                                 |
-| `DropDownStyle? style`               | The style for the dropdown.                                                   |
+| Parameter                        | Description                                                                                             |
+|----------------------------------|---------------------------------------------------------------------------------------------------------|
+| `DropDownData<T> data`           | The data for the dropdown.<br/><sup>See [DropDownData](#dropdowndatat-class-parameters).</sup>          |
+| `DropDownOptions<T>? options`    | The options for the dropdown.<br/><sup>See [DropDownOptions](#dropdownoptionst-class-parameters).</sup> |
+| `DropDownStyle? style`           | The style for the dropdown.<br/><sup>See [DropDownStyle](#dropdownstyle-class-parameters).</sup>        |
 
 <br/>
 
 ## `DropDown<T>` Class Methods
-| Method                                                    | Description                                                                                               |
-|-----------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
-| `Future<DropDownResponse<T>?> show(BuildContext context)` | Displays the dropdown menu as a modal bottom sheet. Returns a future with a potential `DropDownResponse`.<br/><sup>See [DropDownResponse](#dropdownresponset-class-parameters) model.</sup> |
+| Method                                                    | Description                                                                                                                                                                           |
+|-----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Future<DropDownResponse<T>?> show(BuildContext context)` | Displays the dropdown menu as a modal bottom sheet. Returns a future with a potential `DropDownResponse`.<br/><sup>See [DropDownResponse](#dropdownresponset-class-parameters).</sup> |
 
 <br/>
 
 ## `DropDownData<T>` Class Parameters
-| Parameter                                   | Description                                                                       |
-|---------------------------------------------|-----------------------------------------------------------------------------------|
-| `List<SelectedListItem<T>>? items`          | The items for the dropdown. If `future` is provided, these items will be ignored. |
-| `Future<List<SelectedListItem<T>>>? future` | A future that will return the items for the dropdown.                             |
+| Parameter                               | Description                                                                                                                                           |
+|-----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `List<DropDownItem<T>>? items`          | The items for the dropdown. If `future` is provided, these items will be ignored.<br/><sup>See [DropDownItem](#dropdownitemt-class-parameters).</sup> |
+| `Future<List<DropDownItem<T>>>? future` | A future that will return the items for the dropdown.                                                                                                 |
 
 <br/>
 
 ## `DropDownData<T>` Class Constructors
-| Constructor                                                     | Description                                                                                         |
-|-----------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
-| `DropDownData(List<SelectedListItem<T>> items)`                 | Create a data object from a list of `SelectedListItem`s.                                            |
-| `DropDownData.raw(List<T> items)`                               | Create a data object from a list of items.                                                          |
-| `DropDownData.future(Future<List<SelectedListItem<T>>> future)` | Create a data object from a future that will return a list of `SelectedListItem`s.                  |
-| `DropDownData.rawFuture(Future<List<T>> future)`                | Create a data object from a future that will return a list of items.                                |
-| `DropDownData.from(FutureOr<List<SelectedListItem<T>>> data)`   | Create a data object from either a list of `SelectedListItem`s or a future that will return a list. |
-| `DropDownData.fromRaw(FutureOr<List<T>> data)`                  | Create a data object from either a list of items or a future that will return a list.               |
+| Constructor                                                 | Description                                                                                     |
+|-------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| `DropDownData(List<DropDownItem<T>> items)`                 | Create a data object from a list of `DropDownItem`s.                                            |
+| `DropDownData.raw(List<T> items)`                           | Create a data object from a list of items.                                                      |
+| `DropDownData.future(Future<List<DropDownItem<T>>> future)` | Create a data object from a future that will return a list of `DropDownItem`s.                  |
+| `DropDownData.rawFuture(Future<List<T>> future)`            | Create a data object from a future that will return a list of items.                            |
+| `DropDownData.from(FutureOr<List<DropDownItem<T>>> data)`   | Create a data object from either a list of `DropDownItem`s or a future that will return a list. |
+| `DropDownData.fromRaw(FutureOr<List<T>> data)`              | Create a data object from either a list of items or a future that will return a list.           |
 
 <br/>
 
@@ -167,43 +166,44 @@ DropDown<String>(
 | `String selectAllButtonText`          | `"Select All"`                                                                                     | Specifies the text displayed on the selectAll text button  when `enableMultipleSelection` and `isSelectAllVisible` is `true`.                                                 |
 | `Widget? deselectAllButtonChild`      |                                                                                                    | Defines a custom widget to display as the child of the deSelectAll text button  when `enableMultipleSelection` and `isSelectAllVisible` is `true`.                            |
 | `String deselectAllButtonText`        | `"Deselect All"`                                                                                   | Specifies the text displayed on the deSelectAll text button  when `enableMultipleSelection` and `isSelectAllVisible` is `true`.                                               |
-| `Widget? dataLoadingWidget`           | `Align(alignment: Alignment.topCenter, child: CircularProgressIndicator())`                        | The widget to display when data is being loaded from `DropDownData.future`.                                                     |
-| `Widget? dataFailureWidget`           | `Align(alignment: Alignment.topCenter, child: Text('Unable to load data.'))`                       | The widget to display when data fails to load from `DropDownData.future`. By default the text is pulled from `dataFailureText`. |
-| `String dataFailureText`              | `"Unable to load data."`                                                                           | The text to display when data fails to load from `DropDownData.future`.                                                         |
+| `Widget? dataLoadingWidget`           | `Align(alignment: Alignment.topCenter, child: CircularProgressIndicator())`                        | The widget to display when data is being loaded from `DropDownData.future`.                                                                                                   |
+| `Widget? dataFailureWidget`           | `Align(alignment: Alignment.topCenter, child: Text('Unable to load data.'))`                       | The widget to display when data fails to load from `DropDownData.future`. By default the text is pulled from `dataFailureText`.                                               |
+| `String dataFailureText`              | `"Unable to load data."`                                                                           | The text to display when data fails to load from `DropDownData.future`.                                                                                                       |
 | `DropDownStyleBuilder? builder`       |                                                                                                    | A style builder to make a `DropDownStyle`. If provided, all other style options will be ignored in favor of the style options in the `DropDownStyle` returned by the builder. |
 
 <br/>
 
-## `SelectedListItem<T>` Class Parameters
+## `DropDownItem<T>` Class Parameters
 | Parameter         | Default | Description                             |
 |-------------------|---------|-----------------------------------------|
-| `bool isSelected` | `false` | Indicates whether the item is selected. |
 | `T data`          |         | Tha data of the item.                   |
+| `bool isSelected` | `false` | Indicates whether the item is selected. |
 
 <br/>
 
 ## `DropDownResponse<T>` Class Parameters
-| Parameter                             | Description                                                          |
-|---------------------------------------|----------------------------------------------------------------------|
-| `bool multipleSelection`              | Whether the response contains multiple items or a singular one.      |
-| `SelectedListItem<T>? single`         | The single selected item, null if `multipleSelection` is `true`.     |
-| `List<SelectedListItem<T>>? multiple` | The multiple selected items, null if `multipleSelection` is `false`. |
-| `List<SelectedListItem<T>> items`     | The selected items.                                                  |
-| `List<T> data`                        | The data of the selected items.                                      |
+| Parameter                         | Description                                                          |
+|-----------------------------------|----------------------------------------------------------------------|
+| `bool multipleSelection`          | Whether the response contains multiple items or a singular one.      |
+| `DropDownItem<T>? single`         | The single selected item, null if `multipleSelection` is `true`.     |
+| `List<DropDownItem<T>>? multiple` | The multiple selected items, null if `multipleSelection` is `false`. |
+| `List<DropDownItem<T>> items`     | The selected items.                                                  |
+| `List<T> data`                    | The data of the selected items.                                      |
 
 <br/>
 
 ## Type Definitions
-| Name                               | Definition                                                                              | Description                                                                                 |
-|------------------------------------|-----------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
-| `ItemSelectionCallback<T>`         | `void Function(List<SelectedListItem<T>> selectedItems)`                                | A callback function that is invoked when items are selected.                                |
-| `MultipleItemSelectionCallback<T>` | `void Function(List<SelectedListItem<T>> selectedItems)`                                | A callback function that is invoked when multiple items are selected.                       |
-| `SingleItemSelectionCallback<T>`   | `void Function(SelectedListItem<T> selectedItem)`                                       | A callback function that is invoked when a single item is selected.                         |
-| `ListItemBuilder<T>`               | `Widget Function(int index, SelectedListItem<T> dataItem)`                              | A function type definition for building a widget for a specific list item.                  |
-| `SearchDelegate<T>`                | `List<SelectedListItem<T>> Function(String query, List<SelectedListItem<T>> dataItems)` | A function type definition for searching through a list of items based on the user's query. |
-| `ListSortDelegate<T>`              | `int Function(SelectedListItem<T> a, SelectedListItem<T> b)`                            | A function type definition for sorting through the list of items.                           |
-| `BottomSheetListener`              | `bool Function(DraggableScrollableNotification draggableScrollableNotification)`        | A function type definition for handling notifications from a draggable bottom sheet.        |
-| `DropDownStyleBuilder`             | `DropDownStyle Function(BuildContext context)`                                          | A function type definition for building a `DropDownStyle`.                                  |
+| Name                               | Definition                                                                       | Description                                                                                 |
+|------------------------------------|----------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| `DropDownList<T>`                  | `List<DropDownItem<T>>`                                                          | An alias for a `List` of `DropDownItem`s.                                                   |
+| `ItemSelectionCallback<T>`         | `void Function(List<DropDownItem<T>> selectedItems)`                             | A callback function that is invoked when items are selected.                                |
+| `MultipleItemSelectionCallback<T>` | `void Function(List<DropDownItem<T>> selectedItems)`                             | A callback function that is invoked when multiple items are selected.                       |
+| `SingleItemSelectionCallback<T>`   | `void Function(DropDownItem<T> selectedItem)`                                    | A callback function that is invoked when a single item is selected.                         |
+| `ListItemBuilder<T>`               | `Widget Function(int index, DropDownItem<T> dataItem)`                           | A function type definition for building a widget for a specific list item.                  |
+| `SearchDelegate<T>`                | `List<DropDownItem<T>> Function(String query, List<DropDownItem<T>> dataItems)`  | A function type definition for searching through a list of items based on the user's query. |
+| `ListSortDelegate<T>`              | `int Function(DropDownItem<T> a, DropDownItem<T> b)`                             | A function type definition for sorting through the list of items.                           |
+| `BottomSheetListener`              | `bool Function(DraggableScrollableNotification draggableScrollableNotification)` | A function type definition for handling notifications from a draggable bottom sheet.        |
+| `DropDownStyleBuilder`             | `DropDownStyle Function(BuildContext context)`                                   | A function type definition for building a `DropDownStyle`.                                  |
 
 <br/>
 

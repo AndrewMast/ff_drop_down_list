@@ -30,59 +30,35 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   /// This is list of city which will pass to the drop down
-  final List<SelectedListItem<String>> _listOfCities = [
-    SelectedListItem<String>(data: kTokyo),
-    SelectedListItem<String>(data: kNewYork),
-    SelectedListItem<String>(data: kLondon),
-    SelectedListItem<String>(data: kParis),
-    SelectedListItem<String>(data: kMadrid),
-    SelectedListItem<String>(data: kDubai),
-    SelectedListItem<String>(data: kRome),
-    SelectedListItem<String>(data: kBarcelona),
-    SelectedListItem<String>(data: kCologne),
-    SelectedListItem<String>(data: kMonteCarlo),
-    SelectedListItem<String>(data: kPuebla),
-    SelectedListItem<String>(data: kFlorence),
+  final List<DropDownItem<String>> _listOfCities = [
+    DropDownItem<String>(kTokyo),
+    DropDownItem<String>(kNewYork),
+    DropDownItem<String>(kLondon),
+    DropDownItem<String>(kParis),
+    DropDownItem<String>(kMadrid),
+    DropDownItem<String>(kDubai),
+    DropDownItem<String>(kRome),
+    DropDownItem<String>(kBarcelona),
+    DropDownItem<String>(kCologne),
+    DropDownItem<String>(kMonteCarlo),
+    DropDownItem<String>(kPuebla),
+    DropDownItem<String>(kFlorence),
   ];
 
   /// This is list of language with custom model which will pass to the drop down
-  final List<SelectedListItem<LanguageModel>> _listOfLanguages = [
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kEnglish, code: kEn),
-    ),
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kSpanish, code: kEs),
-    ),
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kFrench, code: kFr),
-    ),
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kGerman, code: kDe),
-    ),
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kChinese, code: kZh),
-    ),
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kHindi, code: kHi),
-    ),
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kArabic, code: kAr),
-    ),
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kRussian, code: kRu),
-    ),
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kJapanese, code: kJa),
-    ),
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kPortuguese, code: kPt),
-    ),
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kItalian, code: kIt),
-    ),
-    SelectedListItem<LanguageModel>(
-      data: LanguageModel(name: kKorean, code: kKo),
-    ),
+  final List<DropDownItem<LanguageModel>> _listOfLanguages = [
+    DropDownItem(LanguageModel(name: kEnglish, code: kEn)),
+    DropDownItem(LanguageModel(name: kSpanish, code: kEs)),
+    DropDownItem(LanguageModel(name: kFrench, code: kFr)),
+    DropDownItem(LanguageModel(name: kGerman, code: kDe)),
+    DropDownItem(LanguageModel(name: kChinese, code: kZh)),
+    DropDownItem(LanguageModel(name: kHindi, code: kHi)),
+    DropDownItem(LanguageModel(name: kArabic, code: kAr)),
+    DropDownItem(LanguageModel(name: kRussian, code: kRu)),
+    DropDownItem(LanguageModel(name: kJapanese, code: kJa)),
+    DropDownItem(LanguageModel(name: kPortuguese, code: kPt)),
+    DropDownItem(LanguageModel(name: kItalian, code: kIt)),
+    DropDownItem(LanguageModel(name: kKorean, code: kKo)),
   ];
 
   /// This is register text field controllers
@@ -172,18 +148,18 @@ class _MyHomePageState extends State<MyHomePage> {
     DropDown<String>(
       data: DropDownData.future(Future.delayed(
         Duration(seconds: 2),
-        () => <SelectedListItem<String>>[
-          SelectedListItem<String>(data: kLondon),
-          SelectedListItem<String>(data: kRome),
-          SelectedListItem<String>(data: kParis),
-          SelectedListItem<String>(data: kTokyo),
-          SelectedListItem<String>(data: kMadrid),
-          SelectedListItem<String>(data: kNewYork),
-          SelectedListItem<String>(data: kBarcelona),
+        () => <DropDownItem<String>>[
+          DropDownItem<String>(kLondon),
+          DropDownItem<String>(kRome),
+          DropDownItem<String>(kParis),
+          DropDownItem<String>(kTokyo),
+          DropDownItem<String>(kMadrid),
+          DropDownItem<String>(kNewYork),
+          DropDownItem<String>(kBarcelona),
         ],
       )),
       options: DropDownOptions(
-        onSingleSelected: (SelectedListItem<String> selectedItem) {
+        onSingleSelected: (DropDownItem<String> selectedItem) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(selectedItem.data),
@@ -203,29 +179,31 @@ class _MyHomePageState extends State<MyHomePage> {
         maxSelectedItems: 3,
         isDismissible: true,
         onSelected: (selectedItems) {
-          List<String> list = [];
-          for (var item in selectedItems) {
-            list.add(item.data);
-          }
-          showSnackBar(list.toString());
+          showSnackBar(selectedItems.asItemData().toString());
         },
       ),
-      style: DropDownStyle.build((context) => DropDownStyle(
-            searchCursorColor: Theme.of(context).colorScheme.onPrimaryContainer,
-            headerWidget: const Text(
-              kCities,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20.0,
-              ),
+      style: DropDownStyle.build(
+        (context) => DropDownStyle(
+          searchCursorColor: Theme.of(context).colorScheme.onPrimaryContainer,
+          headerWidget: const Text(
+            kCities,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
             ),
-            submitButtonText: 'Save',
-            clearButtonText: 'Clear',
-            tileColor: BrightnessColor(
-                light: Colors.cyan.shade100, dark: Colors.cyan.shade700),
-            selectedTileColor: BrightnessColor(
-                light: Colors.cyan.shade200, dark: Colors.cyan.shade800),
-          )),
+          ),
+          submitButtonText: 'Save',
+          clearButtonText: 'Clear',
+          tileColor: BrightnessColor(
+            light: Colors.cyan.shade100,
+            dark: Colors.cyan.shade700,
+          ),
+          selectedTileColor: BrightnessColor(
+            light: Colors.cyan.shade200,
+            dark: Colors.cyan.shade800,
+          ),
+        ),
+      ),
     ).show(context);
   }
 
@@ -237,7 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
         enableMultipleSelection: true,
         maxSelectedItems: 3,
         isDismissible: true,
-        listItemBuilder: (int index, SelectedListItem<LanguageModel> dataItem) {
+        listItemBuilder: (int index, DropDownItem<LanguageModel> dataItem) {
           return Text(
             '${dataItem.data.name} : ${dataItem.data.code}',
           );
@@ -250,7 +228,7 @@ class _MyHomePageState extends State<MyHomePage> {
           showSnackBar(list.toString());
         },
         searchDelegate:
-            (String query, List<SelectedListItem<LanguageModel>> dataItems) {
+            (String query, List<DropDownItem<LanguageModel>> dataItems) {
           return dataItems
               .where((item) =>
                   item.data.name.toLowerCase().contains(query.toLowerCase()) ||
