@@ -80,6 +80,13 @@ The [example project](https://github.com/AndrewMast/ff_drop_down_list/blob/main/
 | `List<DropDownItem<T>>? items`          | The items for the dropdown. If `future` is provided, these items will be ignored.<br/><sup>See [DropDownItem](#dropdownitemt-class).</sup> |
 | `Future<List<DropDownItem<T>>>? future` | A future that will return the items for the dropdown.                                                                                      |
 
+| Method                                                                           | Description                                                                            |
+|----------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+| `void selectAll([bool select = true])`                                           | Selects all of the `DropDownItem`s in the list.                                        |
+| `void deselectAll([bool deselect = true])`                                       | Deselects all of the `DropDownItem`s in the list.                                      |
+| `void select(List<T> data, {bool select = true, bool deselectOthers = false})`   | Selects all of the `DropDownItem`s with data contained in the provided list of data.   |
+| `void deselect(List<T> data, {bool deselect = true, bool selectOthers = false})` | Deselects all of the `DropDownItem`s with data contained in the provided list of data. |
+
 | Constructor                                                 | Description                                                                                     |
 |-------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
 | `DropDownData(List<DropDownItem<T>> items)`                 | Create a data object from a list of `DropDownItem`s.                                            |
@@ -168,6 +175,11 @@ The [example project](https://github.com/AndrewMast/ff_drop_down_list/blob/main/
 | `T data`          |         | Tha data of the item.                   |
 | `bool isSelected` | `false` | Indicates whether the item is selected. |
 
+| Method                                  | Description         |
+|-----------------------------------------|---------------------|
+| `void select([bool select = true])`     | Selects the item.   |
+| `void deselect([bool deselect = true])` | Deselects the item. |
+
 <br/>
 
 ## `DropDownResponse<T>` Class
@@ -234,6 +246,15 @@ Contributions to this project are welcome. Feel free to open issues and to submi
 
 These are some things I would like to add to the next release.
 
+- Move some logic to `DropDownItem`
+    - Move default item builder to `DropDownItem` (`Widget build(BuildContext)`?)
+    - Move default search to `DropDownItem` (`bool satisfiesQuery(String)`?)
+        - Move `_basicSearch` to `DropDownList` extension as `search`
+    - Make `DropDownItem` implement `Comparable<DropDownItem>` (`compareTo`)
+        - Add `DropDownOptions` option to sort after search (so default `.sort()` can work)
+    - Make custom `DropDownItem` with subtitle for example
+        - Builds subtitle text
+        - Searches both title and subtitle
 - Show a message when the drop down has no items (empty list)
     - Display basic widget
     - Add option to customize message

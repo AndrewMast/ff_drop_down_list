@@ -60,6 +60,12 @@ class DropDownItem<T> {
   static DropDownList<T> list<T>(List<T> items) {
     return items.map((item) => DropDownItem(item)).toList();
   }
+
+  /// Selects the item
+  void select([bool select = true]) => isSelected = select;
+
+  /// Deselects the item
+  void deselect([bool deselect = true]) => select(!deselect);
 }
 
 /// Adds a method to convert a list into a list of [DropDownItem]s.
@@ -72,6 +78,55 @@ extension ListAsDropDownItems<T> on List<T> {
 extension ListAsItemData<T> on DropDownList<T> {
   /// Convert the list from a list of [DropDownItem]s to a list of normal items.
   List<T> asItemData() => map<T>((item) => item.data).toList();
+}
+
+/// Adds methods to select or deselect [DropDownItem]s and adds
+/// getters for selected/unselected subsets of the list.
+extension DropDownListSelection<T> on DropDownList<T> {
+  /// Selects all of the [DropDownItem]s in the list
+  void selectAll([bool select = true]) {
+    for (final item in this) {
+      item.isSelected = select;
+    }
+  }
+
+  /// Deselects all of the [DropDownItem]s in the list
+  void deselectAll([bool deselect = true]) => selectAll(!deselect);
+
+  /// Selects all of the [DropDownItem]s with data contained in the provided list of data
+  void select(
+    List<T> data, {
+    bool select = true,
+    bool deselectOthers = false,
+  }) {
+    for (final item in this) {
+      if (data.contains(item.data)) {
+        item.isSelected = select;
+      } else if (deselectOthers) {
+        item.isSelected = !select;
+      }
+    }
+  }
+
+  /// Deselects all of the [DropDownItem]s with data contained in the provided list of data
+  void deselect(
+    List<T> data, {
+    bool deselect = true,
+    bool selectOthers = false,
+  }) =>
+      select(
+        data,
+        select: !deselect,
+        deselectOthers: selectOthers,
+      );
+
+  /// Returns the subset of [DropDownItem]s that are selected
+  DropDownList<T> get selected =>
+      where((e) => e.isSelected).toList(growable: false);
+
+  /// Returns the subset of [DropDownItem]s that are unselected
+  DropDownList<T> get unselected =>
+      where((e) => !e.isSelected).toList(growable: false);
 }
 
 /// Manages the data of a dropdown
@@ -113,6 +168,58 @@ class DropDownData<T> {
         future = data is Future<List<T>>
             ? data.then((list) => list.asDropDownItems())
             : null;
+
+  /// Selects all of the [DropDownItem]s in the list
+  void selectAll([bool select = true]) {
+    items?.selectAll(select);
+
+    // ignore: discarded_futures
+    future?.then((list) => list.selectAll(select));
+  }
+
+  /// Deselects all of the [DropDownItem]s in the list
+  void deselectAll([bool deselect = true]) {
+    items?.deselectAll(deselect);
+
+    // ignore: discarded_futures
+    future?.then((list) => list.deselectAll(deselect));
+  }
+
+  /// Selects all of the [DropDownItem]s with data contained in the provided list of data
+  void select(
+    List<T> data, {
+    bool select = true,
+    bool deselectOthers = false,
+  }) {
+    items?.select(data, select: select, deselectOthers: deselectOthers);
+
+    // ignore: discarded_futures
+    future?.then(
+      (list) => list.select(
+        data,
+        select: select,
+        deselectOthers: deselectOthers,
+      ),
+    );
+  }
+
+  /// Deselects all of the [DropDownItem]s with data contained in the provided list of data
+  void deselect(
+    List<T> data, {
+    bool deselect = true,
+    bool selectOthers = false,
+  }) {
+    items?.deselect(data, deselect: deselect, selectOthers: selectOthers);
+
+    // ignore: discarded_futures
+    future?.then(
+      (list) => list.deselect(
+        data,
+        deselect: deselect,
+        selectOthers: selectOthers,
+      ),
+    );
+  }
 }
 
 /// Manages the options and behavior of a dropdown
@@ -528,7 +635,7 @@ class DropDownResponse<T> {
   final DropDownList<T> items;
 
   /// The data of the selected items
-  List<T> get data => items.map<T>((item) => item.data).toList();
+  List<T> get data => items.asItemData();
 
   /// Create a new response
   DropDownResponse({
@@ -831,9 +938,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                                     if (!isSelected &&
                                         widget.options.maxSelectedItems !=
                                             null) {
-                                      if (list
-                                              .where((e) => e.isSelected)
-                                              .length >=
+                                      if (unfilteredList.selected.length >=
                                           widget.options.maxSelectedItems!) {
                                         widget.options.onMaxSelectionReached
                                             ?.call();
@@ -914,7 +1019,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
   /// Handle the submit button pressed
   void onSubmitButtonPressed() {
-    _submitMultiple(unfilteredList.where((item) => item.isSelected).toList());
+    _submitMultiple(unfilteredList.selected);
   }
 
   /// Handle the clear button pressed
@@ -949,7 +1054,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
   /// Perform a basic search.
   DropDownList<T> _basicSearch(String query) {
-    String searchQuery = query.toLowerCase();
+    final String searchQuery = query.toLowerCase();
 
     return unfilteredList
         .where(
