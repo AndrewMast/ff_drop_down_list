@@ -1,4 +1,19 @@
-## Unreleased
+## 0.0.5
+
+* Added extension on `List<DropDownItem>` (aka `DropDownList`) that allows for selection/deselection of items in the list. Also added `selected` and `unselected` getters to return subsets of the list depending on the selection status of the `DropDownItem`.
+* Added methods on `DropDownData` that match new extension methods and apply it to both its `data` and its `future` data.
+* Added `select()` and `deselect()` methods to `DropDownItem`.
+* `DropDownItem` now implements `Comparable` (sorts by `data`).
+* Added `DropDownOptions.sortAfterSearch` option to enable sorting. `DropDownOptions.sortDelegate` is still optional, as now `DropDownItem.compareTo` can be used by default.
+* Moved default item builder to `DropDownItem.build`.
+* Added `DropDownItemBuilder` interface to allow the `T` of `DropDownItem<T>` to determine the widget displayed in the drop down list.
+* Moved search logic to `DropDownItem.satisfiesSearch` which is now called from `DropDownList.search`.
+* Added `DropDownItemSearchable` interface to allow the `T` of `DropDownItem<T>` to determine the way items are searched.
+* Added `toString` method to `DropDownItem` to use for `DropDownItem.build` and `DropDownItem.satisfiesSearch`.
+* Updated language example to showcase new customization abilities.
+* Renamed some internal variables and utilized new `select`/`deselect`/`selectAll`/`deselectAll` methods.
+* List items are now disabled after the number of selected items hits `DropDownOptions.maxSelectedItems`. `DropDownOptions.onMaxSelectionReached` is now called as soon as the last item is selected.
+* Added `DropDownOptions.submitOnMaxSelectionReached` to automatically submit the drop down selection when the maximum number of selected items has been reached.
 
 ## 0.0.4
 
