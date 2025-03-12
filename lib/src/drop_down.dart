@@ -831,10 +831,10 @@ class DropDownBody<T> extends StatefulWidget {
 
 class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   /// The list of items that are currently being displayed
-  DropDownList<T> list = [];
+  DropDownList<T> filteredList = [];
 
   /// The full, unfiltered list of items
-  DropDownList<T> unfilteredList = [];
+  DropDownList<T> list = [];
 
   /// The current search query
   String? search;
@@ -849,7 +849,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     if (widget.data.isFuture) {
       isLoading = true;
     } else {
-      unfilteredList = list = widget.data.items ?? [];
+      list = filteredList = widget.data.items ?? [];
     }
 
     _sortSearchList();
@@ -863,7 +863,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     if (items != null && isLoading) {
       isLoading = false;
 
-      unfilteredList = list = items;
+      list = filteredList = items;
 
       if (search != null) {
         _performSearch(search!);
@@ -875,7 +875,8 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final isSelectAll = list.fold(true, (p, e) => p && (e.isSelected));
+    final isSelectAll = filteredList.fold(true, (p, e) => p && (e.isSelected));
+
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: widget.options.bottomSheetListener,
       child: DraggableScrollableSheet(
@@ -971,7 +972,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                 if (widget.style.isSelectAllVisible &&
                     widget.options.enableMultipleSelection &&
                     widget.options.maxSelectedItems == null &&
-                    list.isNotEmpty)
+                    filteredList.isNotEmpty)
                   Align(
                     alignment: Alignment.centerRight,
                     child: Padding(
@@ -979,9 +980,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                           EdgeInsets.zero,
                       child: TextButton(
                         onPressed: () => setState(() {
-                          for (final element in list) {
-                            element.isSelected = !isSelectAll;
-                          }
+                          filteredList.deselectAll(isSelectAll);
                         }),
                         child: isSelectAll
                             ? widget.style.deselectAllButtonChild ??
@@ -1006,11 +1005,12 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                           snapshot.hasData) {
                         return ListView.separated(
                           controller: scrollController,
-                          itemCount: list.length,
+                          itemCount: filteredList.length,
                           padding: widget.style.listPadding ?? EdgeInsets.zero,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
-                            bool isSelected = list[index].isSelected;
+                            bool isSelected = filteredList[index].isSelected;
+
                             return Material(
                               color: Colors.transparent,
                               clipBehavior: Clip.hardEdge,
@@ -1020,23 +1020,24 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                                     if (!isSelected &&
                                         widget.options.maxSelectedItems !=
                                             null) {
-                                      if (unfilteredList.selected.length >=
+                                      if (list.selected.length >=
                                           widget.options.maxSelectedItems!) {
                                         widget.options.onMaxSelectionReached
                                             ?.call();
                                         return;
                                       }
                                     }
+
                                     setState(() {
-                                      list[index].isSelected = !isSelected;
+                                      filteredList[index].deselect(isSelected);
                                     });
                                   } else {
-                                    _submitSingle(list[index]);
+                                    _submitSingle(filteredList[index]);
                                   }
                                 },
                                 title: widget.options.listItemBuilder
-                                        ?.call(index, list[index]) ??
-                                    list[index].build(context, index),
+                                        ?.call(index, filteredList[index]) ??
+                                    filteredList[index].build(context, index),
                                 trailing: widget.options.enableMultipleSelection
                                     ? isSelected
                                         ? widget
@@ -1099,14 +1100,12 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
   /// Handle the submit button pressed
   void onSubmitButtonPressed() {
-    _submitMultiple(unfilteredList.selected);
+    _submitMultiple(list.selected);
   }
 
   /// Handle the clear button pressed
   void onClearButtonPressed() {
-    for (final item in unfilteredList) {
-      item.isSelected = false;
-    }
+    list.deselectAll();
 
     setState(() {});
   }
@@ -1125,10 +1124,10 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   /// Perform the search on all of the items.
   void _performSearch(String query) {
     if (query.isNotEmpty || widget.options.searchOnEmpty) {
-      list = widget.options.searchDelegate?.call(query, unfilteredList) ??
-          unfilteredList.search(query);
+      filteredList = widget.options.searchDelegate?.call(query, list) ??
+          list.search(query);
     } else {
-      list = unfilteredList;
+      filteredList = list;
     }
   }
 
@@ -1138,7 +1137,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   /// will utilize the [DropDownItem.compareTo] method to sort the list.
   void _sortSearchList() {
     if (widget.options.sortAfterSearch) {
-      list.sort(widget.options.sortDelegate);
+      filteredList.sort(widget.options.sortDelegate);
     }
   }
 
