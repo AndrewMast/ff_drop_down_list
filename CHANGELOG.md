@@ -1,4 +1,4 @@
-## Unreleased
+## 0.0.5
 
 * Added extension on `List<DropDownItem>` (aka `DropDownList`) that allows for selection/deselection of items in the list. Also added `selected` and `unselected` getters to return subsets of the list depending on the selection status of the `DropDownItem`.
 * Added methods on `DropDownData` that match new extension methods and apply it to both its `data` and its `future` data.
