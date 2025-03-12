@@ -6,6 +6,7 @@
 * `DropDownItem` now implements `Comparable` (sorts by `data`).
 * Added `DropDownOptions.sortAfterSearch` option to enable sorting. `DropDownOptions.sortDelegate` is still optional, as now `DropDownItem.compareTo` can be used by default.
 * Moved default item builder to `DropDownItem.build`.
+* Added `DropDownItemBuilder` interface to allow the `T` of `DropDownItem<T>` to determine the widget displayed in the drop down list.
 
 ## 0.0.4
 

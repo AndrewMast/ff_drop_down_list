@@ -37,8 +37,18 @@ typedef BottomSheetListener = bool Function(
 /// A function type definition for building a [DropDownStyle]
 typedef DropDownStyleBuilder = DropDownStyle Function(BuildContext context);
 
+/// An interface that allows the datatype of [DropDownItem.data]
+/// to determine how the drop down displays an item by default.
+///
+/// Gets overridden by [DropDownOptions.listItemBuilder].
+abstract interface class DropDownItemBuilder {
+  /// Builds the widget that displays the item in the [ListView] of the dropdown.
+  Widget build(BuildContext context, int index);
+}
+
 /// This is a model class used to represent an item in a selectable list
-class DropDownItem<T> implements Comparable<DropDownItem<T>> {
+class DropDownItem<T>
+    implements Comparable<DropDownItem<T>>, DropDownItemBuilder {
   /// Tha data of the item.
   final T data;
 
@@ -79,7 +89,19 @@ class DropDownItem<T> implements Comparable<DropDownItem<T>> {
   }
 
   /// Builds the widget that displays the item in the [ListView] of the dropdown.
-  Widget build(BuildContext context) => Text(data.toString());
+  ///
+  /// If the datatype of [data] implements [DropDownItemBuilder],
+  /// then the [DropDownItemBuilder.build] method will be called.
+  ///
+  /// Gets overridden by [DropDownOptions.listItemBuilder].
+  @override
+  Widget build(BuildContext context, int index) {
+    if (data is DropDownItemBuilder) {
+      return (data as DropDownItemBuilder).build(context, index);
+    }
+
+    return Text(data.toString());
+  }
 }
 
 /// Adds a method to convert a list into a list of [DropDownItem]s.
@@ -977,7 +999,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                                 },
                                 title: widget.options.listItemBuilder
                                         ?.call(index, list[index]) ??
-                                    list[index].build(context),
+                                    list[index].build(context, index),
                                 trailing: widget.options.enableMultipleSelection
                                     ? isSelected
                                         ? widget
