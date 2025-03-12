@@ -46,9 +46,20 @@ abstract interface class DropDownItemBuilder {
   Widget build(BuildContext context, int index);
 }
 
+/// An interface that allows the datatype of [DropDownItem.data]
+/// to determine the default search implementation.
+///
+/// Gets overridden by [DropDownOptions.searchDelegate].
+abstract interface class DropDownItemSearchable {
+  bool satisfiesSearch(String query);
+}
+
 /// This is a model class used to represent an item in a selectable list
 class DropDownItem<T>
-    implements Comparable<DropDownItem<T>>, DropDownItemBuilder {
+    implements
+        Comparable<DropDownItem<T>>,
+        DropDownItemBuilder,
+        DropDownItemSearchable {
   /// Tha data of the item.
   final T data;
 
@@ -104,7 +115,17 @@ class DropDownItem<T>
   }
 
   /// Checks whether the item satisfies the search query
+  ///
+  /// If the datatype of [data] implements [DropDownItemSearchable],
+  /// then the [DropDownItemSearchable.satisfiesSearch] method will be called.
+  ///
+  /// Gets overridden by [DropDownOptions.searchDelegate].
+  @override
   bool satisfiesSearch(String query) {
+    if (data is DropDownItemSearchable) {
+      return (data as DropDownItemSearchable).satisfiesSearch(query);
+    }
+
     return data.toString().toLowerCase().contains(query.toLowerCase());
   }
 }
