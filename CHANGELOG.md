@@ -13,6 +13,7 @@
 * Updated language example to showcase new customization abilities.
 * Renamed some internal variables and utilized new `select`/`deselect`/`selectAll`/`deselectAll` methods.
 * List items are now disabled after the number of selected items hits `DropDownOptions.maxSelectedItems`. `DropDownOptions.onMaxSelectionReached` is now called as soon as the last item is selected.
+* Added `DropDownOptions.submitOnMaxSelectionReached` to automatically submit the drop down selection when the maximum number of selected items has been reached.
 
 ## 0.0.4
 

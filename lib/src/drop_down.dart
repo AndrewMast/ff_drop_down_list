@@ -306,6 +306,11 @@ class DropDownOptions<T> {
   /// The maximum number of items that can be selected when [enableMultipleSelection] is true
   final int? maxSelectedItems;
 
+  /// Whether the drop down list should submit when the maximum selection limit is reached
+  ///
+  /// Default Value: `false`
+  final bool submitOnMaxSelectionReached;
+
   /// A callback function triggered when the maximum selection limit is reached
   ///
   /// This callback is called when the number of selected items exceeds or reaches
@@ -390,6 +395,7 @@ class DropDownOptions<T> {
     Key? key,
     this.enableMultipleSelection = false,
     this.maxSelectedItems,
+    this.submitOnMaxSelectionReached = false,
     this.onMaxSelectionReached,
     this.onSelected,
     this.onMultipleSelected,
@@ -1025,6 +1031,11 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                                     if (!isSelected && maxSelectionReached) {
                                       widget.options.onMaxSelectionReached
                                           ?.call();
+
+                                      if (widget.options
+                                          .submitOnMaxSelectionReached) {
+                                        _submitMultiple(list.selected);
+                                      }
                                     }
                                   } else {
                                     _submitSingle(filteredList[index]);
