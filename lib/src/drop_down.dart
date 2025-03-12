@@ -99,6 +99,17 @@ class DropDownItem<T>
     return Comparable.compare(data as Comparable, other.data as Comparable);
   }
 
+  /// Returns a string representation of the item.
+  ///
+  /// Directly returns the string representation of [data].
+  ///
+  /// Is used in [build] to display the item as a widget and
+  /// in [satisfiesSearch] to check if the item matches a search query.
+  @override
+  String toString() {
+    return data.toString();
+  }
+
   /// Builds the widget that displays the item in the [ListView] of the dropdown.
   ///
   /// If the datatype of [data] implements [DropDownItemBuilder],
@@ -111,7 +122,7 @@ class DropDownItem<T>
       return (data as DropDownItemBuilder).build(context, index);
     }
 
-    return Text(data.toString());
+    return Text(toString());
   }
 
   /// Checks whether the item satisfies the search query
@@ -126,7 +137,7 @@ class DropDownItem<T>
       return (data as DropDownItemSearchable).satisfiesSearch(query);
     }
 
-    return data.toString().toLowerCase().contains(query.toLowerCase());
+    return toString().toLowerCase().contains(query.toLowerCase());
   }
 }
 

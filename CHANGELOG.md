@@ -9,6 +9,7 @@
 * Added `DropDownItemBuilder` interface to allow the `T` of `DropDownItem<T>` to determine the widget displayed in the drop down list.
 * Moved search logic to `DropDownItem.satisfiesSearch` which is now called from `DropDownList.search`.
 * Added `DropDownItemSearchable` interface to allow the `T` of `DropDownItem<T>` to determine the way items are searched.
+* Added `toString` method to `DropDownItem` to use for `DropDownItem.build` and `DropDownItem.satisfiesSearch`.
 
 ## 0.0.4
 
