@@ -263,7 +263,7 @@ class DropDownOptions<T> {
   /// and returns a custom widget to display for the list item at that index.
   final ListItemBuilder<T>? listItemBuilder;
 
-  /// Controls whether the search list will be queried when the query string is empty.
+  /// Controls whether the search list will be queried when the query string is empty
   ///
   /// Particularly helpful when [searchDelegate] is set.
   ///
@@ -271,8 +271,16 @@ class DropDownOptions<T> {
   /// Set to `true` to search when the string is empty.
   final bool searchOnEmpty;
 
-  /// A delegate used to configure the custom search functionality in the dropdown.
+  /// A delegate used to configure the custom search functionality in the dropdown
   final SearchDelegate<T>? searchDelegate;
+
+  /// Whether the list of items will be sorted after every search
+  ///
+  /// When enabled, unless a [sortDelegate] is set, the default [List.sort] will be
+  /// used, which will utilize the [DropDownItem.compareTo] method to sort the list.
+  ///
+  /// Default Value: `false`
+  final bool sortAfterSearch;
 
   /// A delegate used to sort the list of items after every search
   final SortDelegate<T>? sortDelegate;
@@ -327,6 +335,7 @@ class DropDownOptions<T> {
     this.listItemBuilder,
     this.searchOnEmpty = false,
     this.searchDelegate,
+    this.sortAfterSearch = false,
     this.sortDelegate,
     this.useRootNavigator = false,
     this.enableDrag = true,
@@ -1075,8 +1084,11 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   }
 
   /// Sorts the list items using the [DropDownOptions.sortDelegate].
+  ///
+  /// When [DropDownOptions.sortDelegate] is `null`, then the [List.sort] method
+  /// will utilize the [DropDownItem.compareTo] method to sort the list.
   void _sortSearchList() {
-    if (widget.options.sortDelegate != null) {
+    if (widget.options.sortAfterSearch) {
       list.sort(widget.options.sortDelegate);
     }
   }

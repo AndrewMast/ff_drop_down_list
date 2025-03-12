@@ -251,7 +251,7 @@ These are some things I would like to add to the next release.
     - Move default search to `DropDownItem` (`bool satisfiesQuery(String)`?)
         - Move `_basicSearch` to `DropDownList` extension as `search`
     - ~~Make `DropDownItem` implement `Comparable<DropDownItem>` (`compareTo`)~~
-        - Add `DropDownOptions` option to sort after search (so default `.sort()` can work)
+        - ~~Add `DropDownOptions` option to sort after search (so default `.sort()` can work)~~
     - Make custom `DropDownItem` with subtitle for example
         - Builds subtitle text
         - Searches both title and subtitle

@@ -4,6 +4,7 @@
 * Added methods on `DropDownData` that match new extension methods and apply it to both its `data` and its `future` data.
 * Added `select()` and `deselect()` methods to `DropDownItem`.
 * `DropDownItem` now implements `Comparable` (sorts by `data`).
+* Added `DropDownOptions.sortAfterSearch` option to enable sorting. `DropDownOptions.sortDelegate` is still optional, as now `DropDownItem.compareTo` can be used by default.
 
 ## 0.0.4
 
