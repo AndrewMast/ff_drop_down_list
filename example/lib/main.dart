@@ -211,37 +211,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void onLanguageTextFieldTap() {
     DropDown<LanguageModel>(
       data: DropDownData(_listOfLanguages),
-      options: DropDownOptions<LanguageModel>(
+      options: DropDownOptions(
         enableMultipleSelection: true,
         maxSelectedItems: 3,
-        isDismissible: true,
-        listItemBuilder: (int index, DropDownItem<LanguageModel> dataItem) {
-          return Text(
-            '${dataItem.data.name} : ${dataItem.data.code}',
-          );
-        },
-        onSelected: (selectedItems) {
-          List<String> list = [];
-          for (var item in selectedItems) {
-            list.add('${item.data.name} : ${item.data.code}');
-          }
-          showSnackBar(list.toString());
-        },
-        searchDelegate:
-            (String query, List<DropDownItem<LanguageModel>> dataItems) {
-          return dataItems
-              .where((item) =>
-                  item.data.name.toLowerCase().contains(query.toLowerCase()) ||
-                  item.data.code.toLowerCase().contains(query.toLowerCase()))
-              .toList();
-        },
+        onSelected: (items) => showSnackBar(items.toString()),
       ),
       style: DropDownStyle(
-        listSeparatorColor: BrightnessColor(
-          light: Colors.black12,
-          dark: Colors.white12,
-        ),
-        tileColor: ThemedColor((theme) => theme.primaryColor),
         headerWidget: const Text(
           kLanguages,
           style: TextStyle(
@@ -356,7 +331,7 @@ class AppElevatedButton extends StatelessWidget {
 }
 
 /// This is custom model class which we will use in drop down
-class LanguageModel {
+class LanguageModel implements DropDownItemBuilder, DropDownItemSearchable {
   final String name;
   final String code;
 
@@ -364,4 +339,28 @@ class LanguageModel {
     required this.name,
     required this.code,
   });
+
+  @override
+  String toString() => "Language(name: $name, code: $code)";
+
+  @override
+  Widget build(BuildContext context, int index) => RichText(
+        text: TextSpan(
+          text: name,
+          style: Theme.of(context).textTheme.bodyMedium,
+          children: [
+            TextSpan(
+              text: ' $code',
+              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: Theme.of(context).secondaryHeaderColor,
+                  ),
+            ),
+          ],
+        ),
+      );
+
+  @override
+  bool satisfiesSearch(String query) =>
+      name.toLowerCase().contains(query.toLowerCase()) ||
+      code.toLowerCase().contains(query.toLowerCase());
 }

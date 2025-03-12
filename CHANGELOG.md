@@ -10,6 +10,7 @@
 * Moved search logic to `DropDownItem.satisfiesSearch` which is now called from `DropDownList.search`.
 * Added `DropDownItemSearchable` interface to allow the `T` of `DropDownItem<T>` to determine the way items are searched.
 * Added `toString` method to `DropDownItem` to use for `DropDownItem.build` and `DropDownItem.satisfiesSearch`.
+* Updated language example to showcase new customization abilities.
 
 ## 0.0.4
 
