@@ -102,6 +102,11 @@ class DropDownItem<T>
 
     return Text(data.toString());
   }
+
+  /// Checks whether the item satisfies the search query
+  bool satisfiesSearch(String query) {
+    return data.toString().toLowerCase().contains(query.toLowerCase());
+  }
 }
 
 /// Adds a method to convert a list into a list of [DropDownItem]s.
@@ -110,15 +115,11 @@ extension ListAsDropDownItems<T> on List<T> {
   DropDownList<T> asDropDownItems() => DropDownItem.list(this);
 }
 
-/// Adds a method to convert a list of [DropDownItem] into a normal list.
-extension ListAsItemData<T> on DropDownList<T> {
+/// Operations for lists of [DropDownItem]s ([DropDownList])
+extension DropDownListExtensions<T> on DropDownList<T> {
   /// Convert the list from a list of [DropDownItem]s to a list of normal items.
   List<T> asItemData() => map<T>((item) => item.data).toList();
-}
 
-/// Adds methods to select or deselect [DropDownItem]s and adds
-/// getters for selected/unselected subsets of the list.
-extension DropDownListSelection<T> on DropDownList<T> {
   /// Selects all of the [DropDownItem]s in the list
   void selectAll([bool select = true]) {
     for (final item in this) {
@@ -158,11 +159,15 @@ extension DropDownListSelection<T> on DropDownList<T> {
 
   /// Returns the subset of [DropDownItem]s that are selected
   DropDownList<T> get selected =>
-      where((e) => e.isSelected).toList(growable: false);
+      where((item) => item.isSelected).toList(growable: false);
 
   /// Returns the subset of [DropDownItem]s that are unselected
   DropDownList<T> get unselected =>
-      where((e) => !e.isSelected).toList(growable: false);
+      where((item) => !item.isSelected).toList(growable: false);
+
+  /// Search the list for [DropDownItem]s that satisfy the search query
+  DropDownList<T> search(String query) =>
+      where((item) => item.satisfiesSearch(query)).toList(growable: false);
 }
 
 /// Manages the data of a dropdown
@@ -1089,21 +1094,10 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   void _performSearch(String query) {
     if (query.isNotEmpty || widget.options.searchOnEmpty) {
       list = widget.options.searchDelegate?.call(query, unfilteredList) ??
-          _basicSearch(query);
+          unfilteredList.search(query);
     } else {
       list = unfilteredList;
     }
-  }
-
-  /// Perform a basic search.
-  DropDownList<T> _basicSearch(String query) {
-    final String searchQuery = query.toLowerCase();
-
-    return unfilteredList
-        .where(
-          (item) => item.data.toString().toLowerCase().contains(searchQuery),
-        )
-        .toList();
   }
 
   /// Sorts the list items using the [DropDownOptions.sortDelegate].
