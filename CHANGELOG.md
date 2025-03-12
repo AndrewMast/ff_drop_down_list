@@ -12,6 +12,7 @@
 * Added `toString` method to `DropDownItem` to use for `DropDownItem.build` and `DropDownItem.satisfiesSearch`.
 * Updated language example to showcase new customization abilities.
 * Renamed some internal variables and utilized new `select`/`deselect`/`selectAll`/`deselectAll` methods.
+* List items are now disabled after the number of selected items hits `DropDownOptions.maxSelectedItems`. `DropDownOptions.onMaxSelectionReached` is now called as soon as the last item is selected.
 
 ## 0.0.4
 

@@ -1015,22 +1015,17 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                               color: Colors.transparent,
                               clipBehavior: Clip.hardEdge,
                               child: ListTile(
+                                enabled: isSelected || !maxSelectionReached,
                                 onTap: () {
                                   if (widget.options.enableMultipleSelection) {
-                                    if (!isSelected &&
-                                        widget.options.maxSelectedItems !=
-                                            null) {
-                                      if (list.selected.length >=
-                                          widget.options.maxSelectedItems!) {
-                                        widget.options.onMaxSelectionReached
-                                            ?.call();
-                                        return;
-                                      }
-                                    }
-
                                     setState(() {
                                       filteredList[index].deselect(isSelected);
                                     });
+
+                                    if (!isSelected && maxSelectionReached) {
+                                      widget.options.onMaxSelectionReached
+                                          ?.call();
+                                    }
                                   } else {
                                     _submitSingle(filteredList[index]);
                                   }
@@ -1098,6 +1093,11 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     );
   }
 
+  /// Whether the max selected items limit has been reached
+  bool get maxSelectionReached =>
+      widget.options.maxSelectedItems != null &&
+      list.selected.length >= widget.options.maxSelectedItems!;
+
   /// Handle the submit button pressed
   void onSubmitButtonPressed() {
     _submitMultiple(list.selected);
@@ -1105,9 +1105,9 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
   /// Handle the clear button pressed
   void onClearButtonPressed() {
-    list.deselectAll();
-
-    setState(() {});
+    setState(() {
+      list.deselectAll();
+    });
   }
 
   /// This helps when search enabled & show the filtered data in list.
