@@ -77,6 +77,9 @@ class DropDownItem<T> implements Comparable<DropDownItem<T>> {
   int compareTo(DropDownItem<T> other) {
     return Comparable.compare(data as Comparable, other.data as Comparable);
   }
+
+  /// Builds the widget that displays the item in the [ListView] of the dropdown.
+  Widget build(BuildContext context) => Text(data.toString());
 }
 
 /// Adds a method to convert a list into a list of [DropDownItem]s.
@@ -974,9 +977,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                                 },
                                 title: widget.options.listItemBuilder
                                         ?.call(index, list[index]) ??
-                                    Text(
-                                      list[index].data.toString(),
-                                    ),
+                                    list[index].build(context),
                                 trailing: widget.options.enableMultipleSelection
                                     ? isSelected
                                         ? widget

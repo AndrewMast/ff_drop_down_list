@@ -5,6 +5,7 @@
 * Added `select()` and `deselect()` methods to `DropDownItem`.
 * `DropDownItem` now implements `Comparable` (sorts by `data`).
 * Added `DropDownOptions.sortAfterSearch` option to enable sorting. `DropDownOptions.sortDelegate` is still optional, as now `DropDownItem.compareTo` can be used by default.
+* Moved default item builder to `DropDownItem.build`.
 
 ## 0.0.4
 

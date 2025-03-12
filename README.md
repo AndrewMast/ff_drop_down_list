@@ -247,7 +247,7 @@ Contributions to this project are welcome. Feel free to open issues and to submi
 These are some things I would like to add to the next release.
 
 - Move some logic to `DropDownItem`
-    - Move default item builder to `DropDownItem` (`Widget build(BuildContext)`?)
+    - ~~Move default item builder to `DropDownItem` (`Widget build(BuildContext)`?)~~
     - Move default search to `DropDownItem` (`bool satisfiesQuery(String)`?)
         - Move `_basicSearch` to `DropDownList` extension as `search`
     - ~~Make `DropDownItem` implement `Comparable<DropDownItem>` (`compareTo`)~~
