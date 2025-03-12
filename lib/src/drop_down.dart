@@ -8,19 +8,19 @@ import 'search_text_field.dart';
 /// An alias for a [List] of [DropDownItem]s.
 typedef DropDownList<T> = List<DropDownItem<T>>;
 
-/// A callback function that is invoked when items are selected
+/// A callback function that is invoked when items are selected.
 typedef ItemSelectedCallback<T> = void Function(DropDownList<T> items);
 
-/// A callback function that is invoked when multiple items are selected
+/// A callback function that is invoked when multiple items are selected.
 typedef MultipleItemSelectedCallback<T> = void Function(DropDownList<T> items);
 
-/// A callback function that is invoked when a single item is selected
+/// A callback function that is invoked when a single item is selected.
 typedef SingleItemSelectedCallback<T> = void Function(DropDownItem<T> item);
 
-/// A function type definition for building a widget for a specific list item
+/// A function type definition for building a widget for a specific list item.
 typedef ListItemBuilder<T> = Widget Function(int index, DropDownItem<T> item);
 
-/// A function type definition for searching through a list of items based on the user's query
+/// A function type definition for searching through a list of items based on the user's query.
 typedef SearchDelegate<T> = DropDownList<T> Function(
   String query,
   DropDownList<T> items,
@@ -29,12 +29,12 @@ typedef SearchDelegate<T> = DropDownList<T> Function(
 /// A function type definition for sorting through the list of items.
 typedef SortDelegate<T> = int Function(DropDownItem<T> a, DropDownItem<T> b);
 
-/// A function type definition for handling notifications from a draggable bottom sheet
+/// A function type definition for handling notifications from a draggable bottom sheet.
 typedef BottomSheetListener = bool Function(
   DraggableScrollableNotification notification,
 );
 
-/// A function type definition for building a [DropDownStyle]
+/// A function type definition for building a [DropDownStyle].
 typedef DropDownStyleBuilder = DropDownStyle Function(BuildContext context);
 
 /// An interface that allows the datatype of [DropDownItem.data]
@@ -54,7 +54,7 @@ abstract interface class DropDownItemSearchable {
   bool satisfiesSearch(String query);
 }
 
-/// This is a model class used to represent an item in a selectable list
+/// This is a model class used to represent an item in a selectable list.
 class DropDownItem<T>
     implements
         Comparable<DropDownItem<T>>,
@@ -82,10 +82,10 @@ class DropDownItem<T>
     return items.map((item) => DropDownItem(item)).toList();
   }
 
-  /// Selects the item
+  /// Selects the item.
   void select([bool select = true]) => isSelected = select;
 
-  /// Deselects the item
+  /// Deselects the item.
   void deselect([bool deselect = true]) => select(!deselect);
 
   /// Compares this drop down item to another drop down item.
@@ -125,7 +125,7 @@ class DropDownItem<T>
     return Text(toString());
   }
 
-  /// Checks whether the item satisfies the search query
+  /// Checks whether the item satisfies the search query.
   ///
   /// If the datatype of [data] implements [DropDownItemSearchable],
   /// then the [DropDownItemSearchable.satisfiesSearch] method will be called.
@@ -152,17 +152,17 @@ extension DropDownListExtensions<T> on DropDownList<T> {
   /// Convert the list from a list of [DropDownItem]s to a list of normal items.
   List<T> asItemData() => map<T>((item) => item.data).toList();
 
-  /// Selects all of the [DropDownItem]s in the list
+  /// Selects all of the [DropDownItem]s in the list.
   void selectAll([bool select = true]) {
     for (final item in this) {
       item.isSelected = select;
     }
   }
 
-  /// Deselects all of the [DropDownItem]s in the list
+  /// Deselects all of the [DropDownItem]s in the list.
   void deselectAll([bool deselect = true]) => selectAll(!deselect);
 
-  /// Selects all of the [DropDownItem]s with data contained in the provided list of data
+  /// Selects all of the [DropDownItem]s with data contained in the provided list of data.
   void select(
     List<T> data, {
     bool select = true,
@@ -177,7 +177,7 @@ extension DropDownListExtensions<T> on DropDownList<T> {
     }
   }
 
-  /// Deselects all of the [DropDownItem]s with data contained in the provided list of data
+  /// Deselects all of the [DropDownItem]s with data contained in the provided list of data.
   void deselect(
     List<T> data, {
     bool deselect = true,
@@ -189,60 +189,60 @@ extension DropDownListExtensions<T> on DropDownList<T> {
         deselectOthers: selectOthers,
       );
 
-  /// Returns the subset of [DropDownItem]s that are selected
+  /// Returns the subset of [DropDownItem]s that are selected.
   DropDownList<T> get selected =>
       where((item) => item.isSelected).toList(growable: false);
 
-  /// Returns the subset of [DropDownItem]s that are unselected
+  /// Returns the subset of [DropDownItem]s that are unselected.
   DropDownList<T> get unselected =>
       where((item) => !item.isSelected).toList(growable: false);
 
-  /// Search the list for [DropDownItem]s that satisfy the search query
+  /// Search the list for [DropDownItem]s that satisfy the search query.
   DropDownList<T> search(String query) =>
       where((item) => item.satisfiesSearch(query)).toList(growable: false);
 }
 
-/// Manages the data of a dropdown
+/// Manages the data of a dropdown.
 class DropDownData<T> {
-  /// The items for the dropdown
+  /// The items for the dropdown.
   ///
   /// If [future] is provided, these items will be ignored.
   final DropDownList<T>? items;
 
-  /// A future that will return the items for the dropdown
+  /// A future that will return the items for the dropdown.
   final Future<DropDownList<T>>? future;
 
-  /// Whether the items are coming from a [Future]
+  /// Whether the items are coming from a [Future].
   bool get isFuture => future != null;
 
-  /// Create a data object from a list of [DropDownItem]s
+  /// Create a data object from a list of [DropDownItem]s.
   const DropDownData(DropDownList<T> this.items) : future = null;
 
-  /// Create a data object from a list of items
+  /// Create a data object from a list of items.
   DropDownData.raw(List<T> items) : this(items.asDropDownItems());
 
-  /// Create a data object from a future that will return a list of [DropDownItem]s
+  /// Create a data object from a future that will return a list of [DropDownItem]s.
   const DropDownData.future(Future<DropDownList<T>> this.future) : items = null;
 
-  /// Create a data object from a future that will return a list of items
+  /// Create a data object from a future that will return a list of items.
   DropDownData.rawFuture(Future<List<T>> future)
       : this.future(future.then((list) => list.asDropDownItems()));
 
   /// Create a data object from either a list of [DropDownItem]s
-  /// or a future that will return a list
+  /// or a future that will return a list.
   DropDownData.from(FutureOr<DropDownList<T>> data)
       : items = data is DropDownList<T> ? data : null,
         future = data is Future<DropDownList<T>> ? data : null;
 
   /// Create a data object from either a list of items
-  /// or a future that will return a list
+  /// or a future that will return a list.
   DropDownData.fromRaw(FutureOr<List<T>> data)
       : items = data is List<T> ? data.asDropDownItems() : null,
         future = data is Future<List<T>>
             ? data.then((list) => list.asDropDownItems())
             : null;
 
-  /// Selects all of the [DropDownItem]s in the list
+  /// Selects all of the [DropDownItem]s in the list.
   void selectAll([bool select = true]) {
     items?.selectAll(select);
 
@@ -250,7 +250,7 @@ class DropDownData<T> {
     future?.then((list) => list.selectAll(select));
   }
 
-  /// Deselects all of the [DropDownItem]s in the list
+  /// Deselects all of the [DropDownItem]s in the list.
   void deselectAll([bool deselect = true]) {
     items?.deselectAll(deselect);
 
@@ -258,7 +258,7 @@ class DropDownData<T> {
     future?.then((list) => list.deselectAll(deselect));
   }
 
-  /// Selects all of the [DropDownItem]s with data contained in the provided list of data
+  /// Selects all of the [DropDownItem]s with data contained in the provided list of data.
   void select(
     List<T> data, {
     bool select = true,
@@ -276,7 +276,7 @@ class DropDownData<T> {
     );
   }
 
-  /// Deselects all of the [DropDownItem]s with data contained in the provided list of data
+  /// Deselects all of the [DropDownItem]s with data contained in the provided list of data.
   void deselect(
     List<T> data, {
     bool deselect = true,
@@ -295,53 +295,54 @@ class DropDownData<T> {
   }
 }
 
-/// Manages the options and behavior of a dropdown
+/// Manages the options and behavior of a dropdown.
 class DropDownOptions<T> {
-  /// Enables single or multiple selection for the drop down list items
-  /// Set to `true` to allow multiple items to be selected at once
+  /// Enables single or multiple selection for the drop down list items.
+  ///
+  /// Set to `true` to allow multiple items to be selected at once.
   ///
   /// Default Value: `false`
   final bool enableMultipleSelection;
 
-  /// The maximum number of items that can be selected when [enableMultipleSelection] is true
+  /// The maximum number of items that can be selected when [enableMultipleSelection] is `true`.
   final int? maxSelectedItems;
 
-  /// Whether the drop down list should submit when the maximum selection limit is reached
+  /// Whether the drop down list should submit when the maximum selection limit is reached.
   ///
   /// Default Value: `false`
   final bool submitOnMaxSelectionReached;
 
-  /// A callback function triggered when the maximum selection limit is reached
+  /// A callback function triggered when the maximum selection limit is reached.
   ///
-  /// This callback is called when the number of selected items exceeds or reaches
-  /// the value specified by [maxSelectedItems]
+  /// This callback is called when the number of selected items exceeds
+  /// or reaches the value specified by [maxSelectedItems].
   final VoidCallback? onMaxSelectionReached;
 
-  /// A callback function triggered when items are selected from the list
+  /// A callback function triggered when items are selected from the list.
   final ItemSelectedCallback<T>? onSelected;
 
-  /// A callback function triggered when multiple items are selected from the list
+  /// A callback function triggered when multiple items are selected from the list.
   final MultipleItemSelectedCallback<T>? onMultipleSelected;
 
-  /// A callback function triggered when a single item is selected from the list
+  /// A callback function triggered when a single item is selected from the list.
   final SingleItemSelectedCallback<T>? onSingleSelected;
 
   /// A function that takes an [int] index and [DropDownItem] item as a parameter
   /// and returns a custom widget to display for the list item at that index.
   final ListItemBuilder<T>? listItemBuilder;
 
-  /// Controls whether the search list will be queried when the query string is empty
+  /// Controls whether the search list will be queried when the query string is empty.
   ///
   /// Particularly helpful when [searchDelegate] is set.
   ///
-  /// Default Value: `false`, The widget will not search when the query string is empty
+  /// Default Value: `false`, The widget will not search when the query string is empty.
   /// Set to `true` to search when the string is empty.
   final bool searchOnEmpty;
 
-  /// A delegate used to configure the custom search functionality in the dropdown
+  /// A delegate used to configure the custom search functionality in the dropdown.
   final SearchDelegate<T>? searchDelegate;
 
-  /// Whether the list of items will be sorted after every search
+  /// Whether the list of items will be sorted after every search.
   ///
   /// When enabled, unless a [sortDelegate] is set, the default [List.sort] will be
   /// used, which will utilize the [DropDownItem.compareTo] method to sort the list.
@@ -349,46 +350,46 @@ class DropDownOptions<T> {
   /// Default Value: `false`
   final bool sortAfterSearch;
 
-  /// A delegate used to sort the list of items after every search
+  /// A delegate used to sort the list of items after every search.
   final SortDelegate<T>? sortDelegate;
 
-  /// Specifies whether a modal bottom sheet should be displayed using the root navigator
+  /// Specifies whether a modal bottom sheet should be displayed using the root navigator.
   ///
   /// Default Value: `false`
   final bool useRootNavigator;
 
-  /// Specifies whether the bottom sheet can be dragged up and down and dismissed by swiping downwards
+  /// Specifies whether the bottom sheet can be dragged up and down and dismissed by swiping downwards.
   ///
   /// Default Value: `true`
   final bool enableDrag;
 
-  /// Specifies whether the bottom sheet will be dismissed when the user taps on the scrim
+  /// Specifies whether the bottom sheet will be dismissed when the user taps on the scrim.
   ///
   /// Default Value: `true`
   final bool isDismissible;
 
-  /// The initial fractional value of the parent container's height to use when
-  /// displaying the [DropDown] widget in [DraggableScrollableSheet]
+  /// The initial fractional value of the parent container's height to use
+  /// when displaying the [DropDown] widget in [DraggableScrollableSheet].
   ///
   /// Default Value: `0.7`
   final double initialSheetSize;
 
-  /// The minimum fractional value of the parent container's height to use when
-  /// displaying the [DropDown] widget in [DraggableScrollableSheet]
+  /// The minimum fractional value of the parent container's height to use
+  /// when displaying the [DropDown] widget in [DraggableScrollableSheet].
   ///
   /// Default Value: `0.3`
   final double minSheetSize;
 
-  /// The maximum fractional value of the parent container's height to use when
-  /// displaying the [DropDown] widget in [DraggableScrollableSheet]
+  /// The maximum fractional value of the parent container's height to use
+  /// when displaying the [DropDown] widget in [DraggableScrollableSheet].
   ///
   /// Default Value: `0.9`
   final double maxSheetSize;
 
-  /// A listener that monitors events bubbling up from the BottomSheet
+  /// A listener that monitors events bubbling up from the BottomSheet.
   ///
   /// The [bottomSheetListener] is triggered with a [DraggableScrollableNotification]
-  /// when changes occur in the BottomSheet's draggable scrollable area
+  /// when changes occur in the BottomSheet's draggable scrollable area.
   final BottomSheetListener? bottomSheetListener;
 
   const DropDownOptions({
@@ -415,238 +416,244 @@ class DropDownOptions<T> {
   });
 }
 
-/// Manages the style and appearance of a dropdown
+/// Manages the style and appearance of a dropdown.
 class DropDownStyle {
-  /// The padding applied to the `ListView` that contains the dropdown items
+  /// The padding applied to the `ListView` that contains the dropdown items.
   ///
-  /// If not provided (i.e., null), [EdgeInsets.zero] will be applied
+  /// If not provided (i.e., null), [EdgeInsets.zero] will be applied.
   final EdgeInsets? listPadding;
 
-  /// The widget used as a separator between items in the dropdown list
+  /// The widget used as a separator between items in the dropdown list.
   ///
-  /// This can be any widget, such as a `Divider` or `SizedBox`
+  /// This can be any widget, such as a [Divider] or [SizedBox].
   ///
-  /// If not provided (i.e., null), a default `Divider` with a color of
-  /// [Colors.transparent] and a height of 0 will be applied
+  /// If not provided (i.e., null), a default [Divider] with a color of
+  /// [Colors.transparent] and a height of `0` will be applied.
   final Widget? listSeparator;
 
-  /// Defines the color of the default list separator `Divider`.
+  /// Defines the color of the default list separator [Divider].
   ///
-  /// Defaults to [Colors.transparent]
+  /// Default Value: [Colors.transparent]
   final Color? listSeparatorColor;
 
-  /// The padding applied to the content of each `ListTile` in the dropdown list
+  /// The padding applied to the content of each [ListTile] in the dropdown list.
   ///
   /// If not provided (i.e., null), the default padding of
-  /// [EdgeInsets.symmetric(horizontal: 20)] will be applied
+  /// [EdgeInsets.symmetric(horizontal: 20)] will be applied.
   final EdgeInsets? tileContentPadding;
 
-  /// Defines the background color of each `ListTile` in the dropdown list
+  /// Defines the background color of each [ListTile] in the dropdown list.
   ///
-  /// Defaults to [Colors.transparent]
+  /// Default Value: [Colors.transparent]
   final Color? tileColor;
 
-  /// Defines the background color of each selected `ListTile` in the dropdown list
+  /// Defines the background color of each selected [ListTile] in the dropdown list.
   ///
-  /// Defaults to [tileColor]
+  /// Default Value: [tileColor]
   final Color? selectedTileColor;
 
-  /// The widget displayed as a trailing icon when a list item is selected
+  /// The widget displayed as a trailing icon when a list item is selected.
   ///
-  /// This is used only when [DropDownOptions.enableMultipleSelection] is true
+  /// This is used only when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
   /// Default Value: [Icon(Icons.check_box)]
   final Widget selectedTileTrailingWidget;
 
-  /// The widget displayed as a trailing icon when a list item is not selected
+  /// The widget displayed as a trailing icon when a list item is not selected.
   ///
-  /// This is used only when [DropDownOptions.enableMultipleSelection] is true
+  /// This is used only when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
   /// Default Value: [Icon(Icons.check_box_outline_blank)]
   final Widget unselectedTileTrailingWidget;
 
-  /// Sets the background color of the dropdown
+  /// Sets the background color of the dropdown.
   ///
   /// Default Value: [Colors.transparent]
   final Color backgroundColor;
 
-  /// The border shape of the bottom sheet
+  /// The border shape of the bottom sheet.
   ///
   /// If not provided (i.e., null), the default value will be
   /// [RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24.0)))]
   final ShapeBorder? border;
 
-  /// The padding applied to the dropdown container
+  /// The padding applied to the dropdown container.
   ///
   /// If not provided (i.e., null), the default value will be
   /// [EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)]
   final EdgeInsets? padding;
 
-  /// The padding applied to the dropdown header
+  /// The padding applied to the dropdown header.
   ///
   /// If not provided (i.e., null), the default value will be
   /// [EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0)]
   final EdgeInsets? headerPadding;
 
-  /// The widget displayed as the title of the bottom sheet
-  /// This allows customization of the title content
+  /// The widget displayed as the title of the bottom sheet.
+  ///
+  /// This allows customization of the title content.
   ///
   /// If not provided, no title will be displayed
   final Widget? headerWidget;
 
   /// Defines a custom widget to display as the child of the submit button
-  /// when [DropDownOptions.enableMultipleSelection] is true
+  /// when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
-  /// This is typically used with an [ElevatedButton]
-  /// If not provided, a default button child will be used
+  /// This is typically used with an [ElevatedButton].
+  ///
+  /// If not provided, a default button child will be used.
   final Widget? submitButtonChild;
 
-  /// Specifies the text displayed on the submit button when [DropDownOptions.enableMultipleSelection] is true
+  /// Specifies the text displayed on the submit button when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
-  /// This is only used if a custom [submitButtonChild] widget is not provided
+  /// This is only used if a custom [submitButtonChild] widget is not provided.
   ///
   /// Default Value: `"Submit"`
   final String submitButtonText;
 
   /// Defines a custom widget to display as the child of the clear button
-  /// when [DropDownOptions.enableMultipleSelection] is true
+  /// when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
-  /// This is typically used with an [ElevatedButton]
-  /// If not provided, a default button child will be used
+  /// This is typically used with an [ElevatedButton].
+  ///
+  /// If not provided, a default button child will be used.
   final Widget? clearButtonChild;
 
-  /// Specifies the text displayed on the clear button when [DropDownOptions.enableMultipleSelection] is true
+  /// Specifies the text displayed on the clear button when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
-  /// This is only used if a custom [clearButtonChild] widget is not provided
+  /// This is only used if a custom [clearButtonChild] widget is not provided.
   ///
   /// Default Value: `"Clear"`
   final String clearButtonText;
 
-  /// Controls the visibility of the search widget
+  /// Controls the visibility of the search widget.
   ///
-  /// Default Value: `true`, The widget will be visible by default
-  /// Set to `false` to hide the widget
+  /// Default Value: `true`, The widget will be visible by default.
+  /// Set to `false` to hide the widget.
   final bool isSearchVisible;
 
-  /// The padding applied to the search text field
+  /// The padding applied to the search text field.
   ///
   /// If not provided (i.e., null), the default value will be
   /// [EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)]
   final EdgeInsets? searchTextFieldPadding;
 
-  /// Defines a custom widget to display the text box for searching
+  /// Defines a custom widget to display the text box for searching.
   ///
   /// If you provide a custom widget, you must include a [TextEditingController]
-  /// for the [TextFormField] to manage the input
+  /// for the [TextFormField] to manage the input.
   ///
-  /// If null, the default [SearchTextField] widget will be used
+  /// If null, the default [SearchTextField] widget will be used.
   final TextFormField? searchWidget;
 
-  /// Specifies the text displayed on the search widget as hint text
+  /// Specifies the text displayed on the search widget as hint text.
   ///
   /// Default Value: `"Search"`
   final String searchHintText;
 
-  /// The fill color for the search input field
+  /// The fill color for the search input field.
   ///
   /// If null, will default to the theme's default input decoration fill color.
   final Color? searchFillColor;
 
-  /// The color of the cursor for the search input field
+  /// The color of the cursor for the search input field.
   ///
   /// If null, will default to the theme's default input cursor color.
   final Color? searchCursorColor;
 
-  /// The border radius of the search input field
+  /// The border radius of the search input field.
   ///
   /// Default Value: [BorderRadius.circular(24.0)]
   final BorderRadius? searchBorderRadius;
 
-  /// The prefix icon for the search input field
+  /// The prefix icon for the search input field.
   ///
   /// Default Value: [Icon(Icons.search)]
   final Widget? searchPrefixIcon;
 
-  /// The prefix icon color for the search input field
+  /// The prefix icon color for the search input field.
   ///
   /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
   final Color? searchPrefixColor;
 
-  /// The suffix icon for the search input field
+  /// The suffix icon for the search input field.
   ///
   /// Pressing this icon clears the input field.
   ///
   /// Default Value: [Icon(Icons.clear)]
   final Widget? searchSuffixIcon;
 
-  /// The suffix icon color for the search input field
+  /// The suffix icon color for the search input field.
   ///
   /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
   final Color? searchSuffixColor;
 
-  /// Controls whether the search input field will autofocus
+  /// Controls whether the search input field will autofocus.
   ///
   /// Default Value: `false`
   final bool searchAutofocus;
 
-  /// Controls the visibility of the "select all" widget when [DropDownOptions.enableMultipleSelection] is true
+  /// Controls the visibility of the "select all" widget when [DropDownOptions.enableMultipleSelection] is `true`
+  /// and [DropDownOptions.maxSelectedItems] is not set.
   ///
   /// Default Value: `true`
   final bool isSelectAllVisible;
 
-  /// The padding applied to the "select all" and "deselect all" TextButtons
+  /// The padding applied to the "select all" and "deselect all" TextButtons.
   ///
-  /// If null, [EdgeInsets.zero] will be applied as the default padding
+  /// If null, [EdgeInsets.zero] will be applied as the default padding.
   final EdgeInsets? selectAllButtonPadding;
 
-  /// Defines a custom widget to display as the child of the selectAll text button
-  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
+  /// Defines a custom widget to display as the child of the Select All text button
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
-  /// This is typically used with an [TextButton]
-  /// If not provided, a default text button child will be used
+  /// This is typically used with an [TextButton].
+  ///
+  /// If not provided, a default text button child will be used.
   final Widget? selectAllButtonChild;
 
-  /// Specifies the text displayed on the selectAll text button
-  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
+  /// Specifies the text displayed on the Select All text button
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
-  /// This is only used if a custom [selectAllButtonChild] widget is not provided
+  /// This is only used if a custom [selectAllButtonChild] widget is not provided.
   ///
   /// Default Value: `"Select All"`
   final String selectAllButtonText;
 
-  /// Defines a custom widget to display as the child of the deSelectAll text button
-  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
+  /// Defines a custom widget to display as the child of the Deselect All text button
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
-  /// This is typically used with an [TextButton]
-  /// If not provided, a default text button child will be used
+  /// This is typically used with an [TextButton].
+  ///
+  /// If not provided, a default text button child will be used.
   final Widget? deselectAllButtonChild;
 
-  /// Specifies the text displayed on the deSelectAll text button
-  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] is true
+  /// Specifies the text displayed on the Deselect All text button
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
-  /// This is only used if a custom [deselectAllButtonChild] widget is not provided
+  /// This is only used if a custom [deselectAllButtonChild] widget is not provided.
   ///
   /// Default Value: `"Deselect All"`
   final String deselectAllButtonText;
 
-  /// The widget to display when data is being loaded from [DropDownData.future]
+  /// The widget to display when data is being loaded from [DropDownData.future].
   ///
   /// Default Value: [Align(alignment: Alignment.topCenter, child: CircularProgressIndicator())]
   final Widget? dataLoadingWidget;
 
-  /// The widget to display when data fails to load from [DropDownData.future]
+  /// The widget to display when data fails to load from [DropDownData.future].
   ///
   /// By default the text is pulled from [dataFailureText].
   ///
   /// Default Value: [Align(alignment: Alignment.topCenter, child: Text('Unable to load data.'))]
   final Widget? dataFailureWidget;
 
-  /// The text to display when data fails to load from [DropDownData.future]
+  /// The text to display when data fails to load from [DropDownData.future].
   ///
   /// Default Value: `"Unable to load data."`
   final String dataFailureText;
 
-  /// A style builder to make a [DropDownStyle]
+  /// A style builder to make a [DropDownStyle].
   ///
   /// If provided, all other style options will be ignored in favor of
   /// the style options in the [DropDownStyle] returned by the builder.
@@ -704,28 +711,28 @@ class DropDownStyle {
       : this(builder: builder);
 
   /// Resolves the style by potentially using the optional [builder]
-  /// to create a contextually aware [DropDownStyle]
+  /// to create a contextually-aware [DropDownStyle].
   DropDownStyle resolve(BuildContext context) => builder?.call(context) ?? this;
 }
 
-/// The response returned from a drop down
+/// The response returned from a drop down.
 class DropDownResponse<T> {
-  /// Whether the response contains multiple items or a singular one
+  /// Whether the response contains multiple items or a singular one.
   final bool multipleSelection;
 
-  /// The single selected item, null if [multipleSelection] is `true`
+  /// The single selected item, null if [multipleSelection] is `true`.
   final DropDownItem<T>? single;
 
-  /// The multiple selected items, null if [multipleSelection] is `false`
+  /// The multiple selected items, null if [multipleSelection] is `false`.
   final DropDownList<T>? multiple;
 
-  /// The selected items
+  /// The selected items.
   final DropDownList<T> items;
 
-  /// The data of the selected items
+  /// The data of the selected items.
   List<T> get data => items.asItemData();
 
-  /// Create a new response
+  /// Create a new response.
   DropDownResponse({
     required this.items,
     this.single,
@@ -733,14 +740,14 @@ class DropDownResponse<T> {
     this.multipleSelection = false,
   });
 
-  /// Create a new response for a single selected item
+  /// Create a new response for a single selected item.
   DropDownResponse.single(DropDownItem<T> singleItem)
       : single = singleItem,
         multiple = null,
         items = [singleItem],
         multipleSelection = false;
 
-  /// Create a new response for multiple selected items
+  /// Create a new response for multiple selected items.
   DropDownResponse.multiple(DropDownList<T> multipleItems)
       : single = null,
         multiple = multipleItems,
@@ -748,19 +755,19 @@ class DropDownResponse<T> {
         multipleSelection = true;
 }
 
-/// Manages the state and behavior of a dropdown
+/// Manages the state and behavior of a dropdown.
 ///
 /// This includes configuring and displaying a modal bottom sheet containing the dropdown items.
 class DropDown<T> {
-  /// The data for the dropdown
+  /// The data for the dropdown.
   final DropDownData<T> data;
 
-  /// The options for the dropdown
+  /// The options for the dropdown.
   ///
   /// If left blank, a default [DropDownOptions] will be used.
   final DropDownOptions<T>? options;
 
-  /// The style for the dropdown
+  /// The style for the dropdown.
   ///
   /// If left blank, a default [DropDownStyle] will be used.
   final DropDownStyle? style;
@@ -771,19 +778,19 @@ class DropDown<T> {
     this.style,
   });
 
-  /// Create a [DropDown] using a list of [DropDownItem]s
+  /// Create a [DropDown] using a list of [DropDownItem]s.
   DropDown.items(DropDownList<T> items, {this.options, this.style})
       : data = DropDownData(items);
 
-  /// Create a [DropDown] using a list of items
+  /// Create a [DropDown] using a list of items.
   DropDown.raw(List<T> items, {this.options, this.style})
       : data = DropDownData.raw(items);
 
-  /// Create a [DropDown] using a future that will return a list of [DropDownItem]s
+  /// Create a [DropDown] using a future that will return a list of [DropDownItem]s.
   DropDown.future(Future<DropDownList<T>> future, {this.options, this.style})
       : data = DropDownData.future(future);
 
-  /// Create a [DropDown] using a future that will return a list of items
+  /// Create a [DropDown] using a future that will return a list of items.
   DropDown.rawFuture(Future<List<T>> future, {this.options, this.style})
       : data = DropDownData.rawFuture(future);
 
@@ -816,7 +823,7 @@ class DropDown<T> {
   }
 }
 
-/// This is the dropdown widget that will be displayed in the bottom sheet body
+/// This is the dropdown widget that will be displayed in the bottom sheet body.
 class DropDownBody<T> extends StatefulWidget {
   final DropDownData<T> data;
 
@@ -836,16 +843,16 @@ class DropDownBody<T> extends StatefulWidget {
 }
 
 class _DropDownBodyState<T> extends State<DropDownBody<T>> {
-  /// The list of items that are currently being displayed
+  /// The list of items that are currently being displayed.
   DropDownList<T> filteredList = [];
 
-  /// The full, unfiltered list of items
+  /// The full, unfiltered list of items.
   DropDownList<T> list = [];
 
-  /// The current search query
+  /// The current search query.
   String? search;
 
-  /// Whether the [DropDownData.future] is loading
+  /// Whether the [DropDownData.future] is loading.
   bool isLoading = false;
 
   @override
@@ -863,8 +870,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     _setSearchWidgetListener();
   }
 
-  /// Saves the data coming from the [DropDownData.future]
-  /// if the data has not been saved yet.
+  /// Saves the data coming from the [DropDownData.future] if the data has not been saved yet.
   void _saveFutureData(DropDownList<T>? items) {
     if (items != null && isLoading) {
       isLoading = false;
@@ -974,7 +980,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                   const Padding(padding: EdgeInsets.only(bottom: 10)),
 
                 /// Select or Deselect TextButton when enableMultipleSelection is enabled
-                /// and maxSelectedItems is not set
+                /// and maxSelectedItems is not set and when the search has results.
                 if (widget.style.isSelectAllVisible &&
                     widget.options.enableMultipleSelection &&
                     widget.options.maxSelectedItems == null &&
@@ -1104,17 +1110,17 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     );
   }
 
-  /// Whether the max selected items limit has been reached
+  /// Whether the max selected items limit has been reached.
   bool get maxSelectionReached =>
       widget.options.maxSelectedItems != null &&
       list.selected.length >= widget.options.maxSelectedItems!;
 
-  /// Handle the submit button pressed
+  /// Handle the submit button pressed.
   void onSubmitButtonPressed() {
     _submitMultiple(list.selected);
   }
 
-  /// Handle the clear button pressed
+  /// Handle the clear button pressed.
   void onClearButtonPressed() {
     setState(() {
       list.deselectAll();
@@ -1176,7 +1182,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
     Navigator.of(context).pop<DropDownResponse<T>>(response);
   }
 
-  /// This helps to add listener on search field controller
+  /// This helps to add listener on search field controller.
   void _setSearchWidgetListener() {
     TextFormField? searchField = widget.style.searchWidget;
 
