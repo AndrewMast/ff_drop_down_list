@@ -38,7 +38,7 @@ typedef BottomSheetListener = bool Function(
 typedef DropDownStyleBuilder = DropDownStyle Function(BuildContext context);
 
 /// This is a model class used to represent an item in a selectable list
-class DropDownItem<T> {
+class DropDownItem<T> implements Comparable<DropDownItem<T>> {
   /// Tha data of the item.
   final T data;
 
@@ -66,6 +66,17 @@ class DropDownItem<T> {
 
   /// Deselects the item
   void deselect([bool deselect = true]) => select(!deselect);
+
+  /// Compares this drop down item to another drop down item.
+  ///
+  /// Assumes the datatype of [data] can be cast as [Comparable]
+  /// or implements [Comparable.compareTo].
+  ///
+  /// Gets overridden by [DropDownOptions.sortDelegate].
+  @override
+  int compareTo(DropDownItem<T> other) {
+    return Comparable.compare(data as Comparable, other.data as Comparable);
+  }
 }
 
 /// Adds a method to convert a list into a list of [DropDownItem]s.

@@ -250,7 +250,7 @@ These are some things I would like to add to the next release.
     - Move default item builder to `DropDownItem` (`Widget build(BuildContext)`?)
     - Move default search to `DropDownItem` (`bool satisfiesQuery(String)`?)
         - Move `_basicSearch` to `DropDownList` extension as `search`
-    - Make `DropDownItem` implement `Comparable<DropDownItem>` (`compareTo`)
+    - ~~Make `DropDownItem` implement `Comparable<DropDownItem>` (`compareTo`)~~
         - Add `DropDownOptions` option to sort after search (so default `.sort()` can work)
     - Make custom `DropDownItem` with subtitle for example
         - Builds subtitle text
