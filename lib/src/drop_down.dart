@@ -568,6 +568,11 @@ class DropDownStyle {
   /// If null, will default to the theme's default input decoration fill color.
   final Color? searchFillColor;
 
+  /// The hover color for the search input field.
+  ///
+  /// If null, will default to the theme's default input decoration hover color.
+  final Color? searchHoverColor;
+
   /// The color of the cursor for the search input field.
   ///
   /// If null, will default to the theme's default input cursor color.
@@ -698,6 +703,7 @@ class DropDownStyle {
     this.searchWidget,
     this.searchHintText = 'Search',
     this.searchFillColor,
+    this.searchHoverColor,
     this.searchCursorColor,
     this.searchBorderRadius,
     this.searchPrefixIcon,
@@ -976,6 +982,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                           onTextChanged: _updateSearchQuery,
                           hintText: widget.style.searchHintText,
                           fillColor: widget.style.searchFillColor,
+                          hoverColor: widget.style.searchHoverColor,
                           cursorColor: widget.style.searchCursorColor,
                           borderRadius: widget.style.searchBorderRadius,
                           prefixIcon: widget.style.searchPrefixIcon,

@@ -13,6 +13,9 @@ class SearchTextField extends StatefulWidget {
   /// The fill color for the search input field
   final Color? fillColor;
 
+  /// The hover color for the search input field
+  final Color? hoverColor;
+
   /// The color of the cursor for the search input field
   final Color? cursorColor;
 
@@ -52,6 +55,7 @@ class SearchTextField extends StatefulWidget {
     required this.onTextChanged,
     this.hintText,
     this.fillColor,
+    this.hoverColor,
     this.cursorColor,
     BorderRadius? borderRadius,
     Widget? prefixIcon,
@@ -95,6 +99,10 @@ class _SearchTextFieldState extends State<SearchTextField> {
         filled: true,
         fillColor: ContextualProperty.resolveAs(
           widget.fillColor,
+          context,
+        ),
+        hoverColor: ContextualProperty.resolveAs(
+          widget.hoverColor,
           context,
         ),
         contentPadding: EdgeInsets.zero,

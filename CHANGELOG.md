@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Added `ListViewListener` to `DropDownOptions` to listen to `ScrollNotification`s from the `ListView`.
+* Added `searchHoverColor` to `DropDownStyle` to change the hover color of the search text field.
 
 ## 0.0.5
 

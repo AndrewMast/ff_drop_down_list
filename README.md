@@ -150,6 +150,7 @@ The [example project](https://github.com/AndrewMast/ff_drop_down_list/blob/main/
 | `TextFormField? searchWidget`         |                                                                                                       | Defines a custom widget to display the text box for searching.                                                                                                                                                                           |
 | `String searchHintText`               | `"Search"`                                                                                            | Specifies the text displayed on the search widget as hint text.                                                                                                                                                                          |
 | `Color? searchFillColor`              |                                                                                                       | The fill color for the search input field.                                                                                                                                                                                               |
+| `Color? searchHoverColor`             |                                                                                                       | The hover color for the search input field.                                                                                                                                                                                              |
 | `Color? searchCursorColor`            |                                                                                                       | The color of the cursor for the search input field.                                                                                                                                                                                      |
 | `BorderRadius? searchBorderRadius`    | `BorderRadius.circular(24.0)`                                                                         | The border radius of the search input field.                                                                                                                                                                                             |
 | `Widget? searchPrefixIcon`            | `Icon(Icons.search)`                                                                                  | The prefix icon for the search input field.                                                                                                                                                                                              |
@@ -250,7 +251,6 @@ Contributions to this project are welcome. Feel free to open issues and to submi
 These are some things I would like to add to the next release.
 
 - Expose colors to customization
-    - Search text field hover color
     - Buttons (Submit, Clear, Select All)
 - Show a message when the drop down has no items (empty list)
     - Display basic widget
