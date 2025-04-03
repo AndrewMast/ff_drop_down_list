@@ -34,6 +34,11 @@ typedef BottomSheetListener = bool Function(
   DraggableScrollableNotification notification,
 );
 
+/// A function type definition for handling scroll notifications from the list view.
+typedef ListViewListener = bool Function(
+  ScrollNotification notification,
+);
+
 /// A function type definition for building a [DropDownStyle].
 typedef DropDownStyleBuilder = DropDownStyle Function(BuildContext context);
 
@@ -392,6 +397,12 @@ class DropDownOptions<T> {
   /// when changes occur in the BottomSheet's draggable scrollable area.
   final BottomSheetListener? bottomSheetListener;
 
+  /// A listener that monitors scroll events bubbling up from the ListView.
+  ///
+  /// The [listViewListener] is triggered with a [ScrollNotification]
+  /// when scroll events occur in the ListView's area.
+  final ListViewListener? listViewListener;
+
   const DropDownOptions({
     Key? key,
     this.enableMultipleSelection = false,
@@ -413,6 +424,7 @@ class DropDownOptions<T> {
     this.minSheetSize = 0.3,
     this.maxSheetSize = 0.9,
     this.bottomSheetListener,
+    this.listViewListener,
   });
 }
 
@@ -1015,74 +1027,81 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
                       if (snapshot.connectionState == ConnectionState.none ||
                           snapshot.hasData) {
-                        return ListView.separated(
-                          controller: scrollController,
-                          itemCount: filteredList.length,
-                          padding: widget.style.listPadding ?? EdgeInsets.zero,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            bool isSelected = filteredList[index].isSelected;
+                        return NotificationListener<ScrollNotification>(
+                          onNotification: widget.options.listViewListener,
+                          child: ListView.separated(
+                            controller: scrollController,
+                            itemCount: filteredList.length,
+                            padding:
+                                widget.style.listPadding ?? EdgeInsets.zero,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              bool isSelected = filteredList[index].isSelected;
 
-                            return Material(
-                              color: Colors.transparent,
-                              clipBehavior: Clip.hardEdge,
-                              child: ListTile(
-                                enabled: isSelected || !maxSelectionReached,
-                                onTap: () {
-                                  if (widget.options.enableMultipleSelection) {
-                                    setState(() {
-                                      filteredList[index].deselect(isSelected);
-                                    });
+                              return Material(
+                                color: Colors.transparent,
+                                clipBehavior: Clip.hardEdge,
+                                child: ListTile(
+                                  enabled: isSelected || !maxSelectionReached,
+                                  onTap: () {
+                                    if (widget
+                                        .options.enableMultipleSelection) {
+                                      setState(() {
+                                        filteredList[index]
+                                            .deselect(isSelected);
+                                      });
 
-                                    if (!isSelected && maxSelectionReached) {
-                                      widget.options.onMaxSelectionReached
-                                          ?.call();
+                                      if (!isSelected && maxSelectionReached) {
+                                        widget.options.onMaxSelectionReached
+                                            ?.call();
 
-                                      if (widget.options
-                                          .submitOnMaxSelectionReached) {
-                                        _submitMultiple(list.selected);
+                                        if (widget.options
+                                            .submitOnMaxSelectionReached) {
+                                          _submitMultiple(list.selected);
+                                        }
                                       }
+                                    } else {
+                                      _submitSingle(filteredList[index]);
                                     }
-                                  } else {
-                                    _submitSingle(filteredList[index]);
-                                  }
-                                },
-                                title: widget.options.listItemBuilder
-                                        ?.call(index, filteredList[index]) ??
-                                    filteredList[index].build(context, index),
-                                trailing: widget.options.enableMultipleSelection
-                                    ? isSelected
-                                        ? widget
-                                            .style.selectedTileTrailingWidget
-                                        : widget
-                                            .style.unselectedTileTrailingWidget
-                                    : const SizedBox.shrink(),
-                                contentPadding:
-                                    widget.style.tileContentPadding ??
-                                        const EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                        ),
-                                tileColor: ContextualProperty.resolveAs(
-                                  (isSelected
-                                          ? widget.style.selectedTileColor
-                                          : null) ??
-                                      widget.style.tileColor ??
-                                      Colors.transparent,
-                                  context,
+                                  },
+                                  title: widget.options.listItemBuilder
+                                          ?.call(index, filteredList[index]) ??
+                                      filteredList[index].build(context, index),
+                                  trailing:
+                                      widget.options.enableMultipleSelection
+                                          ? isSelected
+                                              ? widget.style
+                                                  .selectedTileTrailingWidget
+                                              : widget.style
+                                                  .unselectedTileTrailingWidget
+                                          : const SizedBox.shrink(),
+                                  contentPadding:
+                                      widget.style.tileContentPadding ??
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                          ),
+                                  tileColor: ContextualProperty.resolveAs(
+                                    (isSelected
+                                            ? widget.style.selectedTileColor
+                                            : null) ??
+                                        widget.style.tileColor ??
+                                        Colors.transparent,
+                                    context,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                          separatorBuilder: (context, index) =>
-                              widget.style.listSeparator ??
-                              Divider(
-                                color: ContextualProperty.resolveAs(
-                                  widget.style.listSeparatorColor ??
-                                      BrightnessColor.bwa(alpha: 0.08),
-                                  context,
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                widget.style.listSeparator ??
+                                Divider(
+                                  color: ContextualProperty.resolveAs(
+                                    widget.style.listSeparatorColor ??
+                                        BrightnessColor.bwa(alpha: 0.08),
+                                    context,
+                                  ),
+                                  height: 0,
                                 ),
-                                height: 0,
-                              ),
+                          ),
                         );
                       } else if (snapshot.connectionState ==
                               ConnectionState.active ||

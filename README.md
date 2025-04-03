@@ -120,6 +120,7 @@ The [example project](https://github.com/AndrewMast/ff_drop_down_list/blob/main/
 | `double minSheetSize`                                 | `0.3`   | The minimum fractional value of the parent container's height to use when displaying the `DropDown` widget.                                                                  |
 | `double maxSheetSize`                                 | `0.9`   | The maximum fractional value of the parent container's height to use when displaying the `DropDown` widget.                                                                  |
 | `BottomSheetListener? bottomSheetListener`            |         | A listener that monitors events bubbling up from the `BottomSheet`.                                               <br/><sup>See [Type Definitions](#type-definitions).</sup> |
+| `ListViewListener? listViewListener`                  |         | A listener that monitors scroll events bubbling up from the `ListView`.                                           <br/><sup>See [Type Definitions](#type-definitions).</sup> |
 
 <br/>
 
@@ -207,6 +208,7 @@ The [example project](https://github.com/AndrewMast/ff_drop_down_list/blob/main/
 | `SearchDelegate<T>`               | `List<DropDownItem<T>> Function(String query, List<DropDownItem<T>> items)` | A function type definition for searching through a list of items based on the user's query. |
 | `SortDelegate<T>`                 | `int Function(DropDownItem<T> a, DropDownItem<T> b)`                        | A function type definition for sorting through the list of items.                           |
 | `BottomSheetListener`             | `bool Function(DraggableScrollableNotification notification)`               | A function type definition for handling notifications from a draggable bottom sheet.        |
+| `ListViewListener`                | `bool Function(ScrollNotification notification)`                            | A function type definition for handling scroll notifications from the list view.            |
 | `DropDownStyleBuilder`            | `DropDownStyle Function(BuildContext context)`                              | A function type definition for building a `DropDownStyle`.                                  |
 
 <br/>
@@ -247,6 +249,9 @@ Contributions to this project are welcome. Feel free to open issues and to submi
 
 These are some things I would like to add to the next release.
 
+- Expose colors to customization
+    - Search text field hover color
+    - Buttons (Submit, Clear, Select All)
 - Show a message when the drop down has no items (empty list)
     - Display basic widget
     - Add option to customize message

@@ -1,3 +1,7 @@
+## Unreleased
+
+* Added `ListViewListener` to `DropDownOptions` to listen to `ScrollNotification`s from the `ListView`.
+
 ## 0.0.5
 
 * Added extension on `List<DropDownItem>` (aka `DropDownList`) that allows for selection/deselection of items in the list. Also added `selected` and `unselected` getters to return subsets of the list depending on the selection status of the `DropDownItem`.
