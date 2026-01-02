@@ -278,5 +278,4 @@ See the list of changes in the [changelog](https://github.com/AndrewMast/ff_drop
 
 # License
 
-**ff_drop_down_list**
-is [MIT-licensed.](https://github.com/AndrewMast/ff_drop_down_list/blob/main/LICENSE)
+**ff_drop_down_list** is [MIT-licensed.](https://github.com/AndrewMast/ff_drop_down_list/blob/main/LICENSE)
