@@ -623,6 +623,12 @@ class DropDownStyle {
   /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
   final Color? searchSuffixColor;
 
+  /// Controls whether the suffix icon will be hidden
+  /// when the search input field is empty.
+  ///
+  /// Default Value: `true`
+  final bool searchHideSuffixWhenEmpty;
+
   /// Controls whether the search input field will autofocus.
   ///
   /// Default Value: `false`
@@ -750,6 +756,7 @@ class DropDownStyle {
     this.searchPrefixColor,
     this.searchSuffixIcon,
     this.searchSuffixColor,
+    this.searchHideSuffixWhenEmpty = true,
     this.searchAutofocus = false,
     this.isSelectAllVisible = false,
     this.selectAllButtonPadding,
@@ -1042,6 +1049,8 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                           prefixColor: widget.style.searchPrefixColor,
                           suffixIcon: widget.style.searchSuffixIcon,
                           suffixColor: widget.style.searchSuffixColor,
+                          hideSuffixWhenEmpty:
+                              widget.style.searchHideSuffixWhenEmpty,
                           autofocus: widget.style.searchAutofocus,
                         ),
                   )

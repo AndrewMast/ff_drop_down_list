@@ -46,6 +46,12 @@ class SearchTextField extends StatefulWidget {
   /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
   final Color? suffixColor;
 
+  /// Controls whether the suffix icon will be hidden
+  /// when the search input field is empty.
+  ///
+  /// Default Value: `true`
+  final bool hideSuffixWhenEmpty;
+
   /// Controls whether the search input field will autofocus
   ///
   /// Default Value: `false`
@@ -62,6 +68,7 @@ class SearchTextField extends StatefulWidget {
     this.prefixColor,
     Widget? suffixIcon,
     this.suffixColor,
+    this.hideSuffixWhenEmpty = true,
     this.autofocus = false,
     super.key,
   })  : borderRadius =
@@ -123,18 +130,21 @@ class _SearchTextFieldState extends State<SearchTextField> {
           ),
           onPressed: null,
         ),
-        suffixIcon: IconButton(
-          icon: widget.suffixIcon,
-          iconSize: 24,
-          color: ContextualProperty.resolveAs(
-            widget.suffixColor ?? BrightnessColor.bwa(alpha: 0.5),
-            context,
-          ),
-          onPressed: () {
-            widget.onTextChanged('');
-            _editingController.clear();
-          },
-        ),
+        suffixIcon:
+            widget.hideSuffixWhenEmpty && _editingController.text.isEmpty
+                ? null
+                : IconButton(
+                    icon: widget.suffixIcon,
+                    iconSize: 24,
+                    color: ContextualProperty.resolveAs(
+                      widget.suffixColor ?? BrightnessColor.bwa(alpha: 0.5),
+                      context,
+                    ),
+                    onPressed: () {
+                      widget.onTextChanged('');
+                      _editingController.clear();
+                    },
+                  ),
       ),
     );
   }

@@ -4,6 +4,7 @@
 * Added `searchHoverColor` to `DropDownStyle` to change the hover color of the search text field.
 * Added `submitButtonStyle` and `clearButtonStyle` to `DropDownStyle` to customize the style of the buttons.
 * Added `selectAllButtonStyle` and `deselectAllButtonChild` to `DropDownStyle` to customize the style of the buttons.
+* Added `searchHideSuffixWhenEmpty` to `DropDownStyle` (and `hideSuffixWhenEmpty` to `SearchTextField`) to hide the suffix icon when the search field is empty.
 
 ## 0.0.5
 
