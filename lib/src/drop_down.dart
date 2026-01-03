@@ -34,6 +34,11 @@ typedef BottomSheetListener = bool Function(
   DraggableScrollableNotification notification,
 );
 
+/// A function type definition for handling scroll notifications from the list view.
+typedef ListViewListener = bool Function(
+  ScrollNotification notification,
+);
+
 /// A function type definition for building a [DropDownStyle].
 typedef DropDownStyleBuilder = DropDownStyle Function(BuildContext context);
 
@@ -392,6 +397,12 @@ class DropDownOptions<T> {
   /// when changes occur in the BottomSheet's draggable scrollable area.
   final BottomSheetListener? bottomSheetListener;
 
+  /// A listener that monitors scroll events bubbling up from the ListView.
+  ///
+  /// The [listViewListener] is triggered with a [ScrollNotification]
+  /// when scroll events occur in the ListView's area.
+  final ListViewListener? listViewListener;
+
   const DropDownOptions({
     Key? key,
     this.enableMultipleSelection = false,
@@ -413,6 +424,7 @@ class DropDownOptions<T> {
     this.minSheetSize = 0.3,
     this.maxSheetSize = 0.9,
     this.bottomSheetListener,
+    this.listViewListener,
   });
 }
 
@@ -499,14 +511,23 @@ class DropDownStyle {
   /// Defines a custom widget to display as the child of the submit button
   /// when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
-  /// This is typically used with an [ElevatedButton].
+  /// This will be used as the child of an [ElevatedButton].
   ///
-  /// If not provided, a default button child will be used.
+  /// If not provided, a default button child will be made with [submitButtonText].
   final Widget? submitButtonChild;
+
+  /// Specifies the style displayed on the submit button when [DropDownOptions.enableMultipleSelection] is `true`.
+  ///
+  /// This will be used as the style of an [ElevatedButton].
+  ///
+  /// If not provided, the default button style will be used.
+  final ButtonStyle? submitButtonStyle;
 
   /// Specifies the text displayed on the submit button when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
   /// This is only used if a custom [submitButtonChild] widget is not provided.
+  ///
+  /// The text style from [submitButtonStyle] will be used when rendering the button text.
   ///
   /// Default Value: `"Submit"`
   final String submitButtonText;
@@ -514,14 +535,23 @@ class DropDownStyle {
   /// Defines a custom widget to display as the child of the clear button
   /// when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
-  /// This is typically used with an [ElevatedButton].
+  /// This will be used as the child of an [ElevatedButton].
   ///
-  /// If not provided, a default button child will be used.
+  /// If not provided, a default button child will be made with [clearButtonText].
   final Widget? clearButtonChild;
+
+  /// Specifies the style displayed on the clear button when [DropDownOptions.enableMultipleSelection] is `true`.
+  ///
+  /// This will be used as the style of an [ElevatedButton].
+  ///
+  /// If not provided, the default button style will be used.
+  final ButtonStyle? clearButtonStyle;
 
   /// Specifies the text displayed on the clear button when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
   /// This is only used if a custom [clearButtonChild] widget is not provided.
+  ///
+  /// The text style from [clearButtonStyle] will be used when rendering the button text.
   ///
   /// Default Value: `"Clear"`
   final String clearButtonText;
@@ -556,6 +586,11 @@ class DropDownStyle {
   /// If null, will default to the theme's default input decoration fill color.
   final Color? searchFillColor;
 
+  /// The hover color for the search input field.
+  ///
+  /// If null, will default to the theme's default input decoration hover color.
+  final Color? searchHoverColor;
+
   /// The color of the cursor for the search input field.
   ///
   /// If null, will default to the theme's default input cursor color.
@@ -588,6 +623,12 @@ class DropDownStyle {
   /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
   final Color? searchSuffixColor;
 
+  /// Controls whether the suffix icon will be hidden
+  /// when the search input field is empty.
+  ///
+  /// Default Value: `true`
+  final bool searchHideSuffixWhenEmpty;
+
   /// Controls whether the search input field will autofocus.
   ///
   /// Default Value: `false`
@@ -607,15 +648,25 @@ class DropDownStyle {
   /// Defines a custom widget to display as the child of the Select All text button
   /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
-  /// This is typically used with an [TextButton].
+  /// This will be used as the child of a [TextButton].
   ///
-  /// If not provided, a default text button child will be used.
+  /// If not provided, a default text button child will be made with [selectAllButtonText].
   final Widget? selectAllButtonChild;
+
+  /// Specifies the style displayed on the Select All text button
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
+  ///
+  /// This will be used as the style of a [TextButton].
+  ///
+  /// If not provided, the default button style will be used.
+  final ButtonStyle? selectAllButtonStyle;
 
   /// Specifies the text displayed on the Select All text button
   /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
   /// This is only used if a custom [selectAllButtonChild] widget is not provided.
+  ///
+  /// The text style from [selectAllButtonStyle] will be used when rendering the button text.
   ///
   /// Default Value: `"Select All"`
   final String selectAllButtonText;
@@ -623,15 +674,25 @@ class DropDownStyle {
   /// Defines a custom widget to display as the child of the Deselect All text button
   /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
-  /// This is typically used with an [TextButton].
+  /// This will be used as the child of a [TextButton].
   ///
-  /// If not provided, a default text button child will be used.
+  /// If not provided, a default text button child will be made with [deselectAllButtonText].
   final Widget? deselectAllButtonChild;
+
+  /// Specifies the style displayed on the Deselect All text button
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
+  ///
+  /// This will be used as the style of a [TextButton].
+  ///
+  /// If not provided, the default button style will be used.
+  final ButtonStyle? deselectAllButtonStyle;
 
   /// Specifies the text displayed on the Deselect All text button
   /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
   /// This is only used if a custom [deselectAllButtonChild] widget is not provided.
+  ///
+  /// The text style from [deselectAllButtonStyle] will be used when rendering the button text.
   ///
   /// Default Value: `"Deselect All"`
   final String deselectAllButtonText;
@@ -678,26 +739,32 @@ class DropDownStyle {
     this.headerPadding,
     this.headerWidget,
     this.submitButtonChild,
+    this.submitButtonStyle,
     this.submitButtonText = 'Submit',
     this.clearButtonChild,
+    this.clearButtonStyle,
     this.clearButtonText = 'Clear',
     this.isSearchVisible = true,
     this.searchTextFieldPadding,
     this.searchWidget,
     this.searchHintText = 'Search',
     this.searchFillColor,
+    this.searchHoverColor,
     this.searchCursorColor,
     this.searchBorderRadius,
     this.searchPrefixIcon,
     this.searchPrefixColor,
     this.searchSuffixIcon,
     this.searchSuffixColor,
+    this.searchHideSuffixWhenEmpty = true,
     this.searchAutofocus = false,
     this.isSelectAllVisible = false,
     this.selectAllButtonPadding,
     this.selectAllButtonChild,
+    this.selectAllButtonStyle,
     this.selectAllButtonText = 'Select All',
     this.deselectAllButtonChild,
+    this.deselectAllButtonStyle,
     this.deselectAllButtonText = 'Deselect All',
     this.dataLoadingWidget,
     this.dataFailureWidget,
@@ -934,9 +1001,15 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               ElevatedButton(
+                                style: widget.style.submitButtonStyle,
                                 onPressed: onSubmitButtonPressed,
                                 child: widget.style.submitButtonChild ??
-                                    Text(widget.style.submitButtonText),
+                                    Text(
+                                      widget.style.submitButtonText,
+                                      style: widget
+                                          .style.submitButtonStyle?.textStyle
+                                          ?.resolve({}),
+                                    ),
                               ),
 
                               /// Clear Elevated Button
@@ -945,7 +1018,12 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                                 child: ElevatedButton(
                                   onPressed: onClearButtonPressed,
                                   child: widget.style.clearButtonChild ??
-                                      Text(widget.style.clearButtonText),
+                                      Text(
+                                        widget.style.clearButtonText,
+                                        style: widget
+                                            .style.clearButtonStyle?.textStyle
+                                            ?.resolve({}),
+                                      ),
                                 ),
                               ),
                             ],
@@ -964,12 +1042,15 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                           onTextChanged: _updateSearchQuery,
                           hintText: widget.style.searchHintText,
                           fillColor: widget.style.searchFillColor,
+                          hoverColor: widget.style.searchHoverColor,
                           cursorColor: widget.style.searchCursorColor,
                           borderRadius: widget.style.searchBorderRadius,
                           prefixIcon: widget.style.searchPrefixIcon,
                           prefixColor: widget.style.searchPrefixColor,
                           suffixIcon: widget.style.searchSuffixIcon,
                           suffixColor: widget.style.searchSuffixColor,
+                          hideSuffixWhenEmpty:
+                              widget.style.searchHideSuffixWhenEmpty,
                           autofocus: widget.style.searchAutofocus,
                         ),
                   )
@@ -991,14 +1072,27 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                       padding: widget.style.selectAllButtonPadding ??
                           EdgeInsets.zero,
                       child: TextButton(
+                        style: isSelectAll
+                            ? widget.style.deselectAllButtonStyle
+                            : widget.style.selectAllButtonStyle,
                         onPressed: () => setState(() {
                           filteredList.deselectAll(isSelectAll);
                         }),
                         child: isSelectAll
                             ? widget.style.deselectAllButtonChild ??
-                                Text(widget.style.deselectAllButtonText)
+                                Text(
+                                  widget.style.deselectAllButtonText,
+                                  style: widget
+                                      .style.deselectAllButtonStyle?.textStyle
+                                      ?.resolve({}),
+                                )
                             : widget.style.selectAllButtonChild ??
-                                Text(widget.style.selectAllButtonText),
+                                Text(
+                                  widget.style.selectAllButtonText,
+                                  style: widget
+                                      .style.selectAllButtonStyle?.textStyle
+                                      ?.resolve({}),
+                                ),
                       ),
                     ),
                   ),
@@ -1015,74 +1109,81 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
                       if (snapshot.connectionState == ConnectionState.none ||
                           snapshot.hasData) {
-                        return ListView.separated(
-                          controller: scrollController,
-                          itemCount: filteredList.length,
-                          padding: widget.style.listPadding ?? EdgeInsets.zero,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            bool isSelected = filteredList[index].isSelected;
+                        return NotificationListener<ScrollNotification>(
+                          onNotification: widget.options.listViewListener,
+                          child: ListView.separated(
+                            controller: scrollController,
+                            itemCount: filteredList.length,
+                            padding:
+                                widget.style.listPadding ?? EdgeInsets.zero,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              bool isSelected = filteredList[index].isSelected;
 
-                            return Material(
-                              color: Colors.transparent,
-                              clipBehavior: Clip.hardEdge,
-                              child: ListTile(
-                                enabled: isSelected || !maxSelectionReached,
-                                onTap: () {
-                                  if (widget.options.enableMultipleSelection) {
-                                    setState(() {
-                                      filteredList[index].deselect(isSelected);
-                                    });
+                              return Material(
+                                color: Colors.transparent,
+                                clipBehavior: Clip.hardEdge,
+                                child: ListTile(
+                                  enabled: isSelected || !maxSelectionReached,
+                                  onTap: () {
+                                    if (widget
+                                        .options.enableMultipleSelection) {
+                                      setState(() {
+                                        filteredList[index]
+                                            .deselect(isSelected);
+                                      });
 
-                                    if (!isSelected && maxSelectionReached) {
-                                      widget.options.onMaxSelectionReached
-                                          ?.call();
+                                      if (!isSelected && maxSelectionReached) {
+                                        widget.options.onMaxSelectionReached
+                                            ?.call();
 
-                                      if (widget.options
-                                          .submitOnMaxSelectionReached) {
-                                        _submitMultiple(list.selected);
+                                        if (widget.options
+                                            .submitOnMaxSelectionReached) {
+                                          _submitMultiple(list.selected);
+                                        }
                                       }
+                                    } else {
+                                      _submitSingle(filteredList[index]);
                                     }
-                                  } else {
-                                    _submitSingle(filteredList[index]);
-                                  }
-                                },
-                                title: widget.options.listItemBuilder
-                                        ?.call(index, filteredList[index]) ??
-                                    filteredList[index].build(context, index),
-                                trailing: widget.options.enableMultipleSelection
-                                    ? isSelected
-                                        ? widget
-                                            .style.selectedTileTrailingWidget
-                                        : widget
-                                            .style.unselectedTileTrailingWidget
-                                    : const SizedBox.shrink(),
-                                contentPadding:
-                                    widget.style.tileContentPadding ??
-                                        const EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                        ),
-                                tileColor: ContextualProperty.resolveAs(
-                                  (isSelected
-                                          ? widget.style.selectedTileColor
-                                          : null) ??
-                                      widget.style.tileColor ??
-                                      Colors.transparent,
-                                  context,
+                                  },
+                                  title: widget.options.listItemBuilder
+                                          ?.call(index, filteredList[index]) ??
+                                      filteredList[index].build(context, index),
+                                  trailing:
+                                      widget.options.enableMultipleSelection
+                                          ? isSelected
+                                              ? widget.style
+                                                  .selectedTileTrailingWidget
+                                              : widget.style
+                                                  .unselectedTileTrailingWidget
+                                          : const SizedBox.shrink(),
+                                  contentPadding:
+                                      widget.style.tileContentPadding ??
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 20,
+                                          ),
+                                  tileColor: ContextualProperty.resolveAs(
+                                    (isSelected
+                                            ? widget.style.selectedTileColor
+                                            : null) ??
+                                        widget.style.tileColor ??
+                                        Colors.transparent,
+                                    context,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                          separatorBuilder: (context, index) =>
-                              widget.style.listSeparator ??
-                              Divider(
-                                color: ContextualProperty.resolveAs(
-                                  widget.style.listSeparatorColor ??
-                                      BrightnessColor.bwa(alpha: 0.08),
-                                  context,
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                widget.style.listSeparator ??
+                                Divider(
+                                  color: ContextualProperty.resolveAs(
+                                    widget.style.listSeparatorColor ??
+                                        BrightnessColor.bwa(alpha: 0.08),
+                                    context,
+                                  ),
+                                  height: 0,
                                 ),
-                                height: 0,
-                              ),
+                          ),
                         );
                       } else if (snapshot.connectionState ==
                               ConnectionState.active ||

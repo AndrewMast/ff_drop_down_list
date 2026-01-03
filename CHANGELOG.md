@@ -1,3 +1,11 @@
+## 0.0.6
+
+* Added `ListViewListener` to `DropDownOptions` to listen to `ScrollNotification`s from the `ListView`.
+* Added `searchHoverColor` to `DropDownStyle` to change the hover color of the search text field.
+* Added `submitButtonStyle` and `clearButtonStyle` to `DropDownStyle` to customize the style of the buttons.
+* Added `selectAllButtonStyle` and `deselectAllButtonChild` to `DropDownStyle` to customize the style of the buttons.
+* Added `searchHideSuffixWhenEmpty` to `DropDownStyle` (and `hideSuffixWhenEmpty` to `SearchTextField`) to hide the suffix icon when the search field is empty.
+
 ## 0.0.5
 
 * Added extension on `List<DropDownItem>` (aka `DropDownList`) that allows for selection/deselection of items in the list. Also added `selected` and `unselected` getters to return subsets of the list depending on the selection status of the `DropDownItem`.

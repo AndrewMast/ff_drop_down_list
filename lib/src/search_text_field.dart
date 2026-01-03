@@ -13,6 +13,9 @@ class SearchTextField extends StatefulWidget {
   /// The fill color for the search input field
   final Color? fillColor;
 
+  /// The hover color for the search input field
+  final Color? hoverColor;
+
   /// The color of the cursor for the search input field
   final Color? cursorColor;
 
@@ -43,6 +46,12 @@ class SearchTextField extends StatefulWidget {
   /// Default Value: [BrightnessColor.bwa(alpha: 0.5)]
   final Color? suffixColor;
 
+  /// Controls whether the suffix icon will be hidden
+  /// when the search input field is empty.
+  ///
+  /// Default Value: `true`
+  final bool hideSuffixWhenEmpty;
+
   /// Controls whether the search input field will autofocus
   ///
   /// Default Value: `false`
@@ -52,12 +61,14 @@ class SearchTextField extends StatefulWidget {
     required this.onTextChanged,
     this.hintText,
     this.fillColor,
+    this.hoverColor,
     this.cursorColor,
     BorderRadius? borderRadius,
     Widget? prefixIcon,
     this.prefixColor,
     Widget? suffixIcon,
     this.suffixColor,
+    this.hideSuffixWhenEmpty = true,
     this.autofocus = false,
     super.key,
   })  : borderRadius =
@@ -97,6 +108,10 @@ class _SearchTextFieldState extends State<SearchTextField> {
           widget.fillColor,
           context,
         ),
+        hoverColor: ContextualProperty.resolveAs(
+          widget.hoverColor,
+          context,
+        ),
         contentPadding: EdgeInsets.zero,
         hintText: widget.hintText,
         border: OutlineInputBorder(
@@ -115,18 +130,21 @@ class _SearchTextFieldState extends State<SearchTextField> {
           ),
           onPressed: null,
         ),
-        suffixIcon: IconButton(
-          icon: widget.suffixIcon,
-          iconSize: 24,
-          color: ContextualProperty.resolveAs(
-            widget.suffixColor ?? BrightnessColor.bwa(alpha: 0.5),
-            context,
-          ),
-          onPressed: () {
-            widget.onTextChanged('');
-            _editingController.clear();
-          },
-        ),
+        suffixIcon:
+            widget.hideSuffixWhenEmpty && _editingController.text.isEmpty
+                ? null
+                : IconButton(
+                    icon: widget.suffixIcon,
+                    iconSize: 24,
+                    color: ContextualProperty.resolveAs(
+                      widget.suffixColor ?? BrightnessColor.bwa(alpha: 0.5),
+                      context,
+                    ),
+                    onPressed: () {
+                      widget.onTextChanged('');
+                      _editingController.clear();
+                    },
+                  ),
       ),
     );
   }

@@ -120,6 +120,7 @@ The [example project](https://github.com/AndrewMast/ff_drop_down_list/blob/main/
 | `double minSheetSize`                                 | `0.3`   | The minimum fractional value of the parent container's height to use when displaying the `DropDown` widget.                                                                  |
 | `double maxSheetSize`                                 | `0.9`   | The maximum fractional value of the parent container's height to use when displaying the `DropDown` widget.                                                                  |
 | `BottomSheetListener? bottomSheetListener`            |         | A listener that monitors events bubbling up from the `BottomSheet`.                                               <br/><sup>See [Type Definitions](#type-definitions).</sup> |
+| `ListViewListener? listViewListener`                  |         | A listener that monitors scroll events bubbling up from the `ListView`.                                           <br/><sup>See [Type Definitions](#type-definitions).</sup> |
 
 <br/>
 
@@ -141,27 +142,33 @@ The [example project](https://github.com/AndrewMast/ff_drop_down_list/blob/main/
 | `EdgeInsets? headerPadding`           | `EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0)`                                                 | The padding applied to the dropdown header.                                                                                                                                                                                              |
 | `Widget? headerWidget`                |                                                                                                       | The widget displayed as the title of the bottom sheet.                                                                                                                                                                                   |
 | `Widget? submitButtonChild`           |                                                                                                       | Defines a custom widget to display as the child of the submit button when `enableMultipleSelection` is `true`.                                                                                                                           |
-| `String submitButtonText`             | `"Submit"`                                                                                            | Specifies the text displayed on the submit button when `submitButtonChild` is not provided and `enableMultipleSelection` is `true`.                                                                                                      |
+| `ButtonStyle? submitButtonStyle`      |                                                                                                       | Specifies the style displayed on the submit button when `enableMultipleSelection` is `true`.                                                                                                                                             |
+| `String submitButtonText`             | `"Submit"`                                                                                            | Specifies the text displayed on the submit button when `submitButtonChild` is not provided and `enableMultipleSelection` is `true`. The text style from `submitButtonStyle` will be used in rendering the button text.                   |
 | `Widget? clearButtonChild`            |                                                                                                       | Defines a custom widget to display as the child of the clear button when `enableMultipleSelection` is `true`.                                                                                                                            |
-| `String clearButtonText`              | `"Clear"`                                                                                             | Specifies the text displayed on the clear button when `clearButtonChild` is not provided and `enableMultipleSelection` is `true`.                                                                                                        |
+| `ButtonStyle? clearButtonStyle`       |                                                                                                       | Specifies the style displayed on the clear button when `enableMultipleSelection` is `true`.                                                                                                                                              |
+| `String clearButtonText`              | `"Clear"`                                                                                             | Specifies the text displayed on the clear button when `clearButtonChild` is not provided and `enableMultipleSelection` is `true`. The text style from `clearButtonStyle` will be used in rendering the button text.                      |
 | `bool isSearchVisible`                | `true`                                                                                                | Controls the visibility of the search widget.                                                                                                                                                                                            |
 | `EdgeInsets? searchTextFieldPadding`  | `EdgeInsets.all(10)`                                                                                  | The padding applied to the search text field.                                                                                                                                                                                            |
 | `TextFormField? searchWidget`         |                                                                                                       | Defines a custom widget to display the text box for searching.                                                                                                                                                                           |
 | `String searchHintText`               | `"Search"`                                                                                            | Specifies the text displayed on the search widget as hint text.                                                                                                                                                                          |
 | `Color? searchFillColor`              |                                                                                                       | The fill color for the search input field.                                                                                                                                                                                               |
+| `Color? searchHoverColor`             |                                                                                                       | The hover color for the search input field.                                                                                                                                                                                              |
 | `Color? searchCursorColor`            |                                                                                                       | The color of the cursor for the search input field.                                                                                                                                                                                      |
 | `BorderRadius? searchBorderRadius`    | `BorderRadius.circular(24.0)`                                                                         | The border radius of the search input field.                                                                                                                                                                                             |
 | `Widget? searchPrefixIcon`            | `Icon(Icons.search)`                                                                                  | The prefix icon for the search input field.                                                                                                                                                                                              |
 | `Color? searchPrefixColor`            | `BrightnessColor.bwa(alpha: 0.5)` <br/><sup>See [Custom Color Classes](#custom-color-classes).</sup>  | The prefix icon color for the search input field.                                                                                                                                                                                        |
 | `Widget? searchSuffixIcon`            | `Icon(Icons.clear)`                                                                                   | The suffix icon for the search input field.                                                                                                                                                                                              |
 | `Color? searchSuffixColor`            | `BrightnessColor.bwa(alpha: 0.5)` <br/><sup>See [Custom Color Classes](#custom-color-classes).</sup>  | The suffix icon color for the search input field.                                                                                                                                                                                        |
+| `bool searchHideSuffixWhenEmpty`      | `true`                                                                                                | Controls whether the suffix icon will be hidden when the search input field is empty.                                                                                                                                                    |
 | `bool searchAutofocus`                | `false`                                                                                               | Controls whether the search input field will autofocus.                                                                                                                                                                                  |
 | `bool isSelectAllVisible`             | `false`                                                                                               | Controls the visibility of the "select all" widget when `enableMultipleSelection` is `true` and `maxSelectedItems` is not set.                                                                                                           |
 | `EdgeInsets? selectAllButtonPadding`  | `EdgeInsets.zero`                                                                                     | The padding applied to the "select all" and "deselect all" TextButtons.                                                                                                                                                                  |
 | `Widget? selectAllButtonChild`        |                                                                                                       | Defines a custom widget to display as the child of the Select All text button when `enableMultipleSelection` and `isSelectAllVisible` are `true`.                                                                                        |
-| `String selectAllButtonText`          | `"Select All"`                                                                                        | Specifies the text displayed on the Select All text button when `enableMultipleSelection` and `isSelectAllVisible` are `true`.                                                                                                           |
+| `ButtonStyle? selectAllButtonStyle`   |                                                                                                       | Specifies the style displayed on the Select All text button when `enableMultipleSelection` and `isSelectAllVisible` are `true`.                                                                                                          |
+| `String selectAllButtonText`          | `"Select All"`                                                                                        | Specifies the text displayed on the Select All text button when `enableMultipleSelection` and `isSelectAllVisible` are `true`. The text style from `selectAllButtonChild` will be used in rendering the button text.                     |
 | `Widget? deselectAllButtonChild`      |                                                                                                       | Defines a custom widget to display as the child of the Deselect All text button when `enableMultipleSelection` and `isSelectAllVisible` are `true`.                                                                                      |
-| `String deselectAllButtonText`        | `"Deselect All"`                                                                                      | Specifies the text displayed on the Deselect All text button when `enableMultipleSelection` and `isSelectAllVisible` are `true`.                                                                                                         |
+| `ButtonStyle? deselectAllButtonStyle` |                                                                                                       | Specifies the style displayed on the Deselect All text button when `enableMultipleSelection` and `isSelectAllVisible` are `true`.                                                                                                        |
+| `String deselectAllButtonText`        | `"Deselect All"`                                                                                      | Specifies the text displayed on the Deselect All text button when `enableMultipleSelection` and `isSelectAllVisible` are `true`. The text style from `deselectAllButtonChild` will be used in rendering the button text.                 |
 | `Widget? dataLoadingWidget`           | `Align(alignment: Alignment.topCenter, child: CircularProgressIndicator())`                           | The widget to display when data is being loaded from `DropDownData.future`.                                                                                                                                                              |
 | `Widget? dataFailureWidget`           | `Align(alignment: Alignment.topCenter, child: Text('Unable to load data.'))`                          | The widget to display when data fails to load from `DropDownData.future`. By default the text is pulled from `dataFailureText`.                                                                                                          |
 | `String dataFailureText`              | `"Unable to load data."`                                                                              | The text to display when data fails to load from `DropDownData.future`.                                                                                                                                                                  |
@@ -207,6 +214,7 @@ The [example project](https://github.com/AndrewMast/ff_drop_down_list/blob/main/
 | `SearchDelegate<T>`               | `List<DropDownItem<T>> Function(String query, List<DropDownItem<T>> items)` | A function type definition for searching through a list of items based on the user's query. |
 | `SortDelegate<T>`                 | `int Function(DropDownItem<T> a, DropDownItem<T> b)`                        | A function type definition for sorting through the list of items.                           |
 | `BottomSheetListener`             | `bool Function(DraggableScrollableNotification notification)`               | A function type definition for handling notifications from a draggable bottom sheet.        |
+| `ListViewListener`                | `bool Function(ScrollNotification notification)`                            | A function type definition for handling scroll notifications from the list view.            |
 | `DropDownStyleBuilder`            | `DropDownStyle Function(BuildContext context)`                              | A function type definition for building a `DropDownStyle`.                                  |
 
 <br/>
@@ -243,28 +251,6 @@ Contributions to this project are welcome. Feel free to open issues and to submi
 
 <br/>
 
-# Todo
-
-These are some things I would like to add to the next release.
-
-- Show a message when the drop down has no items (empty list)
-    - Display basic widget
-    - Add option to customize message
-    - Add option to display custom widget
-- Show a message when the drop down has no search results (but has items)
-    - Display basic widget ("no options found from X total"?)
-    - Add option to customize message (function?)
-    - Add option to display custom widget
-- Update example project to include more intuitive examples
-    - Add examples to show the full capability of this package
-    - Add new gif previews to README
-    - Add more examples to README
-- Add tests
-    - Add tests for drop down
-    - Add tests for contextual colors
-
-<br/>
-
 # Changelog
 
 See the list of changes in the [changelog](https://github.com/AndrewMast/ff_drop_down_list/blob/main/CHANGELOG.md).
@@ -273,5 +259,4 @@ See the list of changes in the [changelog](https://github.com/AndrewMast/ff_drop
 
 # License
 
-**ff_drop_down_list**
-is [MIT-licensed.](https://github.com/AndrewMast/ff_drop_down_list/blob/main/LICENSE)
+**ff_drop_down_list** is [MIT-licensed.](https://github.com/AndrewMast/ff_drop_down_list/blob/main/LICENSE)
