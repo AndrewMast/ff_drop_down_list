@@ -3,6 +3,7 @@
 * Added `ListViewListener` to `DropDownOptions` to listen to `ScrollNotification`s from the `ListView`.
 * Added `searchHoverColor` to `DropDownStyle` to change the hover color of the search text field.
 * Added `submitButtonStyle` and `clearButtonStyle` to `DropDownStyle` to customize the style of the buttons.
+* Added `selectAllButtonStyle` and `deselectAllButtonChild` to `DropDownStyle` to customize the style of the buttons.
 
 ## 0.0.5
 

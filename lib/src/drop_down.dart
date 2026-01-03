@@ -642,15 +642,25 @@ class DropDownStyle {
   /// Defines a custom widget to display as the child of the Select All text button
   /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
-  /// This is typically used with an [TextButton].
+  /// This will be used as the child of a [TextButton].
   ///
-  /// If not provided, a default text button child will be used.
+  /// If not provided, a default text button child will be made with [selectAllButtonText].
   final Widget? selectAllButtonChild;
+
+  /// Specifies the style displayed on the Select All text button
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
+  ///
+  /// This will be used as the style of a [TextButton].
+  ///
+  /// If not provided, the default button style will be used.
+  final ButtonStyle? selectAllButtonStyle;
 
   /// Specifies the text displayed on the Select All text button
   /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
   /// This is only used if a custom [selectAllButtonChild] widget is not provided.
+  ///
+  /// The text style from [selectAllButtonStyle] will be used when rendering the button text.
   ///
   /// Default Value: `"Select All"`
   final String selectAllButtonText;
@@ -658,15 +668,25 @@ class DropDownStyle {
   /// Defines a custom widget to display as the child of the Deselect All text button
   /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
-  /// This is typically used with an [TextButton].
+  /// This will be used as the child of a [TextButton].
   ///
-  /// If not provided, a default text button child will be used.
+  /// If not provided, a default text button child will be made with [deselectAllButtonText].
   final Widget? deselectAllButtonChild;
+
+  /// Specifies the style displayed on the Deselect All text button
+  /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
+  ///
+  /// This will be used as the style of a [TextButton].
+  ///
+  /// If not provided, the default button style will be used.
+  final ButtonStyle? deselectAllButtonStyle;
 
   /// Specifies the text displayed on the Deselect All text button
   /// when [DropDownOptions.enableMultipleSelection] and [isSelectAllVisible] are `true`.
   ///
   /// This is only used if a custom [deselectAllButtonChild] widget is not provided.
+  ///
+  /// The text style from [deselectAllButtonStyle] will be used when rendering the button text.
   ///
   /// Default Value: `"Deselect All"`
   final String deselectAllButtonText;
@@ -734,8 +754,10 @@ class DropDownStyle {
     this.isSelectAllVisible = false,
     this.selectAllButtonPadding,
     this.selectAllButtonChild,
+    this.selectAllButtonStyle,
     this.selectAllButtonText = 'Select All',
     this.deselectAllButtonChild,
+    this.deselectAllButtonStyle,
     this.deselectAllButtonText = 'Deselect All',
     this.dataLoadingWidget,
     this.dataFailureWidget,
@@ -1041,14 +1063,27 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                       padding: widget.style.selectAllButtonPadding ??
                           EdgeInsets.zero,
                       child: TextButton(
+                        style: isSelectAll
+                            ? widget.style.deselectAllButtonStyle
+                            : widget.style.selectAllButtonStyle,
                         onPressed: () => setState(() {
                           filteredList.deselectAll(isSelectAll);
                         }),
                         child: isSelectAll
                             ? widget.style.deselectAllButtonChild ??
-                                Text(widget.style.deselectAllButtonText)
+                                Text(
+                                  widget.style.deselectAllButtonText,
+                                  style: widget
+                                      .style.deselectAllButtonStyle?.textStyle
+                                      ?.resolve({}),
+                                )
                             : widget.style.selectAllButtonChild ??
-                                Text(widget.style.selectAllButtonText),
+                                Text(
+                                  widget.style.selectAllButtonText,
+                                  style: widget
+                                      .style.selectAllButtonStyle?.textStyle
+                                      ?.resolve({}),
+                                ),
                       ),
                     ),
                   ),
