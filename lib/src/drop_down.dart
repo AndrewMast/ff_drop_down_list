@@ -511,14 +511,23 @@ class DropDownStyle {
   /// Defines a custom widget to display as the child of the submit button
   /// when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
-  /// This is typically used with an [ElevatedButton].
+  /// This will be used as the child of an [ElevatedButton].
   ///
-  /// If not provided, a default button child will be used.
+  /// If not provided, a default button child will be made with [submitButtonText].
   final Widget? submitButtonChild;
+
+  /// Specifies the style displayed on the submit button when [DropDownOptions.enableMultipleSelection] is `true`.
+  ///
+  /// This will be used as the style of an [ElevatedButton].
+  ///
+  /// If not provided, the default button style will be used.
+  final ButtonStyle? submitButtonStyle;
 
   /// Specifies the text displayed on the submit button when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
   /// This is only used if a custom [submitButtonChild] widget is not provided.
+  ///
+  /// The text style from [submitButtonStyle] will be used when rendering the button text.
   ///
   /// Default Value: `"Submit"`
   final String submitButtonText;
@@ -526,14 +535,23 @@ class DropDownStyle {
   /// Defines a custom widget to display as the child of the clear button
   /// when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
-  /// This is typically used with an [ElevatedButton].
+  /// This will be used as the child of an [ElevatedButton].
   ///
-  /// If not provided, a default button child will be used.
+  /// If not provided, a default button child will be made with [clearButtonText].
   final Widget? clearButtonChild;
+
+  /// Specifies the style displayed on the clear button when [DropDownOptions.enableMultipleSelection] is `true`.
+  ///
+  /// This will be used as the style of an [ElevatedButton].
+  ///
+  /// If not provided, the default button style will be used.
+  final ButtonStyle? clearButtonStyle;
 
   /// Specifies the text displayed on the clear button when [DropDownOptions.enableMultipleSelection] is `true`.
   ///
   /// This is only used if a custom [clearButtonChild] widget is not provided.
+  ///
+  /// The text style from [clearButtonStyle] will be used when rendering the button text.
   ///
   /// Default Value: `"Clear"`
   final String clearButtonText;
@@ -695,8 +713,10 @@ class DropDownStyle {
     this.headerPadding,
     this.headerWidget,
     this.submitButtonChild,
+    this.submitButtonStyle,
     this.submitButtonText = 'Submit',
     this.clearButtonChild,
+    this.clearButtonStyle,
     this.clearButtonText = 'Clear',
     this.isSearchVisible = true,
     this.searchTextFieldPadding,
@@ -952,9 +972,15 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               ElevatedButton(
+                                style: widget.style.submitButtonStyle,
                                 onPressed: onSubmitButtonPressed,
                                 child: widget.style.submitButtonChild ??
-                                    Text(widget.style.submitButtonText),
+                                    Text(
+                                      widget.style.submitButtonText,
+                                      style: widget
+                                          .style.submitButtonStyle?.textStyle
+                                          ?.resolve({}),
+                                    ),
                               ),
 
                               /// Clear Elevated Button
@@ -963,7 +989,12 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                                 child: ElevatedButton(
                                   onPressed: onClearButtonPressed,
                                   child: widget.style.clearButtonChild ??
-                                      Text(widget.style.clearButtonText),
+                                      Text(
+                                        widget.style.clearButtonText,
+                                        style: widget
+                                            .style.clearButtonStyle?.textStyle
+                                            ?.resolve({}),
+                                      ),
                                 ),
                               ),
                             ],
