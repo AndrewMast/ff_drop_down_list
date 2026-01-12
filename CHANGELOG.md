@@ -1,3 +1,7 @@
+## Unreleased
+
+* Swapped default values for `DropDownStyle.padding` and `DropDownStyle.listPadding`.
+
 ## 0.0.6
 
 * Added `ListViewListener` to `DropDownOptions` to listen to `ScrollNotification`s from the `ListView`.

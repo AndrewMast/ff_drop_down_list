@@ -432,7 +432,8 @@ class DropDownOptions<T> {
 class DropDownStyle {
   /// The padding applied to the `ListView` that contains the dropdown items.
   ///
-  /// If not provided (i.e., null), [EdgeInsets.zero] will be applied.
+  /// If not provided (i.e., null), the default value will be
+  /// [EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)]
   final EdgeInsets? listPadding;
 
   /// The widget used as a separator between items in the dropdown list.
@@ -491,8 +492,7 @@ class DropDownStyle {
 
   /// The padding applied to the dropdown container.
   ///
-  /// If not provided (i.e., null), the default value will be
-  /// [EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)]
+  /// If not provided (i.e., null), [EdgeInsets.zero] will be applied.
   final EdgeInsets? padding;
 
   /// The padding applied to the dropdown header.
@@ -969,10 +969,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
               widget.style.backgroundColor,
               context,
             ),
-            padding: widget.style.padding ??
-                EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom,
-                ),
+            padding: widget.style.padding ?? EdgeInsets.zero,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -1114,8 +1111,10 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                           child: ListView.separated(
                             controller: scrollController,
                             itemCount: filteredList.length,
-                            padding:
-                                widget.style.listPadding ?? EdgeInsets.zero,
+                            padding: widget.style.listPadding ??
+                                EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).padding.bottom,
+                                ),
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               bool isSelected = filteredList[index].isSelected;
