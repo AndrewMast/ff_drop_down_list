@@ -649,7 +649,7 @@ class DropDownStyle {
   /// Controls the visibility of the "select all" widget when [DropDownOptions.enableMultipleSelection] is `true`
   /// and [DropDownOptions.maxSelectedItems] is not set.
   ///
-  /// Default Value: `true`
+  /// Default Value: `false`
   final bool isSelectAllVisible;
 
   /// The padding applied to the "select all" and "deselect all" TextButtons.
@@ -974,7 +974,29 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
     _sortSearchList();
 
-    _setSearchWidgetListener();
+    if (widget.style.searchWidget != null) {
+      widget.style.searchWidget?.controller
+          ?.addListener(_onSearchWidgetTextChanged);
+
+      _onSearchWidgetTextChanged();
+    }
+  }
+
+  @override
+  void dispose() {
+    if (widget.style.searchWidget != null) {
+      widget.style.searchWidget?.controller
+          ?.removeListener(_onSearchWidgetTextChanged);
+
+      widget.style.searchWidget?.controller?.dispose();
+    }
+
+    super.dispose();
+  }
+
+  /// A function that is called by the listener on the search widget controller.
+  void _onSearchWidgetTextChanged() {
+    _updateSearchQuery(widget.style.searchWidget?.controller?.text ?? '');
   }
 
   /// Saves the data coming from the [DropDownData.future] if the data has not been saved yet.
@@ -1053,6 +1075,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 8.0),
                                 child: ElevatedButton(
+                                  style: widget.style.clearButtonStyle,
                                   onPressed: onClearButtonPressed,
                                   child: widget.style.clearButtonChild ??
                                       Text(
@@ -1345,14 +1368,5 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
   void _onUnFocusKeyboardAndPop([DropDownResponse<T>? response]) {
     FocusScope.of(context).unfocus();
     Navigator.of(context).pop<DropDownResponse<T>>(response);
-  }
-
-  /// This helps to add listener on search field controller.
-  void _setSearchWidgetListener() {
-    TextFormField? searchField = widget.style.searchWidget;
-
-    searchField?.controller?.addListener(() {
-      _updateSearchQuery(searchField.controller?.text ?? '');
-    });
   }
 }
