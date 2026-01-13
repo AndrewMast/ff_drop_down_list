@@ -359,5 +359,504 @@ void main() {
       expect(style.deselectAllButtonText, 'Custom Deselect All Text');
       expect(style.dataFailureText, 'Custom Failure Text');
     });
+
+    group('Rendered Widget Style Tests', () {
+      testWidgets('should render custom background color',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      style: DropDownStyle(
+                        backgroundColor: Colors.red,
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        final container = tester.widget<Container>(
+          find
+              .descendant(
+                of: find.byType(DraggableScrollableSheet),
+                matching: find.byType(Container),
+              )
+              .first,
+        );
+
+        expect(container.color, Colors.red);
+      });
+
+      testWidgets('should render custom tile colors',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      style: DropDownStyle(
+                        tileColor: Colors.blue,
+                        selectedTileColor: Colors.green,
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        final listTiles = find.byType(ListTile);
+        expect(listTiles, findsNWidgets(2));
+
+        final firstTile = tester.widget<ListTile>(listTiles.first);
+        expect(firstTile.tileColor, Colors.blue);
+      });
+
+      testWidgets('should render custom selected tile color',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      options: DropDownOptions<String>(
+                        enableMultipleSelection: true,
+                      ),
+                      style: DropDownStyle(
+                        selectedTileColor: Colors.purple,
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Item 1'));
+        await tester.pumpAndSettle();
+
+        final listTiles = find.byType(ListTile);
+        expect(listTiles, findsNWidgets(2));
+
+        final firstTile = tester.widget<ListTile>(listTiles.first);
+        expect(firstTile.tileColor, Colors.purple);
+      });
+
+      testWidgets('should render custom submit and clear button styles',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      options: DropDownOptions<String>(
+                        enableMultipleSelection: true,
+                      ),
+                      style: DropDownStyle(
+                        submitButtonStyle: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                        ),
+                        clearButtonStyle: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.cyan,
+                        ),
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        final submitButton = tester.widget<ElevatedButton>(
+          find.widgetWithText(ElevatedButton, 'Submit'),
+        );
+        final clearButton = tester.widget<ElevatedButton>(
+          find.widgetWithText(ElevatedButton, 'Clear'),
+        );
+
+        expect(submitButton.style?.backgroundColor?.resolve({}), Colors.orange);
+        expect(clearButton.style?.backgroundColor?.resolve({}), Colors.cyan);
+      });
+
+      testWidgets('should render custom search field colors',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      style: DropDownStyle(
+                        searchFillColor: Colors.yellow,
+                        searchCursorColor: Colors.pink,
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        expect(textField.cursorColor, Colors.pink);
+      });
+
+      testWidgets('should render custom border and border radius',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      style: DropDownStyle(
+                        searchBorderRadius: BorderRadius.circular(20),
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        final textField = tester.widget<TextField>(find.byType(TextField));
+        final inputDecoration = textField.decoration as InputDecoration;
+        final outlineBorder = inputDecoration.border as OutlineInputBorder;
+        expect(outlineBorder.borderRadius, BorderRadius.circular(20));
+      });
+
+      testWidgets('should render custom list separator color',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      style: DropDownStyle(
+                        listSeparatorColor: Colors.indigo,
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        final dividers = find.byType(Divider);
+        expect(dividers, findsOneWidget);
+
+        final divider = tester.widget<Divider>(dividers.first);
+        expect(divider.color, Colors.indigo);
+      });
+
+      testWidgets('should render select all button styles',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      options: DropDownOptions<String>(
+                        enableMultipleSelection: true,
+                      ),
+                      style: DropDownStyle(
+                        isSelectAllVisible: true,
+                        selectAllButtonStyle: TextButton.styleFrom(
+                          backgroundColor: Colors.lime,
+                        ),
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        final selectAllButton = tester.widget<TextButton>(
+          find.widgetWithText(TextButton, 'Select All'),
+        );
+
+        expect(
+          selectAllButton.style?.backgroundColor?.resolve({}),
+          Colors.lime,
+        );
+      });
+
+      testWidgets('should render custom header widget',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      style: DropDownStyle(
+                        headerWidget: const Text('Custom Header'),
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Custom Header'), findsOneWidget);
+      });
+
+      testWidgets(
+          'should render custom trailing widgets for selected/unselected',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        final selectedIcon = Icon(Icons.star, color: Colors.amber);
+        final unselectedIcon = Icon(Icons.star_border, color: Colors.grey);
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      options: DropDownOptions<String>(
+                        enableMultipleSelection: true,
+                      ),
+                      style: DropDownStyle(
+                        selectedTileTrailingWidget: selectedIcon,
+                        unselectedTileTrailingWidget: unselectedIcon,
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        final listTiles = find.byType(ListTile);
+        expect(listTiles, findsNWidgets(2));
+
+        final firstTileTrailing = find.descendant(
+          of: listTiles.first,
+          matching: find.byIcon(Icons.star_border),
+        );
+        expect(firstTileTrailing, findsOneWidget);
+
+        await tester.tap(find.text('Item 1'));
+        await tester.pumpAndSettle();
+
+        final selectedTrailing = find.descendant(
+          of: listTiles.first,
+          matching: find.byIcon(Icons.star),
+        );
+        expect(selectedTrailing, findsOneWidget);
+      });
+
+      testWidgets('should render contextual colors correctly',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          theme: ThemeData(brightness: Brightness.dark),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      style: DropDownStyle(
+                        backgroundColor: Colors.green.withOpacity(0.5),
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        final containers = find.descendant(
+          of: find.byType(DraggableScrollableSheet),
+          matching: find.byType(Container),
+        );
+
+        expect(containers, findsAtLeastNWidgets(1));
+        final container = tester.widget<Container>(containers.first);
+        expect(container.color, Colors.green.withOpacity(0.5));
+      });
+
+      testWidgets('should render custom button text',
+          (WidgetTester tester) async {
+        final items = [
+          DropDownItem<String>('Item 1'),
+          DropDownItem<String>('Item 2'),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await DropDown<String>(
+                      data: DropDownData(items),
+                      options: DropDownOptions<String>(
+                        enableMultipleSelection: true,
+                      ),
+                      style: DropDownStyle(
+                        submitButtonText: 'Apply Changes',
+                        clearButtonText: 'Reset All',
+                      ),
+                    ).show(context);
+                  },
+                  child: const Text('Show Dropdown'),
+                );
+              },
+            ),
+          ),
+        ));
+
+        await tester.tap(find.text('Show Dropdown'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Apply Changes'), findsOneWidget);
+        expect(find.text('Reset All'), findsOneWidget);
+        expect(find.text('Submit'), findsNothing);
+        expect(find.text('Clear'), findsNothing);
+      });
+    });
   });
 }

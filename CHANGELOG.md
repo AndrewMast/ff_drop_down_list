@@ -1,6 +1,7 @@
 ## Unreleased
 
 * Fixed `DropDownStyle.clearButtonStyle` not being used for the `ElevatedButton`, it was only being used for the text inside of the default child.
+* Added tests to make sure all of the styles and colors are rendered properly.
 
 ## 0.0.7
 
