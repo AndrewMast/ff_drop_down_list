@@ -50,6 +50,10 @@ void main() {
       expect(style.dataLoadingWidget, null);
       expect(style.dataFailureWidget, null);
       expect(style.dataFailureText, 'Unable to load data.');
+      expect(style.emptyListWidget, null);
+      expect(style.emptyListText, 'No options available.');
+      expect(style.emptySearchResultsWidgetBuilder, null);
+      expect(style.emptySearchResultsTextBuilder, null);
       expect(style.builder, null);
     });
 
@@ -164,6 +168,25 @@ void main() {
       expect(style.dataLoadingWidget, customLoadingWidget);
       expect(style.dataFailureWidget, customFailureWidget);
       expect(style.dataFailureText, 'Custom failure text');
+    });
+
+    test('should create DropDownStyle with custom empty state values', () {
+      final customEmptyWidget = Text('Custom Empty Message');
+      final customNoResultsBuilder =
+          (int count) => Text('Custom No Results: $count');
+      final customNoResultsTextBuilder = (int count) => 'Found $count items';
+
+      final style = DropDownStyle(
+        emptyListWidget: customEmptyWidget,
+        emptyListText: 'Custom empty text',
+        emptySearchResultsWidgetBuilder: customNoResultsBuilder,
+        emptySearchResultsTextBuilder: customNoResultsTextBuilder,
+      );
+
+      expect(style.emptyListWidget, customEmptyWidget);
+      expect(style.emptyListText, 'Custom empty text');
+      expect(style.emptySearchResultsWidgetBuilder, customNoResultsBuilder);
+      expect(style.emptySearchResultsTextBuilder, customNoResultsTextBuilder);
     });
 
     test('should create DropDownStyle.build with builder', () {
