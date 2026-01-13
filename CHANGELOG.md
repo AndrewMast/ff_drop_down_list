@@ -5,6 +5,7 @@
 * Added `DropDownStyle.emptyListWidget` and `DropDownStyle.emptyListText` to display if the dropdown does not have any items.
 * Added `DropDownStyle.emptySearchResultsWidgetBuilder` and `DropDownStyle.emptySearchResultsTextBuilder` to display if the dropdown has no search results.
 * Removed unnecessary `SizedBox` that affected list item spacing.
+* Added a few basic examples to the example project.
 
 ## 0.0.6
 
