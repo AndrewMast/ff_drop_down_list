@@ -2,6 +2,7 @@
 
 * Swapped default values for `DropDownStyle.padding` and `DropDownStyle.listPadding`.
 * Added basic test suite.
+* Added `DropDownStyle.emptyListWidget` and `DropDownStyle.emptyListText` to display if the dropdown does not have any items.
 
 ## 0.0.6
 

@@ -714,6 +714,18 @@ class DropDownStyle {
   /// Default Value: `"Unable to load data."`
   final String dataFailureText;
 
+  /// The widget to display when the list is empty.
+  ///
+  /// By default the text is pulled from [emptyListText].
+  ///
+  /// Default Value: [Align(alignment: Alignment.topCenter, child: Text('No options available.'))]
+  final Widget? emptyListWidget;
+
+  /// The text to display when the list is empty.
+  ///
+  /// Default Value: `"No options available."`
+  final String emptyListText;
+
   /// A style builder to make a [DropDownStyle].
   ///
   /// If provided, all other style options will be ignored in favor of
@@ -769,6 +781,8 @@ class DropDownStyle {
     this.dataLoadingWidget,
     this.dataFailureWidget,
     this.dataFailureText = 'Unable to load data.',
+    this.emptyListWidget,
+    this.emptyListText = 'No options available.',
     this.builder,
   });
 
@@ -1106,6 +1120,15 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
                       if (snapshot.connectionState == ConnectionState.none ||
                           snapshot.hasData) {
+                        // Check if list is empty
+                        if (list.isEmpty) {
+                          return widget.style.emptyListWidget ??
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Text(widget.style.emptyListText),
+                              );
+                        }
+
                         return NotificationListener<ScrollNotification>(
                           onNotification: widget.options.listViewListener,
                           child: ListView.separated(
