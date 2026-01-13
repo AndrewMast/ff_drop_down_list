@@ -1220,7 +1220,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                                                   .selectedTileTrailingWidget
                                               : widget.style
                                                   .unselectedTileTrailingWidget
-                                          : const SizedBox.shrink(),
+                                          : null,
                                   contentPadding:
                                       widget.style.tileContentPadding ??
                                           const EdgeInsets.symmetric(
