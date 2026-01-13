@@ -3,6 +3,10 @@ import 'package:ff_drop_down_list/model/contextual_colors.dart';
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
+import 'examples/advanced_examples.dart';
+import 'examples/style_examples.dart';
+import 'examples/search_examples.dart';
+import 'examples/data_examples.dart';
 
 void main() => runApp(const MyApp());
 
@@ -93,22 +97,80 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextButton(
-                  onPressed: launchFutureExample,
-                  child: Text('Launch Future Example')),
-              const SizedBox(height: 8),
-              TextButton(
-                  onPressed: launchEmptySearchExample,
-                  child: Text('Launch Empty Search Examples')),
-              const SizedBox(height: 8),
-              TextButton(
-                  onPressed: launchProductSearchExample,
-                  child: Text('Launch Product Search Example')),
-              const SizedBox(height: 8),
-              TextButton(
-                  onPressed: launchUserSearchExample,
-                  child: Text('Launch User Search Example')),
+              // Basic examples
+              _buildSectionHeader('Basic Examples'),
+              _buildExampleButton('Future Data Example', launchFutureExample),
+              _buildExampleButton(
+                  'Empty Search Examples', launchEmptySearchExample),
+              _buildExampleButton(
+                  'Product Search Example', launchProductSearchExample),
+              _buildExampleButton(
+                  'User Search Example', launchUserSearchExample),
+
+              const SizedBox(height: 20.0),
+
+              // Advanced features
+              _buildSectionHeader('Advanced Features'),
+              _buildExampleButton('Multiple Selection (Max 5)',
+                  () => AdvancedExamples.showMultipleSelectionExample(context)),
+              _buildExampleButton('Custom List Items',
+                  () => AdvancedExamples.showCustomListItemExample(context)),
+              _buildExampleButton(
+                  'Light Theme',
+                  () => AdvancedExamples.showThemedExample(context,
+                      isDark: false)),
+              _buildExampleButton(
+                  'Dark Theme',
+                  () => AdvancedExamples.showThemedExample(context,
+                      isDark: true)),
+
+              const SizedBox(height: 20.0),
+
+              // Style examples
+              _buildSectionHeader('Style Customization'),
+              _buildExampleButton('Minimal Style',
+                  () => StyleExamples.showMinimalStyleExample(context)),
+              _buildExampleButton('Card Style',
+                  () => StyleExamples.showCardStyleExample(context)),
+              _buildExampleButton('Custom Search Style',
+                  () => StyleExamples.showCustomSearchStyleExample(context)),
+              _buildExampleButton('Custom Button Style',
+                  () => StyleExamples.showCustomButtonStyleExample(context)),
+
+              const SizedBox(height: 20.0),
+
+              // Search examples
+              _buildSectionHeader('Search & Sorting'),
+              _buildExampleButton(
+                  'Custom Search Delegate',
+                  () =>
+                      SearchExamples.showCustomSearchDelegateExample(context)),
+              _buildExampleButton('Sort After Search',
+                  () => SearchExamples.showSortAfterSearchExample(context)),
+              _buildExampleButton(
+                  'Advanced Search with Filters',
+                  () => SearchExamples.showAdvancedSearchWithFiltersExample(
+                      context)),
+
+              const SizedBox(height: 20.0),
+
+              // Data examples
+              _buildSectionHeader('Data Sources'),
+              _buildExampleButton('Future Data Loading',
+                  () => DataExamples.showFutureDataExample(context)),
+              _buildExampleButton('Network Error Handling',
+                  () => DataExamples.showFutureWithErrorExample(context)),
+              _buildExampleButton('Empty Data Source',
+                  () => DataExamples.showEmptyDataExample(context)),
+              _buildExampleButton('Large Dataset (1000 items)',
+                  () => DataExamples.showLargeDataSetExample(context)),
+              _buildExampleButton('Pre-selected Items',
+                  () => DataExamples.showPreSelectedItemsExample(context)),
+
               const SizedBox(height: 30.0),
+
+              // Form example
+              _buildSectionHeader('Form Example'),
               const Text(
                 kRegister,
                 style: TextStyle(
@@ -151,6 +213,37 @@ class _MyHomePageState extends State<MyHomePage> {
               const AppElevatedButton(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0, bottom: 12.0),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 20.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.blue,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExampleButton(String title, VoidCallback onPressed) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            alignment: Alignment.centerLeft,
+          ),
+          child: Text(title),
         ),
       ),
     );
@@ -200,6 +293,7 @@ class _MyHomePageState extends State<MyHomePage> {
             fontSize: 20.0,
           ),
         ),
+        searchHintText: 'Search for a city that wouldn\'t exist...',
         emptySearchResultsWidgetBuilder: (String searchQuery, int count) {
           return Column(
             mainAxisSize: MainAxisSize.min,
