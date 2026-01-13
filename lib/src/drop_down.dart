@@ -29,6 +29,12 @@ typedef SearchDelegate<T> = DropDownList<T> Function(
 /// A function type definition for sorting through the list of items.
 typedef SortDelegate<T> = int Function(DropDownItem<T> a, DropDownItem<T> b);
 
+/// A function type definition for building a widget to display when search returns no results.
+typedef EmptySearchResultsWidgetBuilder = Widget Function(int count);
+
+/// A function type definition for building the text to display when search returns no results.
+typedef EmptySearchResultsTextBuilder = String Function(int count);
+
 /// A function type definition for handling notifications from a draggable bottom sheet.
 typedef BottomSheetListener = bool Function(
   DraggableScrollableNotification notification,
@@ -726,6 +732,18 @@ class DropDownStyle {
   /// Default Value: `"No options available."`
   final String emptyListText;
 
+  /// A function that returns the widget to display when search returns no results.
+  ///
+  /// By default a widget is created using [emptySearchResultsTextBuilder].
+  ///
+  /// Default Value: `(int count) => Align(alignment: Alignment.topCenter, child: Text('No options found from $count total'))`
+  final EmptySearchResultsWidgetBuilder? emptySearchResultsWidgetBuilder;
+
+  /// A function that returns the text to display when search returns no results.
+  ///
+  /// Default Value: `(int count) => 'No options found from $count total'`
+  final EmptySearchResultsTextBuilder? emptySearchResultsTextBuilder;
+
   /// A style builder to make a [DropDownStyle].
   ///
   /// If provided, all other style options will be ignored in favor of
@@ -783,6 +801,8 @@ class DropDownStyle {
     this.dataFailureText = 'Unable to load data.',
     this.emptyListWidget,
     this.emptyListText = 'No options available.',
+    this.emptySearchResultsWidgetBuilder,
+    this.emptySearchResultsTextBuilder,
     this.builder,
   });
 
@@ -1126,6 +1146,22 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                               Align(
                                 alignment: Alignment.topCenter,
                                 child: Text(widget.style.emptyListText),
+                              );
+                        }
+
+                        // Check if search has no results
+                        if (filteredList.isEmpty &&
+                            search != null &&
+                            search!.isNotEmpty) {
+                          return widget.style.emptySearchResultsWidgetBuilder
+                                  ?.call(list.length) ??
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Text(
+                                  widget.style.emptySearchResultsTextBuilder
+                                          ?.call(list.length) ??
+                                      'No options found from ${list.length} total',
+                                ),
                               );
                         }
 
