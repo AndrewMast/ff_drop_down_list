@@ -172,9 +172,10 @@ void main() {
 
     test('should create DropDownStyle with custom empty state values', () {
       final customEmptyWidget = Text('Custom Empty Message');
-      final customNoResultsBuilder =
-          (int count) => Text('Custom No Results: $count');
-      final customNoResultsTextBuilder = (int count) => 'Found $count items';
+      final customNoResultsBuilder = (String searchQuery, int count) =>
+          Text('Custom No Results for "$searchQuery": $count');
+      final customNoResultsTextBuilder = (String searchQuery, int count) =>
+          'Found $count items for "$searchQuery"';
 
       final style = DropDownStyle(
         emptyListWidget: customEmptyWidget,

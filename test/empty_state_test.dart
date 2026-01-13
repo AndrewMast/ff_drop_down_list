@@ -100,8 +100,9 @@ void main() {
       final dropDown = DropDown<String>(
         data: DropDownData<String>(items),
         style: DropDownStyle(
-          emptySearchResultsWidgetBuilder: (int count) =>
-              Text('No matching items found from $count items'),
+          emptySearchResultsWidgetBuilder: (String searchQuery, int count) =>
+              Text(
+                  'No matching items found for "$searchQuery" from $count items'),
         ),
       );
 
@@ -127,7 +128,8 @@ void main() {
       await tester.enterText(find.byType(TextFormField), 'xyz');
       await tester.pumpAndSettle();
 
-      expect(find.text('No matching items found from 3 items'), findsOneWidget);
+      expect(find.text('No matching items found for "xyz" from 3 items'),
+          findsOneWidget);
     });
 
     testWidgets('should show default no search results text',
@@ -170,8 +172,8 @@ void main() {
       final dropDown = DropDown<String>(
         data: DropDownData<String>(items),
         style: DropDownStyle(
-          emptySearchResultsTextBuilder: (int count) =>
-              'Found $count items, but no matches',
+          emptySearchResultsTextBuilder: (String searchQuery, int count) =>
+              'Found $count items, but no matches for "$searchQuery"',
         ),
       );
 
@@ -197,7 +199,8 @@ void main() {
       await tester.enterText(find.byType(TextFormField), 'xyz');
       await tester.pumpAndSettle();
 
-      expect(find.text('Found 3 items, but no matches'), findsOneWidget);
+      expect(
+          find.text('Found 3 items, but no matches for "xyz"'), findsOneWidget);
     });
 
     testWidgets('should show items when search has results',

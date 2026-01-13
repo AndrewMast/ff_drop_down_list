@@ -30,10 +30,16 @@ typedef SearchDelegate<T> = DropDownList<T> Function(
 typedef SortDelegate<T> = int Function(DropDownItem<T> a, DropDownItem<T> b);
 
 /// A function type definition for building a widget to display when search returns no results.
-typedef EmptySearchResultsWidgetBuilder = Widget Function(int count);
+typedef EmptySearchResultsWidgetBuilder = Widget Function(
+  String query,
+  int count,
+);
 
 /// A function type definition for building the text to display when search returns no results.
-typedef EmptySearchResultsTextBuilder = String Function(int count);
+typedef EmptySearchResultsTextBuilder = String Function(
+  String query,
+  int count,
+);
 
 /// A function type definition for handling notifications from a draggable bottom sheet.
 typedef BottomSheetListener = bool Function(
@@ -736,12 +742,12 @@ class DropDownStyle {
   ///
   /// By default a widget is created using [emptySearchResultsTextBuilder].
   ///
-  /// Default Value: `(int count) => Align(alignment: Alignment.topCenter, child: Text('No options found from $count total'))`
+  /// Default Value: `(String query, int count) => Align(alignment: Alignment.topCenter, child: Text('No options found from $count total'))`
   final EmptySearchResultsWidgetBuilder? emptySearchResultsWidgetBuilder;
 
   /// A function that returns the text to display when search returns no results.
   ///
-  /// Default Value: `(int count) => 'No options found from $count total'`
+  /// Default Value: `(String query, int count) => 'No options found from $count total'`
   final EmptySearchResultsTextBuilder? emptySearchResultsTextBuilder;
 
   /// A style builder to make a [DropDownStyle].
@@ -1154,12 +1160,12 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                             search != null &&
                             search!.isNotEmpty) {
                           return widget.style.emptySearchResultsWidgetBuilder
-                                  ?.call(list.length) ??
+                                  ?.call(search!, list.length) ??
                               Align(
                                 alignment: Alignment.topCenter,
                                 child: Text(
                                   widget.style.emptySearchResultsTextBuilder
-                                          ?.call(list.length) ??
+                                          ?.call(search!, list.length) ??
                                       'No options found from ${list.length} total',
                                 ),
                               );
