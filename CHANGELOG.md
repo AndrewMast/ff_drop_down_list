@@ -1,3 +1,7 @@
+## Unreleased
+
+* Fixed `DropDownStyle.clearButtonStyle` not being used for the `ElevatedButton`, it was only being used for the text inside of the default child.
+
 ## 0.0.7
 
 * Swapped default values for `DropDownStyle.padding` and `DropDownStyle.listPadding`.

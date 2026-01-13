@@ -1053,6 +1053,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 8.0),
                                 child: ElevatedButton(
+                                  style: widget.style.clearButtonStyle,
                                   onPressed: onClearButtonPressed,
                                   child: widget.style.clearButtonChild ??
                                       Text(
