@@ -2,6 +2,7 @@
 
 * Fixed `DropDownStyle.clearButtonStyle` not being used for the `ElevatedButton`, it was only being used for the text inside of the default child.
 * Added tests to make sure all of the styles and colors are rendered properly.
+* Fixed the controller and listener for custom search widgets so they are properly disposed.
 
 ## 0.0.7
 
