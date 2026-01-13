@@ -1,4 +1,4 @@
-## Unreleased
+## 0.0.7
 
 * Swapped default values for `DropDownStyle.padding` and `DropDownStyle.listPadding`.
 * Added basic test suite.
