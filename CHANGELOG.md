@@ -1,3 +1,12 @@
+## 0.0.7
+
+* Swapped default values for `DropDownStyle.padding` and `DropDownStyle.listPadding`.
+* Added basic test suite.
+* Added `DropDownStyle.emptyListWidget` and `DropDownStyle.emptyListText` to display if the dropdown does not have any items.
+* Added `DropDownStyle.emptySearchResultsWidgetBuilder` and `DropDownStyle.emptySearchResultsTextBuilder` to display if the dropdown has no search results.
+* Removed unnecessary `SizedBox` that affected list item spacing.
+* Added more examples to the example project.
+
 ## 0.0.6
 
 * Added `ListViewListener` to `DropDownOptions` to listen to `ScrollNotification`s from the `ListView`.

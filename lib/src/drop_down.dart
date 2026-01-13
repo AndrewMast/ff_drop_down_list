@@ -29,6 +29,18 @@ typedef SearchDelegate<T> = DropDownList<T> Function(
 /// A function type definition for sorting through the list of items.
 typedef SortDelegate<T> = int Function(DropDownItem<T> a, DropDownItem<T> b);
 
+/// A function type definition for building a widget to display when search returns no results.
+typedef EmptySearchResultsWidgetBuilder = Widget Function(
+  String query,
+  int count,
+);
+
+/// A function type definition for building the text to display when search returns no results.
+typedef EmptySearchResultsTextBuilder = String Function(
+  String query,
+  int count,
+);
+
 /// A function type definition for handling notifications from a draggable bottom sheet.
 typedef BottomSheetListener = bool Function(
   DraggableScrollableNotification notification,
@@ -432,7 +444,8 @@ class DropDownOptions<T> {
 class DropDownStyle {
   /// The padding applied to the `ListView` that contains the dropdown items.
   ///
-  /// If not provided (i.e., null), [EdgeInsets.zero] will be applied.
+  /// If not provided (i.e., null), the default value will be
+  /// [EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)]
   final EdgeInsets? listPadding;
 
   /// The widget used as a separator between items in the dropdown list.
@@ -491,8 +504,7 @@ class DropDownStyle {
 
   /// The padding applied to the dropdown container.
   ///
-  /// If not provided (i.e., null), the default value will be
-  /// [EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)]
+  /// If not provided (i.e., null), [EdgeInsets.zero] will be applied.
   final EdgeInsets? padding;
 
   /// The padding applied to the dropdown header.
@@ -714,6 +726,30 @@ class DropDownStyle {
   /// Default Value: `"Unable to load data."`
   final String dataFailureText;
 
+  /// The widget to display when the list is empty.
+  ///
+  /// By default the text is pulled from [emptyListText].
+  ///
+  /// Default Value: [Align(alignment: Alignment.topCenter, child: Text('No options available.'))]
+  final Widget? emptyListWidget;
+
+  /// The text to display when the list is empty.
+  ///
+  /// Default Value: `"No options available."`
+  final String emptyListText;
+
+  /// A function that returns the widget to display when search returns no results.
+  ///
+  /// By default a widget is created using [emptySearchResultsTextBuilder].
+  ///
+  /// Default Value: `(String query, int count) => Align(alignment: Alignment.topCenter, child: Text('No options found from $count total'))`
+  final EmptySearchResultsWidgetBuilder? emptySearchResultsWidgetBuilder;
+
+  /// A function that returns the text to display when search returns no results.
+  ///
+  /// Default Value: `(String query, int count) => 'No options found from $count total'`
+  final EmptySearchResultsTextBuilder? emptySearchResultsTextBuilder;
+
   /// A style builder to make a [DropDownStyle].
   ///
   /// If provided, all other style options will be ignored in favor of
@@ -769,6 +805,10 @@ class DropDownStyle {
     this.dataLoadingWidget,
     this.dataFailureWidget,
     this.dataFailureText = 'Unable to load data.',
+    this.emptyListWidget,
+    this.emptyListText = 'No options available.',
+    this.emptySearchResultsWidgetBuilder,
+    this.emptySearchResultsTextBuilder,
     this.builder,
   });
 
@@ -969,10 +1009,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
               widget.style.backgroundColor,
               context,
             ),
-            padding: widget.style.padding ??
-                EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom,
-                ),
+            padding: widget.style.padding ?? EdgeInsets.zero,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -1109,13 +1146,40 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
 
                       if (snapshot.connectionState == ConnectionState.none ||
                           snapshot.hasData) {
+                        // Check if list is empty
+                        if (list.isEmpty) {
+                          return widget.style.emptyListWidget ??
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Text(widget.style.emptyListText),
+                              );
+                        }
+
+                        // Check if search has no results
+                        if (filteredList.isEmpty &&
+                            search != null &&
+                            search!.isNotEmpty) {
+                          return widget.style.emptySearchResultsWidgetBuilder
+                                  ?.call(search!, list.length) ??
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Text(
+                                  widget.style.emptySearchResultsTextBuilder
+                                          ?.call(search!, list.length) ??
+                                      'No options found from ${list.length} total',
+                                ),
+                              );
+                        }
+
                         return NotificationListener<ScrollNotification>(
                           onNotification: widget.options.listViewListener,
                           child: ListView.separated(
                             controller: scrollController,
                             itemCount: filteredList.length,
-                            padding:
-                                widget.style.listPadding ?? EdgeInsets.zero,
+                            padding: widget.style.listPadding ??
+                                EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).padding.bottom,
+                                ),
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               bool isSelected = filteredList[index].isSelected;
@@ -1156,7 +1220,7 @@ class _DropDownBodyState<T> extends State<DropDownBody<T>> {
                                                   .selectedTileTrailingWidget
                                               : widget.style
                                                   .unselectedTileTrailingWidget
-                                          : const SizedBox.shrink(),
+                                          : null,
                                   contentPadding:
                                       widget.style.tileContentPadding ??
                                           const EdgeInsets.symmetric(
